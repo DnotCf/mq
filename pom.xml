@@ -13,6 +13,7 @@
         <module>mq-core</module>
         <module>site-starter</module>
         <module>mqtt-integration</module>
+        <module>amqp-integration</module>
     </modules>
 
     <properties>

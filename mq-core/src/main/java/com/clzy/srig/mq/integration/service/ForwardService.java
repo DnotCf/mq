@@ -64,6 +64,8 @@ public class ForwardService {
             temps.add(router);
         }
 
-        messagePublishes.forEach(p -> p.initReceiver(routerMap.get(p.type())));
+        routerMap.forEach((serverType, routers) -> {
+            messagePublishes.stream().filter(p -> p.type().equals(serverType)).forEach(c -> c.initReceiver(routers));
+        });
     }
 }

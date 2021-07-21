@@ -17,7 +17,6 @@ public class MqttService {
 
     private Map<String, MqttClient> mqttClientMap = new HashMap<>();
 
-
     public synchronized MqttClient getClient(MQServer server) {
 
         String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());

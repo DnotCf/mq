@@ -2,18 +2,16 @@ package com.clzy.srig.mq.integration.service;
 
 import com.clzy.srig.mq.integration.entity.ForwardRouter;
 import com.clzy.srig.mq.integration.entity.MQServer;
-import com.clzy.srig.mq.integration.entity.MQTTServer;
 import com.clzy.srig.mq.integration.enums.MQIntegration;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Slf4j
-@Component
+@Component("mqttIntegration")
 public class MqttIntegration implements IMqIntegration {
 
     @Autowired
