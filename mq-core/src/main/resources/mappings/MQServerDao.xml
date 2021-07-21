@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clzy.srig.mq.integration.dao.MQServerDao">
+    <sql id="mqServerColumns">
+        a.ID          AS "id",
+        a.IP          AS "ip",
+        a.PORT        AS "port",
+        a.PROTOCOL    AS "protocol",
+        a.CLIENT_NAME AS "clientName",
+        a.TYPE        AS "type",
+        a.USERNAME    AS "username",
+        a.PASSWORD    AS "password"
+    </sql>
+
+    <sql id="mServersJoins">
+    </sql>
+
+    <select id="get" resultType="MQServer">
+        SELECT
+        <include refid="mqServerColumns"/>
+        FROM SRIG_MQ_SERVER a
+        <include refid="mServersJoins"/>
+        WHERE a.ID = #{id}
+    </select>
+
+
+    <select id="findList" resultType="MQServer">
+        SELECT
+        <include refid="mqServerColumns"/>
+        FROM SRIG_MQ_SERVER a
+        <include refid="mServersJoins"/>
+        <where>
+            <if test="ip != null and ip != ''">
+                AND a.IP = #{ip}
+            </if>
+            <if test="port != null">
+                AND a.PORT = #{port}
+            </if>
+            <if test="protocol != null and protocol != ''">
+                AND a.PROTOCOL = #{protocol}
+            </if>
+            <if test="type != null">
+                AND a.TYPE = #{type}
+            </if>
+        </where>
+        <choose>
+            <when test="page != null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <select id="findAllList" resultType="MQServer">
+        SELECT
+        <include refid="mqServerColumns"/>
+        FROM SRIG_MQ_SERVER a
+        <include refid="mServersJoins"/>
+        <where>
+        </where>
+        <choose>
+            <when test="page != null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO SRIG_MQ_SERVER(ID,
+                                   IP,
+                                   PORT,
+                                   CLIENT_NAME,
+                                   PROTOCOL,
+                                   TYPE,
+                                   USERNAME,
+                                   PASSWORD,
+                                   UPDATE_TIME,
+                                   CREATE_TIME)
+        VALUES (#{id},
+                #{ip},
+                #{port},
+                #{clientName},
+                #{protocol},
+                #{type},
+                #{username},
+                #{password},
+                #{updateDate},
+                #{createDate})
+    </insert>
+
+    <update id="update">
+        UPDATE SRIG_MQ_SERVER
+        SET IP          = #{ip},
+            PORT        = #{port},
+            CLIENT_NAME = #{clientName},
+            PROTOCOL    = #{protocol},
+            TYPE        = #{type},
+            USERNAME    = #{username},
+            PASSWORD    = #{password},
+            UPDATE_TIME = #{updateDate}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="delete">
+        DELETE
+        FROM SRIG_MQ_SERVER
+        WHERE ID = #{id}
+    </update>
+</mapper>

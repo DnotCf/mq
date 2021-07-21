@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clzy.srig.mq.integration.dao.ForwardRouterDao">
+    <sql id="rsuColumns">
+        a.ID             AS "id",
+        a.FROM_SERVER_ID AS "fromServer.id",
+        a.TO_SERVER_ID   AS "toServer.id",
+        a.FROM_TOPIC     AS "fromTopic",
+        a.TO_TOPIC       AS "toTopic",
+        <include refid="fromServerColumns"/>
+        ,
+        <include refid="toServerColumns"/>
+    </sql>
+
+    <sql id="fromServerColumns">
+        f.IP          AS "fromServer.ip",
+        f.PORT        AS "fromServer.port",
+        f.PROTOCOL    AS "fromServer.protocol",
+        f.CLIENT_NAME AS "fromServer.clientName",
+        f.TYPE        AS "fromServer.type",
+        f.USERNAME    AS "fromServer.username",
+        f.PASSWORD    AS "fromServer.password"
+    </sql>
+
+    <sql id="toServerColumns">
+        t.IP          AS "toServer.ip",
+        t.PORT        AS "toServer.port",
+        t.PROTOCOL    AS "toServer.protocol",
+        t.CLIENT_NAME AS "toServer.clientName",
+        t.TYPE        AS "toServer.type",
+        t.USERNAME    AS "toServer.username",
+        t.PASSWORD    AS "toServer.password"
+    </sql>
+
+    <sql id="rsuJoins">
+        INNER JOIN SRIG_MQ_SERVER f ON f.ID = a.FROM_SERVER_ID
+        INNER JOIN SRIG_MQ_SERVER t ON t.ID = a.TO_SERVER_ID
+    </sql>
+
+    <select id="get" resultType="ForwardRouter">
+        SELECT
+        <include refid="rsuColumns"/>
+        FROM SRIG_FORWARD_ROUTER a
+        <include refid="rsuJoins"/>
+        WHERE a.ID = #{id}
+    </select>
+
+
+    <select id="findList" resultType="ForwardRouter">
+        SELECT
+        <include refid="rsuColumns"/>
+        FROM SRIG_FORWARD_ROUTER a
+        <include refid="rsuJoins"/>
+        <where>
+            <if test="fromTopic != null and fromTopic != ''">
+                AND a.FROM_TOPIC = #{fromTopic}
+            </if>
+            <if test="toTopic != null and toTopic != ''">
+                AND a.TO_TOPIC = #{toTopic}
+            </if>
+        </where>
+        <choose>
+            <when test="page != null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <select id="findAllList" resultType="ForwardRouter">
+        SELECT
+        <include refid="rsuColumns"/>
+        FROM SRIG_FORWARD_ROUTER a
+        <include refid="rsuJoins"/>
+        <where>
+        </where>
+        <choose>
+            <when test="page != null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO SRIG_FORWARD_ROUTER(ID,
+                                        FROM_SERVER_ID,
+                                        FROM_SERVER_ID,
+                                        FROM_TOPIC,
+                                        TO_TOPIC)
+        VALUES (#{id},
+                #{fromServer.id},
+                #{toServer.id},
+                #{fromTopic},
+                #{toTopic})
+    </insert>
+
+    <update id="update">
+        UPDATE SRIG_FORWARD_ROUTER
+        SET FROM_TOPIC = #{fromTopic},
+            TO_TOPIC   = #{toTopic}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="delete">
+        DELETE
+        FROM SRIG_FORWARD_ROUTER
+        WHERE ID = #{id}
+    </update>
+</mapper>

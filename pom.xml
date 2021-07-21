@@ -18,7 +18,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <site-core.version>1.0.4-SNAPSHOT</site-core.version>
+        <site-core.version>1.0.5-SNAPSHOT</site-core.version>
     </properties>
 
     <dependencyManagement>
