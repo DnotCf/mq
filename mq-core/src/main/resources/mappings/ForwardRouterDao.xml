@@ -7,6 +7,8 @@
         a.TO_SERVER_ID   AS "toServer.id",
         a.FROM_TOPIC     AS "fromTopic",
         a.TO_TOPIC       AS "toTopic",
+        a.EXPIRE_TIME    AS "expireTime",
+        a.STATUS    AS   "status",
         <include refid="fromServerColumns"/>
         ,
         <include refid="toServerColumns"/>

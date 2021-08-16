@@ -28,9 +28,9 @@ public class AmqpService {
                 factory.setUsername(server.getUsername());
                 factory.setPassword(server.getPassword());
                 factory.setVirtualHost(server.getClientName());
-
                 Connection connection = factory.newConnection();
                 client = connection.createChannel();
+                amqpClientMap.put(connectUrl, client);
             } catch (Exception e) {
                 log.error("AMQP连接异常", e);
                 client = null;

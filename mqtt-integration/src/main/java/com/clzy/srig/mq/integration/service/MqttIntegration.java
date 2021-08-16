@@ -43,12 +43,16 @@ public class MqttIntegration implements IMqIntegration {
     public void initReceiver(List<ForwardRouter> forwardRouters) {
         for (ForwardRouter router : forwardRouters) {
             MqttClient client = mqttService.getClient(router.getFromServer());
+            if (client == null) {
+                continue;
+            }
             try {
                 client.subscribe(router.getFromTopic().split(","));
                 client.setCallback(new MqttCallback() {
                     @Override
                     public void connectionLost(Throwable cause) {
-
+                        //todo 重新连接
+                        log.error("=====断开连接=====", cause);
                     }
 
                     @Override

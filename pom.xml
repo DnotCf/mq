@@ -14,6 +14,7 @@
         <module>site-starter</module>
         <module>mqtt-integration</module>
         <module>amqp-integration</module>
+        <module>rocketmq-integration</module>
     </modules>
 
     <properties>

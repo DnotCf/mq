@@ -31,7 +31,6 @@ public class MQServer extends DataEntity<MQServer> {
      */
     private int port;
 
-
     /**
      * 客户端连接名称
      */
@@ -47,6 +46,25 @@ public class MQServer extends DataEntity<MQServer> {
      */
     private String password;
 
+    /**
+     * 服务状态
+     */
+    private String status;
+
+    /**
+     * 重试次数
+     */
+    private Integer retry;
+
+    /**
+     * 集群地址 ip:prot,ip2:prot2
+     */
+    private String cluster;
+
+    /**
+     * 默认连接参数
+     */
+    private String defaultParam;
 
     @Override
     public void doPreInsert() {

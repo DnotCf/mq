@@ -8,8 +8,12 @@
         a.PROTOCOL    AS "protocol",
         a.CLIENT_NAME AS "clientName",
         a.TYPE        AS "type",
+        a.STATUS      AS "status",
+        a.RETRY       AS "retry",
         a.USERNAME    AS "username",
-        a.PASSWORD    AS "password"
+        a.PASSWORD    AS "password",
+        a.CLUSTER     AS "cluster",
+        a.DEFAULT_PARAM AS "defaultParam"
     </sql>
 
     <sql id="mServersJoins">
