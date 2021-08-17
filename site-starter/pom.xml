@@ -37,7 +37,7 @@
         </dependency>
         <dependency>
             <groupId>com.clzy.srig</groupId>
-            <artifactId>rocketmq-integration</artifactId>
+            <artifactId>rocketmq-aliyun-integration</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

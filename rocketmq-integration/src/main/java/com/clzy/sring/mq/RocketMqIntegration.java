@@ -1,4 +1,4 @@
-package com.clzy.sring.mq.service;
+package com.clzy.sring.mq;
 
 import com.clzy.geo.core.utils.StringUtils;
 import com.clzy.srig.mq.integration.entity.ForwardRouter;
@@ -9,7 +9,6 @@ import com.clzy.srig.mq.integration.service.IMqIntegration;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
@@ -18,9 +17,7 @@ import org.apache.rocketmq.common.message.MessageExt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * @Author: tangs
@@ -30,8 +27,7 @@ import java.util.function.Consumer;
 @Service
 public class RocketMqIntegration implements IMqIntegration {
 
-    @Autowired
-    private ForwardService forwardService;
+
     @Autowired
     private RocketMqService rocketMqService;
     @Override
@@ -56,29 +52,10 @@ public class RocketMqIntegration implements IMqIntegration {
     public void initReceiver(List<ForwardRouter> routers) {
         for (ForwardRouter router : routers) {
             try {
-                DefaultMQPushConsumer consumer = rocketMqService.createConsumer(router.getFromServer());
+                DefaultMQPushConsumer consumer = rocketMqService.createConsumer(router);
                 if (consumer == null) {
                     continue;
                 }
-                // 设置监听
-                consumer.registerMessageListener((MessageListenerConcurrently) (list, consumeConcurrentlyContext) -> {
-                    if (CollectionUtils.isEmpty(list)) {
-                        log.debug("rocketMQ接收消息为空，直接返回成功");
-                        return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
-                    }
-                    for (MessageExt msg : list) {
-                        forwardService.publish(router.getFromServer(), msg.getBody());
-                    }
-                    return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
-                });
-
-                String[] topicArr = router.getFromTopic().split(",");
-                for (String tag : topicArr) {
-                    if (StringUtils.isNotBlank(tag)) {
-                        consumer.subscribe(router.getFromTopic(), "");
-                    }
-                }
-
                 consumer.start();
             } catch (Exception e) {
                 log.error("初始化RocketMq连接失败", e);

@@ -15,28 +15,43 @@
     </sql>
 
     <sql id="fromServerColumns">
+        f.ID          AS "fromServer.id",
         f.IP          AS "fromServer.ip",
         f.PORT        AS "fromServer.port",
         f.PROTOCOL    AS "fromServer.protocol",
         f.CLIENT_NAME AS "fromServer.clientName",
         f.TYPE        AS "fromServer.type",
         f.USERNAME    AS "fromServer.username",
-        f.PASSWORD    AS "fromServer.password"
+        f.PASSWORD    AS "fromServer.password",
+        f.TAG         AS "fromServer.tag",
+        f.SECRET_KEY  AS "fromServer.secretKey",
+        f.ACCESS_KEY   AS "fromServer.accessKey",
+        f.GROUP       AS "fromServer.group",
+        f.CLUSTER     AS "fromServer.cluster",
+        f.STATUS      AS "fromServer.stauts"
+
     </sql>
 
     <sql id="toServerColumns">
+        t.ID          AS "fromServer.id",
         t.IP          AS "toServer.ip",
         t.PORT        AS "toServer.port",
         t.PROTOCOL    AS "toServer.protocol",
         t.CLIENT_NAME AS "toServer.clientName",
         t.TYPE        AS "toServer.type",
         t.USERNAME    AS "toServer.username",
-        t.PASSWORD    AS "toServer.password"
+        t.PASSWORD    AS "toServer.password",
+        t.TAG         AS "toServer.tag",
+        t.SECRET_KEY  AS "toServer.secretKey",
+        t.ACCESS_KEY   AS "toServer.accessKey",
+        t.GROUP       AS "toServer.group",
+        t.CLUSTER     AS "toServer.cluster",
+        t.STATUS      AS "toServer.stauts"
     </sql>
 
     <sql id="rsuJoins">
-        INNER JOIN SRIG_MQ_SERVER f ON f.ID = a.FROM_SERVER_ID
-        INNER JOIN SRIG_MQ_SERVER t ON t.ID = a.TO_SERVER_ID
+        INNER JOIN SRIG_MQ_SERVER f ON f.ID = a.FROM_SERVER_ID AND f.DEL_FLAG = 1
+        INNER JOIN SRIG_MQ_SERVER t ON t.ID = a.TO_SERVER_ID AND t.DEL_FLAG = 1
     </sql>
 
     <select id="get" resultType="ForwardRouter">
@@ -92,18 +107,26 @@
                                         FROM_SERVER_ID,
                                         FROM_SERVER_ID,
                                         FROM_TOPIC,
-                                        TO_TOPIC)
+                                        TO_TOPIC,
+                                        EXPIRE_TIME,
+                                        STATUS
+                             )
         VALUES (#{id},
                 #{fromServer.id},
                 #{toServer.id},
                 #{fromTopic},
-                #{toTopic})
+                #{toTopic},
+                #{expireTime},
+                #{status}
+                       )
     </insert>
 
     <update id="update">
         UPDATE SRIG_FORWARD_ROUTER
         SET FROM_TOPIC = #{fromTopic},
-            TO_TOPIC   = #{toTopic}
+            TO_TOPIC   = #{toTopic},
+            EXPIRE_TIME= #{expireTime},
+            STATUS =#{status}
         WHERE ID = #{id}
     </update>
 

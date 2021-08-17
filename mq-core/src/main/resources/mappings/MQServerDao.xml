@@ -13,7 +13,11 @@
         a.USERNAME    AS "username",
         a.PASSWORD    AS "password",
         a.CLUSTER     AS "cluster",
-        a.DEFAULT_PARAM AS "defaultParam"
+        a.DEFAULT_PARAM AS "defaultParam",
+        a.TAG AS "tag",
+        a.GROUP AS "group",
+        a.SECRET_KEY AS "secretKey",
+        a.ACCESS_KEY AS "accessKey"
     </sql>
 
     <sql id="mServersJoins">
@@ -34,6 +38,7 @@
         FROM SRIG_MQ_SERVER a
         <include refid="mServersJoins"/>
         <where>
+            a.DEL_FLAG = 1
             <if test="ip != null and ip != ''">
                 AND a.IP = #{ip}
             </if>
@@ -80,20 +85,38 @@
                                    CLIENT_NAME,
                                    PROTOCOL,
                                    TYPE,
+                                   STATUS,
                                    USERNAME,
                                    PASSWORD,
                                    UPDATE_TIME,
-                                   CREATE_TIME)
+                                   CREATE_TIME,
+                                   RETRY,
+                                   CLUSTER,
+                                   DEFAULT_PARAM,
+                                   TAG,
+                                   GROUP,
+                                   SECRET_KEY,
+                                   ACCESS_KEY
+                )
         VALUES (#{id},
                 #{ip},
                 #{port},
                 #{clientName},
                 #{protocol},
                 #{type},
+                #{status},
                 #{username},
                 #{password},
                 #{updateDate},
-                #{createDate})
+                #{createDate},
+                #{retry},
+                #{cluster},
+                #{defaultParam},
+                #{tag},
+                #{group},
+                #{secretKey},
+                #{accessKey}
+                       )
     </insert>
 
     <update id="update">
@@ -105,13 +128,20 @@
             TYPE        = #{type},
             USERNAME    = #{username},
             PASSWORD    = #{password},
-            UPDATE_TIME = #{updateDate}
+            UPDATE_TIME = #{updateDate},
+            CLUSTER = #{cluster},
+            RETRY = #{retry},
+            STATUS = #{status},
+            DEFAULT_PARAM = #{defaultParam},
+            TAG=#{tag},
+            GROUP=#{group},
+            SECRET_KEY=#{secretKey},
+            ACCESS_KEY=#{accessKey}
         WHERE ID = #{id}
     </update>
 
     <update id="delete">
-        DELETE
-        FROM SRIG_MQ_SERVER
+        UPDATE SRIG_MQ_SERVER SET DEL_FALG = 0
         WHERE ID = #{id}
     </update>
 </mapper>

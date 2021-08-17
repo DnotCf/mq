@@ -43,4 +43,8 @@ public class ForwardRouter extends DataEntity<ForwardRouter> {
     public void doPreUpdate() {
 
     }
+
+    public ForwardRouter(String id) {
+        super(id);
+    }
 }

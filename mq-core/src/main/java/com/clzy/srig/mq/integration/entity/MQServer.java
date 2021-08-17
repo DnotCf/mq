@@ -29,7 +29,7 @@ public class MQServer extends DataEntity<MQServer> {
     /**
      * 服务端口
      */
-    private int port;
+    private Integer port;
 
     /**
      * 客户端连接名称
@@ -65,7 +65,14 @@ public class MQServer extends DataEntity<MQServer> {
      * 默认连接参数
      */
     private String defaultParam;
+    /**
+     * 标签
+     */
+    private String tag;
 
+    private String secretKey;
+    private String accessKey;
+    private String group;
     @Override
     public void doPreInsert() {
 
@@ -75,4 +82,9 @@ public class MQServer extends DataEntity<MQServer> {
     public void doPreUpdate() {
 
     }
+
+    public MQServer(String id) {
+        super(id);
+    }
+
 }
