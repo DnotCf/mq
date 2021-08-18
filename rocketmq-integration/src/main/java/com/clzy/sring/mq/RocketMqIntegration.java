@@ -11,6 +11,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageExt;
@@ -61,5 +62,10 @@ public class RocketMqIntegration implements IMqIntegration {
                 log.error("初始化RocketMq连接失败", e);
             }
         }
+    }
+
+    @Override
+    public void disConnect(ForwardRouter router) {
+        rocketMqService.disConnect(router.getFromServer());
     }
 }

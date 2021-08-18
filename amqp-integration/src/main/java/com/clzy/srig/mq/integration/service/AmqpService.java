@@ -7,8 +7,10 @@ import com.rabbitmq.client.ConnectionFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Component
@@ -38,5 +40,20 @@ public class AmqpService {
 
         }
         return client;
+    }
+    public void disConnect(MQServer server) {
+        String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
+        Channel client = amqpClientMap.get(connectUrl);
+        if (client != null) {
+            try {
+                client.close();
+                amqpClientMap.remove(connectUrl);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (TimeoutException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 }

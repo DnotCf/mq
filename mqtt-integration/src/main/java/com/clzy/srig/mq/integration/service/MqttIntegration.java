@@ -71,4 +71,9 @@ public class MqttIntegration implements IMqIntegration {
 
         }
     }
+
+    @Override
+    public void disConnect(ForwardRouter router) {
+        mqttService.disConnect(router.getFromServer());
+    }
 }

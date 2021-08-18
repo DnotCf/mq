@@ -63,19 +63,19 @@ public class ForwardService {
             return;
         }
 
-        Map<MQIntegration.ServerType, List<ForwardRouter>> routerMap = new HashMap<>();
+//        Map<MQIntegration.ServerType, List<ForwardRouter>> routerMap = new HashMap<>();
 
         for (ForwardRouter router : list) {
-            List<ForwardRouter> temps = routerMap.computeIfAbsent(router.getFromServer().getType(), k -> new ArrayList<>());
-            temps.add(router);
+//            List<ForwardRouter> temps = routerMap.computeIfAbsent(router.getFromServer().getType(), k -> new ArrayList<>());
+//            temps.add(router);
             if (router.getExpireTime() == null || router.getExpireTime().compareTo(new Date()) > 0) {
                 addRouterTable(router);
             }
         }
 
-        routerMap.forEach((serverType, routers) -> {
-            messagePublishes.stream().filter(p -> p.type().equals(serverType)).forEach(c -> c.initReceiver(routers));
-        });
+//        routerMap.forEach((serverType, routers) -> {
+//            messagePublishes.stream().filter(p -> p.type().equals(serverType)).forEach(c -> c.initReceiver(routers));
+//        });
     }
 
     /**
@@ -90,6 +90,13 @@ public class ForwardService {
             routers = new ArrayList<>();
             routers.add(router);
             routerTable.put(fromId, routers);
+            //初始化消费
+            List<ForwardRouter> finalRouters = routers;
+            messagePublishes.forEach(s->{
+                if (s.type().equals(router.getFromServer().getType())) {
+                    s.initReceiver(finalRouters);
+                }
+            });
         }else {
             routers.add(router);
         }
@@ -104,13 +111,19 @@ public class ForwardService {
         String fromId = router.getFromServer().getId();
         List<ForwardRouter> routers = routerTable.get(fromId);
         if (!CollectionUtils.isEmpty(routers)) {
-            Iterator<ForwardRouter> iterator = routers.iterator();
-            while (iterator.hasNext()) {
-                if (iterator.next().getToServer().getId().equals(router.getToServer().getId())) {
-                    iterator.remove();
-                }
-            }
+            routers.removeIf(router1 -> router1.getToServer().getId().equals(router.getToServer().getId()));
         }
+        if (CollectionUtils.isEmpty(routers)) {
+            stopConsumer(router);
+        }
+    }
+
+    public void stopConsumer(ForwardRouter router) {
+        messagePublishes.forEach(p -> {
+            if (p.type().equals(router.getFromServer().getType())) {
+                p.disConnect(router);
+            }
+        });
     }
 
     /**
@@ -122,12 +135,7 @@ public class ForwardService {
         String fromId = router.getFromServer().getId();
         List<ForwardRouter> routers = routerTable.get(fromId);
         if (!CollectionUtils.isEmpty(routers)) {
-            Iterator<ForwardRouter> iterator = routers.iterator();
-            while (iterator.hasNext()) {
-                if (iterator.next().getToServer().getId().equals(router.getToServer().getId())) {
-                    iterator.remove();
-                }
-            }
+            routers.removeIf(router1 -> router1.getToServer().getId().equals(router.getToServer().getId()));
         }else {
             routers = new ArrayList<>();
             routerTable.put(fromId, routers);

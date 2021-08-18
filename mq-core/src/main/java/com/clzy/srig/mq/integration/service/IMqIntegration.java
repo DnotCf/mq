@@ -12,4 +12,10 @@ public interface IMqIntegration {
     void onPublich(ForwardRouter router, byte[] message);
 
     void initReceiver(List<ForwardRouter> routers);
+
+    /**
+     * 删除连接
+     * @param router
+     */
+    void disConnect(ForwardRouter router);
 }

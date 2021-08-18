@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +36,7 @@ public class MqttService {
                 options.setConnectionTimeout(10);
                 options.setKeepAliveInterval(20);
                 client.connect(options);
+                mqttClientMap.put(connectUrl, client);
             } catch (Exception e) {
                 log.error("MQTT连接异常", e);
                 client = null;
@@ -43,6 +45,19 @@ public class MqttService {
         }
 
         return client;
+    }
+
+    public void disConnect(MQServer server) {
+        String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
+        MqttClient client = mqttClientMap.get(connectUrl);
+        if (client != null) {
+            try {
+                client.disconnect();
+                mqttClientMap.remove(connectUrl);
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

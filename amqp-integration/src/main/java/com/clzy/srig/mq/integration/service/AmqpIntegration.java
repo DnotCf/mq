@@ -8,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Component("amqpIntegration")
@@ -55,5 +57,10 @@ public class AmqpIntegration implements IMqIntegration {
                 log.error("初始化AMQP连接失败", e);
             }
         }
+    }
+
+    @Override
+    public void disConnect(ForwardRouter router) {
+        amqpService.disConnect(router.getFromServer());
     }
 }

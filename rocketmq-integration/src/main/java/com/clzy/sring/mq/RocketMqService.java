@@ -53,6 +53,7 @@ public class RocketMqService {
             group = MQIntegration.defaultGroupName;
         }
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(group);
+
         consumer.setNamesrvAddr(namesrvAddr);
         consumer.setConsumeMessageBatchMaxSize(param.getInteger("consumeMessageBatchMaxSize"));
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
@@ -73,7 +74,7 @@ public class RocketMqService {
         if (StringUtils.isBlank(tag)) {
             tag = "*";
         }
-        consumer.subscribe(router.getFromTopic(), "*");
+        consumer.subscribe(router.getFromTopic(), tag);
         consumerMap.put(namesrvAddr, consumer);
         log.info("====={}===activeMQ消费连接服务创建成功=====", namesrvAddr);
         return consumer;
@@ -124,6 +125,18 @@ public class RocketMqService {
         }
 
         return object;
+    }
+
+    public void disConnect(MQServer server) {
+        String namesrvAddr = getConectionUrl(server);
+        if (StringUtils.isBlank(namesrvAddr)) {
+            namesrvAddr = String.format("%s:%d", server.getIp(), server.getPort());
+        }
+        DefaultMQPushConsumer consumer = consumerMap.get(namesrvAddr);
+        if (consumer != null) {
+            consumer.shutdown();
+            consumerMap.remove(namesrvAddr);
+        }
     }
 
 }

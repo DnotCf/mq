@@ -65,4 +65,9 @@ public class RocketAliyunMqIntegration implements IMqIntegration {
             }
         }
     }
+
+    @Override
+    public void disConnect(ForwardRouter router) {
+        aliyunMqService.disConnect(router.getFromServer());
+    }
 }

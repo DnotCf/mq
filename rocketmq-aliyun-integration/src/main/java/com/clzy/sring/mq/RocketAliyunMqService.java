@@ -47,7 +47,7 @@ public class RocketAliyunMqService {
         }
         log.info("==={}===阿里云rocketmq连接开始=====", conectionUrl);
         MqConfig mqConfig = new MqConfig();
-//        JSONObject param = getDefaultParam(router.getFromServer().getDefaultParam());
+        JSONObject param = getDefaultParam(router.getFromServer().getDefaultParam());
         mqConfig.setSecretKey(router.getFromServer().getSecretKey());
         mqConfig.setAccessKey(router.getFromServer().getAccessKey());
         mqConfig.setOrderGroupId(router.getFromServer().getGroup());
@@ -63,6 +63,9 @@ public class RocketAliyunMqService {
         //配置文件
         Properties properties = mqConfig.getMqPropertie();
         properties.setProperty(PropertyKeyConst.GROUP_ID, mqConfig.getOrderGroupId());
+        properties.setProperty(PropertyKeyConst.ConsumeThreadNums, param.getString(PropertyKeyConst.ConsumeThreadNums));
+        properties.setProperty(PropertyKeyConst.ConsumeTimeout, param.getString(PropertyKeyConst.ConsumeTimeout));
+        properties.setProperty(PropertyKeyConst.MessageModel, param.getString(PropertyKeyConst.MessageModel));
         orderConsumerBean.setProperties(properties);
         //订阅关系
         Map<Subscription, MessageListener> subscriptionTable = new HashMap<>();
@@ -105,7 +108,7 @@ public class RocketAliyunMqService {
 //        mqConfig.setOrderTag(param.getString("tag"));
         ProducerBean orderProducerBean = new ProducerBean();
         orderProducerBean.setProperties(mqConfig.getMqPropertie());
-        //启动
+        //启
         orderProducerBean.start();
         producerMap.put(conectionUrl, orderProducerBean);
         return orderProducerBean;
@@ -132,7 +135,25 @@ public class RocketAliyunMqService {
         if (StringUtils.isBlank(object.getString("group"))) {
             object.put("group", MQIntegration.defaultGroupName);
         }
+        if (StringUtils.isBlank(object.getString(PropertyKeyConst.ConsumeThreadNums))) {
+            object.put(PropertyKeyConst.ConsumeThreadNums, "1");
+        }
+        if (StringUtils.isBlank(object.getString(PropertyKeyConst.ConsumeTimeout))) {
+            object.put(PropertyKeyConst.ConsumeTimeout, "1000");
+        }
+        if (StringUtils.isBlank(object.getString(PropertyKeyConst.MessageModel))) {
+            object.put(PropertyKeyConst.MessageModel, "BROADCASTING");
+        }
         return object;
+    }
+
+    public void disConnect(MQServer server) {
+        String url = getConectionUrl(server);
+        ConsumerBean consumerBean = consumerMap.get(url);
+        if (consumerBean != null) {
+            consumerBean.shutdown();
+            consumerMap.remove(url);
+        }
     }
 
 }
