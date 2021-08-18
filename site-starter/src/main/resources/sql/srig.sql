@@ -61,7 +61,7 @@ CREATE TABLE `SRIG_MQ_SERVER`
     `UPDATE_TIME`   datetime                                                DEFAULT NULL,
     `CLUSTER`       varchar(255)                                            DEFAULT NULL COMMENT '集群地址',
     `DEFAULT_PARAM` varchar(500)                                            DEFAULT NULL COMMENT '连接参数:json字符串',
-    `GROUP`         varchar(50)                                             DEFAULT NULL,
+    `GROUP_ID`         varchar(50)                                             DEFAULT NULL,
     `TAG`           varchar(50)                                             DEFAULT NULL,
     `SECRET_KEY`    varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
     `ACCESS_KEY`    varchar(255)                                            DEFAULT NULL,
