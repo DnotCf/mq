@@ -79,19 +79,19 @@ CREATE TABLE `SRIG_MQ_SERVER`
 -- ----------------------------
 INSERT INTO `SRIG_MQ_SERVER`
 VALUES ('1', 'localhost', '1883', 'tcp', 'srig-mq-integration', 'MQTT', null, null, '5', null, '2021-07-21 14:59:10',
-        null, null, null, null, null, null, null, null, null, null, '1');
+        null, null, null, null, null, null, null, null, null, null, '0');
 INSERT INTO `SRIG_MQ_SERVER`
 VALUES ('2', '10.149.10.172', '1883', 'tcp', 'srig-mq-integration', 'MQTT', null, null, '5', null,
-        '2021-07-21 14:59:10', null, null, null, null, null, null, null, null, null, null, '1');
+        '2021-07-21 14:59:10', null, null, null, null, null, null, null, null, null, null, '0');
 INSERT INTO `SRIG_MQ_SERVER`
 VALUES ('3', 'localhost', '5672', 'tcp', 'foo', 'AMQP', null, null, '5', null, '2021-07-21 14:59:10', null, null, null,
-        null, null, null, null, null, null, null, '1');
+        null, null, null, null, null, null, null, '0');
 INSERT INTO `SRIG_MQ_SERVER`
 VALUES ('4', 'localhost', '1883', 'tcp', 'target', 'MQTT', null, null, '5', null, '2021-07-21 14:59:10', null, null,
-        null, null, null, null, null, null, null, null, '1');
+        null, null, null, null, null, null, null, null, '0');
 INSERT INTO `SRIG_MQ_SERVER`
 VALUES ('5', 'localhost', '9876', 'tcp', 'target', 'RocketMQ', '', '', '5', '', '2021-07-21 14:59:10', null,
-        '127.0.0.1:9876', null, null, null, null, null, null, null, null, '1');
+        '127.0.0.1:9876', null, null, null, null, null, null, null, null, '0');
 INSERT INTO `SRIG_MQ_SERVER`
 VALUES ('6', 'localhost', '9876', 'tcp', 'target', 'Aliyun_RocketMQ', '', '', '5', '', '2021-07-21 14:59:10',
         '2021-08-17 16:00:28',
