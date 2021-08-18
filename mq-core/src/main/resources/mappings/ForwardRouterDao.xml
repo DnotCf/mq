@@ -49,8 +49,8 @@
     </sql>
 
     <sql id="rsuJoins">
-        INNER JOIN SRIG_MQ_SERVER f ON f.ID = a.FROM_SERVER_ID AND f.DEL_FLAG = 1
-        INNER JOIN SRIG_MQ_SERVER t ON t.ID = a.TO_SERVER_ID AND t.DEL_FLAG = 1
+        INNER JOIN SRIG_MQ_SERVER f ON f.ID = a.FROM_SERVER_ID AND f.DEL_FLAG = 0
+        INNER JOIN SRIG_MQ_SERVER t ON t.ID = a.TO_SERVER_ID AND t.DEL_FLAG = 0
     </sql>
 
     <select id="get" resultType="ForwardRouter">

@@ -41,7 +41,7 @@
         FROM SRIG_MQ_SERVER a
         <include refid="mServersJoins"/>
         <where>
-            a.DEL_FLAG = 1
+            a.DEL_FLAG = 0
             <if test="ip != null and ip != ''">
                 AND a.IP = #{ip}
             </if>
@@ -143,7 +143,7 @@
 
     <update id="delete">
         UPDATE SRIG_MQ_SERVER
-        SET DEL_FALG = 0
+        SET DEL_FALG = 1
         WHERE ID = #{id}
     </update>
 </mapper>
