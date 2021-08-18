@@ -26,8 +26,9 @@
         f.TAG         AS "fromServer.tag",
         f.SECRET_KEY  AS "fromServer.secretKey",
         f.ACCESS_KEY   AS "fromServer.accessKey",
-        f.GROUP       AS "fromServer.group",
+        f.GROUP_ID       AS "fromServer.group",
         f.CLUSTER     AS "fromServer.cluster",
+        f.TOPIC     AS "fromServer.topic",
         f.STATUS      AS "fromServer.stauts"
     </sql>
 
@@ -43,8 +44,9 @@
         t.TAG         AS "toServer.tag",
         t.SECRET_KEY  AS "toServer.secretKey",
         t.ACCESS_KEY   AS "toServer.accessKey",
-        t.GROUP       AS "toServer.group",
+        t.GROUP_ID       AS "toServer.group",
         t.CLUSTER     AS "toServer.cluster",
+        t.TOPIC     AS "toServer.topic",
         t.STATUS      AS "toServer.stauts"
     </sql>
 
@@ -104,7 +106,7 @@
     <insert id="insert">
         INSERT INTO SRIG_FORWARD_ROUTER(ID,
                                         FROM_SERVER_ID,
-                                        FROM_SERVER_ID,
+                                        TO_SERVER_ID,
                                         FROM_TOPIC,
                                         TO_TOPIC,
                                         EXPIRE_TIME,
@@ -131,7 +133,11 @@
 
     <update id="updateStatus">
         UPDATE SRIG_FORWARD_ROUTER
-        SET STATUS =#{status}
+        SET
+                <if test="expireTime !=null" >
+                    EXPIRE_TIME= #{expireTime},
+                </if>
+                STATUS =#{status}
         WHERE ID = #{id}
     </update>
 

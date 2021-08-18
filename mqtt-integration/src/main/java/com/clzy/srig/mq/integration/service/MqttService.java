@@ -74,8 +74,8 @@ public class MqttService {
                 }
             });
         }
-        client.close(true);
         client.disconnect();
+        client.close(true);
     }
 
     public void disConnect(MQServer server) {

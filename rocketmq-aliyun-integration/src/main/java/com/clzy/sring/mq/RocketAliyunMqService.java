@@ -103,6 +103,9 @@ public class RocketAliyunMqService {
     }
 
     public void testConnection(ForwardRouter router) {
+        if (StringUtils.isBlank(router.getFromTopic())) {
+            router.setFromTopic("testConnection");
+        }
         ConsumerBean build = build(router);
         build.start();
         build.shutdown();

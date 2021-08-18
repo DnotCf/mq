@@ -87,6 +87,9 @@ public class RocketMqService {
     }
 
     public void testConnect(ForwardRouter router) throws MQClientException {
+        if (StringUtils.isBlank(router.getFromTopic())) {
+            router.setFromTopic("testConnect");
+        }
         DefaultMQPushConsumer consumer = build(router);
         consumer.start();
         consumer.shutdown();

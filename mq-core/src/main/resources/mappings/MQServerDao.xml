@@ -15,7 +15,8 @@
         a.CLUSTER     AS "cluster",
         a.DEFAULT_PARAM AS "defaultParam",
         a.TAG AS "tag",
-        a.GROUP AS "group",
+        a.GROUP_ID AS "group",
+        a.TOPIC AS "topic",
         a.SECRET_KEY AS "secretKey",
         a.ACCESS_KEY AS "accessKey",
         a.NETWORK_TYPE AS "networkType",
@@ -97,7 +98,8 @@
                                    CLUSTER,
                                    DEFAULT_PARAM,
                                    TAG,
-                                   GROUP,
+                                   GROUP_ID,
+                                   TOPIC,
                                    SECRET_KEY,
                                    ACCESS_KEY)
         VALUES (#{id},
@@ -116,6 +118,7 @@
                 #{defaultParam},
                 #{tag},
                 #{group},
+                #{topic},
                 #{secretKey},
                 #{accessKey})
     </insert>
@@ -135,7 +138,8 @@
             STATUS        = #{status},
             DEFAULT_PARAM = #{defaultParam},
             TAG=#{tag},
-            GROUP=#{group},
+            GROUP_ID=#{group},
+            TOPIC=#{topic},
             SECRET_KEY=#{secretKey},
             ACCESS_KEY=#{accessKey}
         WHERE ID = #{id}

@@ -94,6 +94,7 @@ public class MQServer extends DataEntity<MQServer> {
      */
     private String vpnPassword;
 
+    private String topic;
     @Override
     public void doPreInsert() {
 
