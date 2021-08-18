@@ -1,0 +1,137 @@
+// 页面顶部页签
+
+@tags-prefix-cls: ~"@{css-prefix-header}tags";
+
+.@{tags-prefix-cls} {
+  border: none;
+  border-bottom: 1px solid #C0CDD8;
+
+  .btn-con {
+    min-width: 26px;
+
+    .ivu-icon {
+      font-size: 14px !important;
+      color: #CCCCCC;
+    }
+
+    .ivu-icon:hover {
+      color: #57a3f3;
+    }
+  }
+
+  .btn-con button {
+    box-shadow: none;
+  }
+
+  .close-con {
+    right: 26px;
+    width: 85px;
+    background: @geo-overall-back;
+    border-left: 1px solid #f1f1f1;
+    border-right: 1px solid #f1f1f1;
+
+    .close-con-remark {
+      font-size: @font-smalless;
+      padding-right: 5px;
+    }
+
+    .ivu-btn {
+      box-shadow: none;
+
+      .ivu-icon {
+        font-size: @font-smalless !important;
+      }
+    }
+  }
+
+  .scroll-outer {
+    background: @geo-overall-back;
+    box-shadow: none;
+    right: 108px;
+    left: 26px;
+  }
+
+  .btn-con.left-btn {
+    border-right: 1px solid #f1f1f1;
+  }
+
+  .btn-con.right-btn {
+    right: 0;
+  }
+
+  .scroll-outer .scroll-body {
+    padding-top: 0;
+    padding-bottom: 0;
+
+  }
+
+  &-tag {
+    margin: 0;
+    width: 115px;
+    height: 100%;
+    line-height: 55px;
+    border: none !important;
+    border-radius: 0;
+    // background: @geo-overall-back;
+    // padding: 0 10px;
+    // text-align: center;
+    background: #fff;
+    position: relative;
+
+    .ivu-tag-text {
+      display: inline-block;
+      width: 70%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: @geo-color-normal;
+      font-size: @font-normal;
+      margin-left: 15px;
+    }
+
+    .ivu-icon {
+      position: absolute;
+      top: 21px;
+      right: 15px;
+      display: inline-block;
+      font-size: @font-normal;
+      color: #666;
+      font-family: "iconfont" !important;
+
+      &:before {
+        content: '\E6B1';
+      }
+    }
+  }
+
+  &-tag:hover {
+    .ivu-tag-text {
+      color: #fff !important;
+      font-size: @font-normal;
+    }
+
+    .ivu-icon {
+      color: #fff !important;
+      font-size: @font-normal;
+      opacity: 1;
+    }
+
+    opacity: 1;
+    background: url(../../../public/images/header/title-back.png) no-repeat bottom/100% 80% !important;
+  }
+
+  &-tag.ivu-tag-primary.ivu-tag-checked {
+    background: url(../../../public/images/header/title-back.png) no-repeat bottom/100% 80%;
+
+    .ivu-tag-text {
+      color: #fff !important;
+      font-size: @font-normal;
+    }
+
+    .ivu-icon {
+      color: #fff !important;
+      font-size: @font-normal;
+      opacity: 1;
+    }
+  }
+}

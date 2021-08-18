@@ -1,0 +1,214 @@
+// 弹框样式统一设置
+@modal-prefix-cls: ~"@{css-prefix-header}modal";
+
+// 普通页面上的弹出框样式设置
+.@{modal-prefix-cls} {
+  .ivu-modal {
+    &-body {
+      padding: 0;
+      max-height: 580px;
+      min-height: 150px;
+      overflow-y: auto;
+
+      // linx 固定错误提示消息
+      .ivu-alert:first-child {
+        position: absolute;
+        top: 46px;
+        left: 6px;
+        right: 6px;
+        z-index: 99;
+      }
+    }
+
+    &-header {
+      padding: 4px 8px;
+      // background: @geo-highlight-color;
+      background-color: #0089FF;
+      border-radius: 5px 5px 0 0;
+      text-align: left;
+      border-bottom: none;
+
+      &-inner {
+        font-weight: normal;
+        font-size: @font-small;
+        color: @geo-deep-back-font;
+      }
+    }
+
+    &-close {
+      top: 0;
+      right: 0;
+      border-radius: 0 15px 0 0;
+      // padding-bottom: 9px;
+      background: @geo-deep-color;
+      width: 40px;
+
+      .ivu-icon-ios-close {
+        color: @geo-confirm-box-close-button;
+        // top: 6px;
+        left: 5px;
+        font-size: 30px;
+      }
+    }
+
+    &-close:hover {
+      .ivu-icon-ios-close {
+        color: @geo-deep-back-font;
+      }
+    }
+
+    &-content {
+      border-radius: 6px 6px 0 0;
+    }
+
+    &-footer {
+      text-align: center;
+      padding: 6px 10px 6px 10px;
+      box-shadow: none;
+      border-top: 1px solid @geo-table-border;
+
+      .ivu-btn {
+        padding: 5px 30px 5px;
+        background-color: @geo-cancel-color;
+        border-color: @geo-cancel-color;
+        color: @geo-deep-back-font;
+        border-radius: 5px;
+      }
+
+      .ivu-btn-primary {
+        background-color: @geo-highlight-color;
+        border-color: @geo-highlight-color;
+
+        ivu-icon {
+          color: @geo-deep-back-font;
+        }
+
+        span {
+          color: @geo-deep-back-font;
+        }
+      }
+    }
+  }
+}
+
+// 全局弹出提示框样式设置
+.@{modal-prefix-cls}.confirm-modal {
+  top: 40%;
+  transform: translate(0, -40%);
+  z-index: 99999 !important;
+
+  .ivu-modal {
+    max-width: 360px;
+
+    &-body {
+      min-height: 180px;
+    }
+
+    &-content {
+      border-radius: 8px;
+    }
+
+    &-confirm {
+      padding: 0;
+
+      &-head {
+        background: @geo-confirm-color;
+        border-radius: 8px 8px 0 0;
+        border: 0;
+        padding: 5px 0;
+        text-align: center;
+        box-shadow: 0px 3px 10px 0px rgba(24, 144, 255, 0.1);
+      }
+
+      &-head-title {
+        color: @geo-deep-back-font;
+        font-weight: normal;
+      }
+
+      &-body {
+        min-height: 80px;
+        padding: 10px;
+        font-size: @font-big;
+        color: @geo-color-normal-deep;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      &-footer {
+        text-align: center;
+
+        .ivu-btn {
+          border-color: @geo-confirm-color;
+          background: transparent;
+          color: @geo-confirm-color;
+          padding: 6px 20px 6px 20px;
+          height: 30px;
+          line-height: 0;
+
+          span {
+            color: @geo-confirm-color;
+          }
+        }
+      }
+    }
+
+    &-close {
+      top: 0;
+      right: 0;
+      background: #00000021;
+      border-radius: 0 8px 0 0;
+      padding-bottom: 2px;
+
+      .ivu-icon-ios-close {
+        color: @geo-confirm-box-close-button;
+        top: 2px;
+      }
+    }
+
+    &-close:hover {
+      .ivu-icon-ios-close {
+        color: @geo-deep-back-font;
+      }
+    }
+  }
+}
+
+// 弹出框之info类型
+.@{modal-prefix-cls}.confirm-modal {
+  .ivu-modal-confirm.ivu-modal-confirm-info {
+    .ivu-modal-confirm-head {
+      background: @geo-highlight-color !important;
+    }
+
+    .ivu-modal-confirm-body {
+    }
+
+    .ivu-modal-confirm-footer {
+      .ivu-btn {
+        border-color: @geo-highlight-color !important;
+        color: @geo-highlight-color !important;
+
+        span {
+          color: @geo-highlight-color !important;
+        }
+      }
+    }
+  }
+}
+
+// 弹出框之success类型
+.@{modal-prefix-cls}.confirm-modal.success {
+
+}
+
+// 弹出框之warning类型
+.@{modal-prefix-cls}.confirm-modal.warning {
+
+}
+
+// 弹出框之error类型
+.@{modal-prefix-cls}.confirm-modal.error {
+
+}

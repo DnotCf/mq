@@ -1,0 +1,92 @@
+// form表单样式统一设置
+@form-prefix-cls: ~"@{css-prefix-header}form";
+
+.@{form-prefix-cls} {
+  .code-row-bg {
+    margin-top: 20px;
+    border-bottom: none;
+  }
+
+  .ivu-form-item-label {
+    font-size: @font-default;
+    color: @geo-color-normal-deep;
+  }
+
+  .ivu-form-item-content {
+    .ivu-input {
+      font-size: @font-default;
+      color: @geo-color-normal;
+      caret-color: @geo-highlight-color;
+    }
+
+    .ivu-input:focus {
+      border-color: rgba(0, 137, 255, 0.5);
+      box-shadow: 0px 3px 6px rgba(0, 137, 255, 0.15);
+    }
+
+    .ivu-select {
+      font-size: @font-default;
+      color: @geo-color-normal;
+
+      .ivu-select-placeholder {
+        font-size: @font-default;
+        color: @geo-color-normal;
+      }
+
+      .ivu-select-selected-value {
+        font-size: @font-default;
+        color: @geo-color-normal;
+      }
+
+    }
+
+    .ivu-form-item-error-tip {
+      top: 85%;
+      color: #E61C22;
+    }
+
+    .ivu-input-type-textarea + .ivu-form-item-error-tip {
+      top: 100%
+    }
+
+    .ivu-input[disabled], fieldset[disabled] .ivu-input {
+      background-color: #F6F7F8 !important;
+    }
+
+    .ivu-date-picker {
+      width: 100% !important;
+    }
+
+    .ivu-checkbox-wrapper {
+      color: #333;
+      font-size: 1.166666rem;
+    }
+
+    .ivu-select {
+      .ivu-select-dropdown {
+        width: 100%;
+
+        .ivu-select-item {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+
+  .form-tab .ivu-tabs-nav-scroll {
+    padding: 5px 0 0 30px;
+  }
+
+  .form-item-title {
+    border-bottom: 1px solid rgba(233, 233, 233, 1);
+    padding: 8px 16px;
+
+    h3 {
+      font-size: @font-big;
+      color: @geo-color-normal-deep;
+      font-weight: normal;
+    }
+  }
+}

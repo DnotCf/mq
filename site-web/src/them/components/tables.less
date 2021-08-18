@@ -1,0 +1,494 @@
+// 项目中表格组件统一样式的设置
+@table-content-prefix-cls: ~"@{css-prefix-header}table-content";
+@table-prefix-cls: ~"@{css-prefix-header}table";
+
+.@{table-content-prefix-cls} {
+  padding: 0 18px;
+  background: @geo-overall-back;
+
+  .search-con {
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+
+    .search-btn {
+      background: @geo-highlight-color;
+    }
+
+    .search-bar {
+      display: flex;
+      position: relative;
+      // overflow: hidden;
+      // align-items: center;
+      .ivu-tag {
+        &.ivu-tag-checked {
+          display: none;
+        }
+      }
+
+      .search-left {
+        position: relative;
+
+        .ivu-select-selection {
+          height: 35px;
+        }
+      }
+
+      .place-txt {
+        position: absolute;
+        top: 7px;
+        left: 16px;
+        color: #333;
+        font-size: @font-default;
+        // z-index: 1000;
+        &.active {
+          color: @geo-highlight-color;
+        }
+
+      }
+
+      .search-close-icon {
+        position: absolute;
+        top: 10px;
+        right: 8px;
+        z-index: 1000;
+        cursor: pointer;
+      }
+
+      .ivu-select-selection {
+        border: 1px solid #ddd;
+        background-color: inherit;
+      }
+
+      .ivu-select-visible .ivu-select-selection {
+        border: 1px solid @geo-highlight-color;
+        box-shadow: none;
+      }
+
+      .search-enter-box {
+        display: inline-block;
+        margin-left: 10px;
+        height: 35px;
+        // float: left;
+        .search-enter-item {
+          display: inline-block;
+          min-width: 240px;
+          margin-right: 10px;
+          white-space: nowrap;
+
+          .enter-item-wrap {
+            width: 100%;
+            display: flex;
+            align-items: center;
+
+            .pre-label {
+              width: auto;
+              padding: 0 5px;
+              color: #333;
+              background-color: #F0F0F0;
+              border: 1px solid #ddd;
+              border-radius: 5px 0 0 5px;
+              height: 35px;
+              font-size: @font-default;
+              vertical-align: middle;
+              line-height: 35px;
+              text-align: center;
+            }
+          }
+        }
+      }
+    }
+
+    .tool-bars {
+      order: 1;
+      flex-shrink: 0;
+
+      .ivu-btn {
+        padding: 4px 13px 4px;
+
+        .ivu-icon {
+          color: @geo-highlight-color;
+        }
+
+        span {
+          color: @geo-highlight-color;
+        }
+      }
+
+      .ivu-btn-primary {
+        background-color: @geo-overall-back;
+        border-color: @geo-highlight-color;
+
+        .ivu-icon {
+          color: @geo-highlight-color;
+          vertical-align: middle;
+        }
+
+        span {
+          color: @geo-highlight-color;
+        }
+      }
+
+      .ivu-btn-error {
+        background-color: @geo-overall-back;
+
+        .ivu-icon {
+          color: @erro-btn;
+          vertical-align: middle;
+        }
+
+        span {
+          color: @erro-btn;
+        }
+      }
+
+      .more-btn-info {
+        position: relative;
+        display: inline-block;
+        vertical-align: bottom;
+
+        .more-text {
+          display: inline-block;
+          padding: 5px 8px 4px 13px;
+          border: 1px solid @geo-highlight-color;
+          border-radius: 4px;
+          color: @geo-highlight-color;
+          cursor: pointer;
+          font-size: @font-default;
+
+          &.active {
+            background-color: @geo-highlight-color;
+            color: #fff;
+
+            .icon {
+              color: #fff !important;
+            }
+          }
+        }
+
+        .more-btn-wrap {
+          position: absolute;
+          top: 35px;
+          right: 0;
+          width: 124px;
+          //height: 155px;
+          z-index: 10;
+          border: 1px solid @geo-highlight-color;
+          border-radius: 10px;
+          // text-align: center;
+          min-height: 135px;
+          background-color: #fff;
+          padding: 5px 0;
+
+          .item-btn {
+            font-size: @font-default;
+            color: #05467D;
+            padding: 3px 0;
+            cursor: pointer;
+            position: relative;
+
+            .icon {
+              margin: 0 10px;
+            }
+
+            &:hover {
+              color: @geo-highlight-color;
+
+              .icon {
+                color: @geo-highlight-color !important;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .switchs {
+      display: inline-block;
+      margin-right: 10px;
+      text-align: center;
+    }
+
+    .search {
+      &-col {
+        display: inline-block;
+        width: 122px;
+        text-align: center;
+      }
+
+      &-input {
+        flex: 1;
+        margin-left: 0;
+        border-radius: 4px 0 0 4px;
+        height: 35px;
+        box-shadow: none;
+        border-color: #dcdee2;
+        margin-top: 1px;
+
+        input {
+          width: 100%;
+          border-radius: 0 5px 5px 0;
+          height: 35px;
+          border-left: none;
+          box-shadow: none;
+          border-color: #dcdee2;
+        }
+      }
+
+      &-btn {
+        margin-left: 0;
+        padding: 0;
+        border-radius: 5px;
+        background: #1890FF;
+        // position: absolute;
+        // right: -40px;
+        height: 35px;
+        width: 45px;
+
+        .ivu-icon {
+          font-size: @font-default;
+          color: @geo-deep-back-font;
+        }
+
+        span {
+          color: @geo-deep-back-font;
+        }
+      }
+    }
+
+    .iview-micselect {
+      display: inline-block;
+      width: 150px;
+      margin-left: 2px;
+      text-align: center;
+    }
+
+    .iview-micselect.inner {
+      margin-left: 0;
+
+      .ivu-select-selection {
+        border-left: 0;
+        border-radius: 0;
+        height: 35px;
+        text-align: left;
+      }
+    }
+
+    .ivu-select-item {
+      text-align: left;
+    }
+
+    .ivu-select-item:hover {
+      background: @geo-highlight-color;
+      color: #fff;
+    }
+
+    .ivu-select-item-selected, .ivu-select-item-selected:hover {
+      color: @geo-highlight-color;
+    }
+
+    .ivu-select-item-selected:hover {
+      color: #fff;
+
+      &:after {
+        color: #fff;
+      }
+    }
+
+    .ivu-select-multiple .ivu-select-item-selected:after {
+      right: 3px;
+    }
+
+    .ivu-select-single .ivu-select-selection {
+      border-radius: 5px 0 0 5px;
+      height: 30px;
+      border-right: none;
+      box-shadow: none;
+      border-color: #dcdee2;
+    }
+
+    .ivu-date-picker {
+      width: 65%;
+
+      .ivu-input {
+        border-left: none;
+        height: 35px;
+        border-radius: 0 5px 5px 0;
+      }
+    }
+
+    .enter-item-wrap {
+      .iview-micselect {
+        width: 65%;
+        border-right: 1px solid #dcdee2;
+        border-radius: 0 5px 5px 0;
+      }
+    }
+  }
+
+  .search-con::after {
+    content: ' ';
+    display: block;
+    clear: both;
+    height: 0;
+    visibility: hidden;
+  }
+
+  .tables-pager {
+    text-align: left;
+    padding: 3px 0px;
+    margin-top: 8px;
+  }
+
+  .ivu-poptip-body-content {
+    overflow: hidden;
+  }
+
+  .customer-table {
+    th .ivu-table-cell {
+      /* width: 100%; */
+    }
+
+    /* 自定义表头样式 */
+
+    .header-pop {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+
+      a {
+        color: #000000;
+        color: rgba(0, 0, 0, 0.7);
+        min-width: 10px;
+        min-height: 15px;
+      }
+
+      .ivu-table-sort {
+        margin-top: 3px;
+      }
+
+      .showpop-button {
+        width: 12px;
+        padding-left: 0;
+        margin-left: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+
+        i {
+          left: 0;
+          position: absolute;
+          top: 40%;
+        }
+      }
+
+      .showPopButton {
+        background: rgba(255, 255, 255, 0.7);
+      }
+    }
+
+    .header-pop:after {
+      content: ' ';
+      visibility: hidden;
+      clear: both;
+      display: block;
+      height: 0;
+    }
+
+    .table-header-world {
+      color: @geo-color-normal-deep;
+      font-weight: 600;
+      font-size: @font-normal;
+    }
+  }
+
+  .btn-select-item {
+    display: inline-block;
+  }
+}
+
+.@{table-prefix-cls} {
+  .ivu-table-header {
+    .ivu-table-cell-with-selection {
+      display: none;
+    }
+  }
+
+  .ivu-table-cell-ellipsis {
+    margin-top: 3px;
+  }
+
+  .ivu-table-header table th {
+    background: @geo-table-head-back;
+    border-color: @geo-table-border;
+    position: relative;
+    text-align: center;
+  }
+
+  th .ivu-table-cell {
+    color: @geo-color-normal-deep;
+    font-weight: 600;
+    font-size: @font-default;
+  }
+
+  .ivu-table {
+    color: @geo-color-normal;
+    font-size: @font-default;
+  }
+
+  .ivu-table th, .ivu-table td {
+    height: 36px;
+  }
+
+  .table-header-world {
+    font-size: @font-default;
+    font-weight: 400;
+  }
+
+  tr.ivu-table-row-hover td {
+    background-color: @geo-color-light-background;
+  }
+
+  .ivu-table td {
+    background-color: transparent;
+  }
+
+  .ivu-table table .ivu-table-row:nth-child(even) {
+
+  }
+
+  .ivu-table .clickable-column {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    padding-left: 18px;
+
+    .ivu-tooltip-rel {
+      div {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        margin-top: 7px;
+      }
+    }
+  }
+
+  .ivu-page-item-active {
+    border-color: transparent;
+    background: @geo-highlight-color;
+
+    a {
+      color: @geo-highlight-color;
+    }
+  }
+
+  .ivu-page-item:hover {
+    border-color: @geo-highlight-color;
+  }
+
+  .ivu-page-options-elevator input:focus {
+    color: @geo-highlight-color;
+  }
+}

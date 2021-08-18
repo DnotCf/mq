@@ -1,0 +1,92 @@
+.chrats-poptips {
+  z-index: 999999999;
+    .ivu-poptip-content {
+      .ivu-poptip-inner {
+        position: relative;
+        .ivu-poptip-title {
+          padding: 0;
+          position: absolute;
+          right: 5px;
+          top: 5px;
+          .charts-tooltip-close {
+            color: #333333;
+            border: none;
+            padding: 0;
+            box-shadow: none;
+            .iconfont {
+              font-size: 1.833333rem;
+            }
+          }
+          .charts-tooltip-close:hover {
+            color: #57a3f3;
+          }
+        }
+        .ivu-poptip-title:after {
+          content: none;
+        }
+        .charts-tooltip-content {
+          padding-top: 10px;
+          min-height: 16.666666rem;
+          .chart-detail-item {
+            textarea.ivu-input {
+              resize: none;
+              font-size: 1.166666rem;
+              background-color: #F7F7F7 !important;
+              color: #627ABB !important;
+              border: 1px dashed #9DAEDD;
+              height: 120px;
+              overflow-y: auto !important;
+              margin-bottom: 10px;
+            }
+            .ivu-input-wrapper {
+              padding: 3px 0;
+            }
+            .text-area-input.ivu-input-wrapper  {
+              height: 136px;
+              min-height: 136px;
+              max-height: 136px;
+            }
+            .title {
+              font-size: 1.166666rem;
+              color: #333333;
+            }
+            .content {
+              font-size: 1.166666rem;
+              color: #1A8AF7;
+            }
+            .company-tag {
+              border:1px solid #F58B37;
+              color: #F58B37;
+              .ivu-tag-text {
+                 color: #F58B37;
+              }
+            }
+          }
+        }
+        .bottom-extra {
+          height: 20px;
+          position: absolute;
+          bottom: -20px;
+          width: 10px;
+          left: 50%;
+          transform: translate(-2px, 0);
+        }
+      }
+    }
+ }
+
+ .chrats-poptips.ivu-poptip-popper .ivu-poptip-arrow {
+    border-width: 10px 10px 0;
+    border-top-color: hsla(0,0%,85%,.5);
+    left: 50%;
+    margin-left: -7px;
+    bottom: -10px;
+}
+ .chrats-poptips.ivu-poptip-popper .ivu-poptip-arrow:after {
+     content: " ";
+     margin-left: -7px;
+     border-bottom-width: 0;
+     border-top-width: 10px;
+     border-top-color: #fff;
+     bottom: 0;
+ }
