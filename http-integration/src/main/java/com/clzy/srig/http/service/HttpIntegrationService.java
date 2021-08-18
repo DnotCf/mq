@@ -19,10 +19,11 @@ public class HttpIntegrationService {
         String url = getConectionUrl(server);
 
     }
+
     public String getConectionUrl(MQServer server) {
         String namesrvAddr = server.getCluster();
         if (StringUtils.isBlank(namesrvAddr)) {
-            namesrvAddr =  String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
+            namesrvAddr = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
         }
         return namesrvAddr;
     }

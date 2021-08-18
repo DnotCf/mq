@@ -45,6 +45,14 @@ public class RocketAliyunMqService {
         if (consumerMap.get(conectionUrl) != null) {
             return consumerMap.get(conectionUrl);
         }
+        ConsumerBean orderConsumerBean = build(router);
+        orderConsumerBean.start();
+        consumerMap.put(conectionUrl, orderConsumerBean);
+        return orderConsumerBean;
+    }
+
+    public ConsumerBean build(ForwardRouter router) {
+        String conectionUrl = getConectionUrl(router.getFromServer());
         log.info("==={}===阿里云rocketmq连接开始=====", conectionUrl);
         MqConfig mqConfig = new MqConfig();
         JSONObject param = getDefaultParam(router.getFromServer().getDefaultParam());
@@ -82,15 +90,22 @@ public class RocketAliyunMqService {
                     return Action.CommitMessage;
                 } catch (Exception e) {
                     //消费失败
+                    log.error("====rocketAliyun消费错误", e);
                     return Action.ReconsumeLater;
                 }
             }
         });
         //订阅多个topic如上面设置
         orderConsumerBean.setSubscriptionTable(subscriptionTable);
-        consumerMap.put(conectionUrl, orderConsumerBean);
-        log.info("==={}===阿里云rocketmq连接成功=====",conectionUrl);
+//        consumerMap.put(conectionUrl, orderConsumerBean);
+        log.info("==={}===阿里云rocketmq连接成功=====", conectionUrl);
         return orderConsumerBean;
+    }
+
+    public void testConnection(ForwardRouter router) {
+        ConsumerBean build = build(router);
+        build.start();
+        build.shutdown();
     }
 
     public ProducerBean buildOrderProducer(ForwardRouter server) {
@@ -117,7 +132,7 @@ public class RocketAliyunMqService {
     public String getConectionUrl(MQServer server) {
         String namesrvAddr = server.getCluster();
         if (StringUtils.isBlank(namesrvAddr)) {
-            namesrvAddr =  String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
+            namesrvAddr = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
         }
         return namesrvAddr;
     }
@@ -126,7 +141,7 @@ public class RocketAliyunMqService {
         JSONObject object = null;
         if (StringUtils.isBlank(jsonStr)) {
             object = new JSONObject();
-        }else {
+        } else {
             object = JSONObject.parseObject(jsonStr);
         }
         if (StringUtils.isBlank(object.getString("tag"))) {

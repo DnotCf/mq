@@ -3,14 +3,13 @@ package com.clzy.srig.mq.integration.service;
 import com.clzy.srig.mq.integration.entity.ForwardRouter;
 import com.clzy.srig.mq.integration.entity.MQServer;
 import com.clzy.srig.mq.integration.enums.MQIntegration;
+import com.clzy.srig.mq.integration.enums.MQStuats;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Component("amqpIntegration")
@@ -30,14 +29,14 @@ public class AmqpIntegration implements IMqIntegration {
     @Override
     public void onPublich(ForwardRouter router, byte[] message) {
         MQServer server = router.getToServer();
-
-        Channel client = amqpService.getConnect(server);
-
         try {
+            Channel client = amqpService.getConnect(server);
             client.queueDeclare(router.getToTopic(), false, false, false, null);
             client.basicPublish("", router.getToTopic(), null, message);
+            router.setStatus(MQStuats.online.getCode());
         } catch (Exception e) {
             log.error("AMQP消息推送失败");
+            router.setStatus(MQStuats.client_offline.getCode());
             e.printStackTrace();
         }
     }
@@ -45,22 +44,46 @@ public class AmqpIntegration implements IMqIntegration {
     @Override
     public void initReceiver(List<ForwardRouter> routers) {
         for (ForwardRouter router : routers) {
-            Channel client = amqpService.getConnect(router.getFromServer());
-            try {
-                client.queueDeclare(router.getFromTopic(), false, false, false, null);
-                client.basicConsume(router.getFromTopic(), (consumerTag, message) -> {
-                    forwardService.publish(router.getFromServer(), message.getBody());
-                }, consumerTag -> {
+            consumer(router);
+        }
+    }
 
-                });
-            } catch (Exception e) {
-                log.error("初始化AMQP连接失败", e);
-            }
+    public void consumer(ForwardRouter router) {
+        try {
+            Channel client = amqpService.getConnect(router.getFromServer());
+            client.queueDeclare(router.getFromTopic(), false, false, false, null);
+            client.basicConsume(router.getFromTopic(), (consumerTag, message) -> {
+                forwardService.publish(router.getFromServer(), message.getBody());
+            }, consumerTag -> {
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            router.setStatus(MQStuats.server_offline.getCode());
+        }
+    }
+
+    @Override
+    public void connect(ForwardRouter router) {
+        Channel channel = amqpService.getAmqpClientMap(router.getFromServer());
+        if (channel == null) {
+            consumer(router);
         }
     }
 
     @Override
     public void disConnect(ForwardRouter router) {
         amqpService.disConnect(router.getFromServer());
+        router.setStatus(MQStuats.offline.getCode());
+    }
+
+    @Override
+    public boolean testConnect(ForwardRouter router) {
+        try {
+            amqpService.testConnect(router);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

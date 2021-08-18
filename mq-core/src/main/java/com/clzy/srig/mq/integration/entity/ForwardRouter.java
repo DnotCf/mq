@@ -7,7 +7,6 @@ import java.util.Date;
 
 /**
  * 路由转发
- *
  */
 @Getter
 @Setter
@@ -25,7 +24,7 @@ public class ForwardRouter extends DataEntity<ForwardRouter> {
     private String toTopic;
 
     /**
-     * 服务状态0禁用,1正常运行,2运行异常
+     * 服务状态0异常,1正常运行
      */
     private String status;
 

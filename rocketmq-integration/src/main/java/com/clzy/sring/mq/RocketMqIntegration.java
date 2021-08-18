@@ -1,20 +1,15 @@
 package com.clzy.sring.mq;
 
-import com.clzy.geo.core.utils.StringUtils;
 import com.clzy.srig.mq.integration.entity.ForwardRouter;
 import com.clzy.srig.mq.integration.entity.MQServer;
 import com.clzy.srig.mq.integration.enums.MQIntegration;
-import com.clzy.srig.mq.integration.service.ForwardService;
+import com.clzy.srig.mq.integration.enums.MQStuats;
 import com.clzy.srig.mq.integration.service.IMqIntegration;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
-import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.message.Message;
-import org.apache.rocketmq.common.message.MessageExt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +26,7 @@ public class RocketMqIntegration implements IMqIntegration {
 
     @Autowired
     private RocketMqService rocketMqService;
+
     @Override
     public MQIntegration.ServerType type() {
         return MQIntegration.ServerType.RocketMQ;
@@ -43,8 +39,10 @@ public class RocketMqIntegration implements IMqIntegration {
             DefaultMQProducer producer = rocketMqService.createProducer(server);
             Message msg = new Message(router.getToTopic(), message);
             producer.send(msg);
+            router.setStatus(MQStuats.online.getCode());
         } catch (Exception e) {
             log.error("RocketMq消息推送失败");
+            router.setStatus(MQStuats.client_offline.getCode());
             e.printStackTrace();
         }
     }
@@ -52,20 +50,34 @@ public class RocketMqIntegration implements IMqIntegration {
     @Override
     public void initReceiver(List<ForwardRouter> routers) {
         for (ForwardRouter router : routers) {
-            try {
-                DefaultMQPushConsumer consumer = rocketMqService.createConsumer(router);
-                if (consumer == null) {
-                    continue;
-                }
-                consumer.start();
-            } catch (Exception e) {
-                log.error("初始化RocketMq连接失败", e);
-            }
+            connect(router);
+        }
+    }
+
+    @Override
+    public void connect(ForwardRouter router) {
+        try {
+            DefaultMQPushConsumer consumer = rocketMqService.createConsumer(router);
+        } catch (Exception e) {
+            router.setStatus(MQStuats.server_offline.getCode());
+            log.error("初始化RocketMq连接失败", e);
         }
     }
 
     @Override
     public void disConnect(ForwardRouter router) {
         rocketMqService.disConnect(router.getFromServer());
+        router.setStatus(MQStuats.offline.getCode());
+    }
+
+    @Override
+    public boolean testConnect(ForwardRouter router) {
+        try {
+            rocketMqService.testConnect(router);
+            return true;
+        } catch (MQClientException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

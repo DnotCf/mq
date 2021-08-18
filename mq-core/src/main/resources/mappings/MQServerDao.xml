@@ -17,7 +17,10 @@
         a.TAG AS "tag",
         a.GROUP AS "group",
         a.SECRET_KEY AS "secretKey",
-        a.ACCESS_KEY AS "accessKey"
+        a.ACCESS_KEY AS "accessKey",
+        a.NETWORK_TYPE AS "networkType",
+        a.VPN_ACCONT  AS "vpnAccount",
+        a.VPN_PASSWORD AS "vpnPassword"
     </sql>
 
     <sql id="mServersJoins">
@@ -96,8 +99,7 @@
                                    TAG,
                                    GROUP,
                                    SECRET_KEY,
-                                   ACCESS_KEY
-                )
+                                   ACCESS_KEY)
         VALUES (#{id},
                 #{ip},
                 #{port},
@@ -115,23 +117,22 @@
                 #{tag},
                 #{group},
                 #{secretKey},
-                #{accessKey}
-                       )
+                #{accessKey})
     </insert>
 
     <update id="update">
         UPDATE SRIG_MQ_SERVER
-        SET IP          = #{ip},
-            PORT        = #{port},
-            CLIENT_NAME = #{clientName},
-            PROTOCOL    = #{protocol},
-            TYPE        = #{type},
-            USERNAME    = #{username},
-            PASSWORD    = #{password},
-            UPDATE_TIME = #{updateDate},
-            CLUSTER = #{cluster},
-            RETRY = #{retry},
-            STATUS = #{status},
+        SET IP            = #{ip},
+            PORT          = #{port},
+            CLIENT_NAME   = #{clientName},
+            PROTOCOL      = #{protocol},
+            TYPE          = #{type},
+            USERNAME      = #{username},
+            PASSWORD      = #{password},
+            UPDATE_TIME   = #{updateDate},
+            CLUSTER       = #{cluster},
+            RETRY         = #{retry},
+            STATUS        = #{status},
             DEFAULT_PARAM = #{defaultParam},
             TAG=#{tag},
             GROUP=#{group},
@@ -141,7 +142,8 @@
     </update>
 
     <update id="delete">
-        UPDATE SRIG_MQ_SERVER SET DEL_FALG = 0
+        UPDATE SRIG_MQ_SERVER
+        SET DEL_FALG = 0
         WHERE ID = #{id}
     </update>
 </mapper>

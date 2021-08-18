@@ -2,13 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.clzy.srig.mq.integration.dao.ForwardRouterDao">
     <sql id="rsuColumns">
-        a.ID             AS "id",
+        a.ID AS "id",
         a.FROM_SERVER_ID AS "fromServer.id",
-        a.TO_SERVER_ID   AS "toServer.id",
-        a.FROM_TOPIC     AS "fromTopic",
-        a.TO_TOPIC       AS "toTopic",
-        a.EXPIRE_TIME    AS "expireTime",
-        a.STATUS    AS   "status",
+        a.TO_SERVER_ID AS "toServer.id",
+        a.FROM_TOPIC AS "fromTopic",
+        a.TO_TOPIC AS "toTopic",
+        a.EXPIRE_TIME AS "expireTime",
+        a.STATUS AS "status",
         <include refid="fromServerColumns"/>
         ,
         <include refid="toServerColumns"/>
@@ -29,7 +29,6 @@
         f.GROUP       AS "fromServer.group",
         f.CLUSTER     AS "fromServer.cluster",
         f.STATUS      AS "fromServer.stauts"
-
     </sql>
 
     <sql id="toServerColumns">
@@ -109,24 +108,30 @@
                                         FROM_TOPIC,
                                         TO_TOPIC,
                                         EXPIRE_TIME,
-                                        STATUS
-                             )
+                                        STATUS)
         VALUES (#{id},
                 #{fromServer.id},
                 #{toServer.id},
                 #{fromTopic},
                 #{toTopic},
                 #{expireTime},
-                #{status}
-                       )
+                #{status})
     </insert>
 
     <update id="update">
         UPDATE SRIG_FORWARD_ROUTER
         SET FROM_TOPIC = #{fromTopic},
-            TO_TOPIC   = #{toTopic},
+        TO_TOPIC = #{toTopic},
+        <if test="expireTime !=null">
             EXPIRE_TIME= #{expireTime},
-            STATUS =#{status}
+        </if>
+        STATUS =#{status}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE SRIG_FORWARD_ROUTER
+        SET STATUS =#{status}
         WHERE ID = #{id}
     </update>
 

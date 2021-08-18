@@ -2,21 +2,14 @@ package com.clzy.sring.mq;
 
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.bean.ConsumerBean;
-import com.aliyun.openservices.ons.api.bean.OrderProducerBean;
 import com.aliyun.openservices.ons.api.bean.ProducerBean;
 import com.clzy.geo.core.utils.StringUtils;
 import com.clzy.srig.mq.integration.entity.ForwardRouter;
 import com.clzy.srig.mq.integration.entity.MQServer;
 import com.clzy.srig.mq.integration.enums.MQIntegration;
-import com.clzy.srig.mq.integration.service.ForwardService;
+import com.clzy.srig.mq.integration.enums.MQStuats;
 import com.clzy.srig.mq.integration.service.IMqIntegration;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
-import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
-import org.apache.rocketmq.client.producer.DefaultMQProducer;
-import org.apache.rocketmq.common.message.MessageExt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +25,7 @@ public class RocketAliyunMqIntegration implements IMqIntegration {
 
     @Autowired
     private RocketAliyunMqService aliyunMqService;
+
     @Override
     public MQIntegration.ServerType type() {
         return MQIntegration.ServerType.Aliyun_RocketMQ;
@@ -48,8 +42,10 @@ public class RocketAliyunMqIntegration implements IMqIntegration {
             }
             Message msg = new Message(router.getToTopic(), tag, message);
             producer.send(msg);
+            router.setStatus(MQStuats.online.getCode());
         } catch (Exception e) {
             log.error("RocketMq消息推送失败");
+            router.setStatus(MQStuats.client_offline.getCode());
             e.printStackTrace();
         }
     }
@@ -57,17 +53,29 @@ public class RocketAliyunMqIntegration implements IMqIntegration {
     @Override
     public void initReceiver(List<ForwardRouter> routers) {
         for (ForwardRouter router : routers) {
-            try {
-                ConsumerBean consumer = aliyunMqService.buildOrderConsumer(router);
-                consumer.start();
-            } catch (Exception e) {
-                log.error("初始化RocketMq连接失败", e);
-            }
+            connect(router);
+        }
+    }
+
+    @Override
+    public void connect(ForwardRouter router) {
+        try {
+            ConsumerBean consumer = aliyunMqService.buildOrderConsumer(router);
+        } catch (Exception e) {
+            router.setStatus(MQStuats.server_offline.getCode());
+            log.error("初始化RocketMq连接失败", e);
         }
     }
 
     @Override
     public void disConnect(ForwardRouter router) {
         aliyunMqService.disConnect(router.getFromServer());
+        router.setStatus(MQStuats.offline.getCode());
+    }
+
+    @Override
+    public boolean testConnect(ForwardRouter router) {
+        aliyunMqService.testConnection(router);
+        return true;
     }
 }

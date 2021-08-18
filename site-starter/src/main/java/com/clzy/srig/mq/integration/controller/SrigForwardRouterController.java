@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author tangs
@@ -35,7 +35,7 @@ public class SrigForwardRouterController {
     @Autowired
     private ForwardService forwardService;
 
-    @ApiOperation(value = "自定义分页条件排序获取信息",notes = "自定义分页条件排序获取信息")
+    @ApiOperation(value = "自定义分页条件排序获取信息", notes = "自定义分页条件排序获取信息")
     @PostMapping("page")
     public JsonResponse list(@RequestBody @ApiParam ForwardRouter entiy, HttpServletRequest request, HttpServletResponse response) {
         Page<ForwardRouter> page = new Page<>(request, response);
@@ -43,30 +43,28 @@ public class SrigForwardRouterController {
         return JsonResponse.success(page);
     }
 
-    @ApiOperation(value = "上传信息",notes = "上传信息")
+    @ApiOperation(value = "上传信息", notes = "上传信息")
     @PostMapping("save")
     public JsonResponse save(@RequestBody ForwardRouter entiy) {
         String id = entiy.getId();
         service.save(entiy);
         if (StringUtils.isBlank(id)) {
             forwardService.addRouterTable(entiy);
-        }else {
+        } else {
             forwardService.updateRouterTable(entiy);
         }
         return JsonResponse.success(true);
     }
 
-    @ApiOperation(value = "根据主键获取信息",notes = "根据主键获取信息")
+    @ApiOperation(value = "根据主键获取信息", notes = "根据主键获取信息")
     @GetMapping("get")
-    public JsonResponse get(String id)
-    {
-    return JsonResponse.success(service.get(id));
+    public JsonResponse get(String id) {
+        return JsonResponse.success(service.get(id));
     }
 
-    @ApiOperation(value = "删除信息",notes = "删除信息")
+    @ApiOperation(value = "删除信息", notes = "删除信息")
     @PostMapping("delete")
-    public JsonResponse delete(String ids)
-    {
+    public JsonResponse delete(String ids) {
         String[] idsAry = ids.split(",");
         for (String id : idsAry) {
             ForwardRouter router = service.get(id);
@@ -75,4 +73,19 @@ public class SrigForwardRouterController {
         }
         return JsonResponse.success(true);
     }
+
+    @ApiOperation(value = "连接测试", notes = "连接测试")
+    @PostMapping("testConnection")
+    public JsonResponse testConnection(@RequestBody ForwardRouter entiy) {
+        return JsonResponse.success(forwardService.testConnection(entiy));
+    }
+
+    @ApiOperation(value = "停止消费", notes = "停止消费")
+    @GetMapping("stop")
+    public JsonResponse stopConnection(String fromId) {
+        forwardService.stopConsumer(service.get(fromId));
+        return JsonResponse.success(true);
+    }
+
+
 }

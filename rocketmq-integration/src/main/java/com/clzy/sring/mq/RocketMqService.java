@@ -39,13 +39,19 @@ public class RocketMqService {
     public DefaultMQPushConsumer createConsumer(ForwardRouter router) throws MQClientException {
         MQServer server = router.getFromServer();
         String namesrvAddr = getConectionUrl(server);
-        if (StringUtils.isBlank(namesrvAddr)) {
-            namesrvAddr = String.format("%s:%d", server.getIp(), server.getPort());
-        }
         if (consumerMap.get(namesrvAddr) != null) {
             log.info("====={}===activeMQ连接服务已经存在=====", namesrvAddr);
             return consumerMap.get(namesrvAddr);
         }
+        DefaultMQPushConsumer consumer = build(router);
+        consumer.start();
+        consumerMap.put(namesrvAddr, consumer);
+        return consumer;
+    }
+
+    public DefaultMQPushConsumer build(ForwardRouter router) throws MQClientException {
+        MQServer server = router.getFromServer();
+        String namesrvAddr = getConectionUrl(server);
         log.info("====={}===activeMQ消费连接服务创建开始=====", namesrvAddr);
         JSONObject param = getDefaultParam(server.getDefaultParam());
         String group = server.getGroup();
@@ -75,9 +81,15 @@ public class RocketMqService {
             tag = "*";
         }
         consumer.subscribe(router.getFromTopic(), tag);
-        consumerMap.put(namesrvAddr, consumer);
+//        consumerMap.put(namesrvAddr, consumer);
         log.info("====={}===activeMQ消费连接服务创建成功=====", namesrvAddr);
         return consumer;
+    }
+
+    public void testConnect(ForwardRouter router) throws MQClientException {
+        DefaultMQPushConsumer consumer = build(router);
+        consumer.start();
+        consumer.shutdown();
     }
 
     public DefaultMQProducer createProducer(MQServer server) throws MQClientException {
@@ -117,7 +129,7 @@ public class RocketMqService {
         JSONObject object = null;
         if (StringUtils.isBlank(jsonStr)) {
             object = new JSONObject();
-        }else {
+        } else {
             object = JSONObject.parseObject(jsonStr);
         }
         if (StringUtils.isBlank(object.getString("consumeMessageBatchMaxSize"))) {

@@ -29,7 +29,17 @@ public class HttpIntegration implements IMqIntegration {
     }
 
     @Override
+    public void connect(ForwardRouter router) {
+
+    }
+
+    @Override
     public void disConnect(ForwardRouter router) {
 
+    }
+
+    @Override
+    public boolean testConnect(ForwardRouter router) {
+        return false;
     }
 }

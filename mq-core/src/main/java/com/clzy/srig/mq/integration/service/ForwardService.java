@@ -1,11 +1,17 @@
 package com.clzy.srig.mq.integration.service;
 
+import com.alibaba.fastjson.JSON;
 import com.clzy.geo.core.utils.Collections3;
+import com.clzy.geo.core.utils.DateUtils;
 import com.clzy.geo.core.utils.StringUtils;
 import com.clzy.srig.mq.integration.entity.ForwardRouter;
 import com.clzy.srig.mq.integration.entity.MQServer;
 import com.clzy.srig.mq.integration.enums.MQIntegration;
+import com.clzy.srig.mq.integration.enums.MQStuats;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -13,6 +19,8 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
+@EnableScheduling
 @Component
 public class ForwardService {
 
@@ -68,7 +76,7 @@ public class ForwardService {
         for (ForwardRouter router : list) {
 //            List<ForwardRouter> temps = routerMap.computeIfAbsent(router.getFromServer().getType(), k -> new ArrayList<>());
 //            temps.add(router);
-            if (router.getExpireTime() == null || router.getExpireTime().compareTo(new Date()) > 0) {
+            if (router.getExpireTime() == null || router.getExpireTime().compareTo(new Date()) >= 0) {
                 addRouterTable(router);
             }
         }
@@ -80,6 +88,7 @@ public class ForwardService {
 
     /**
      * 添加路由表
+     *
      * @param router
      */
     public void addRouterTable(ForwardRouter router) {
@@ -92,18 +101,20 @@ public class ForwardService {
             routerTable.put(fromId, routers);
             //初始化消费
             List<ForwardRouter> finalRouters = routers;
-            messagePublishes.forEach(s->{
+            messagePublishes.forEach(s -> {
                 if (s.type().equals(router.getFromServer().getType())) {
+                    log.info("=====配置表==={}==", JSON.toJSONString(finalRouters.get(0)));
                     s.initReceiver(finalRouters);
                 }
             });
-        }else {
+        } else {
             routers.add(router);
         }
     }
 
     /**
      * 删除路由表
+     *
      * @param router
      */
     public void deleteRouterTable(ForwardRouter router) {
@@ -126,8 +137,17 @@ public class ForwardService {
         });
     }
 
+    public void startConsumer(ForwardRouter router) {
+        messagePublishes.forEach(p -> {
+            if (p.type().equals(router.getFromServer().getType())) {
+                p.connect(router);
+            }
+        });
+    }
+
     /**
      * 更新路由表
+     *
      * @param router
      */
     public void updateRouterTable(ForwardRouter router) {
@@ -136,11 +156,12 @@ public class ForwardService {
         List<ForwardRouter> routers = routerTable.get(fromId);
         if (!CollectionUtils.isEmpty(routers)) {
             routers.removeIf(router1 -> router1.getToServer().getId().equals(router.getToServer().getId()));
-        }else {
+        } else {
             routers = new ArrayList<>();
             routerTable.put(fromId, routers);
         }
         routers.add(router);
+        startConsumer(router);
     }
 
     private void check(ForwardRouter router) {
@@ -148,8 +169,57 @@ public class ForwardService {
         if (router.getFromServer() == null || StringUtils.isBlank(fromId)) {
             throw new RuntimeException("源路由数据编号id为空");
         }
-        if (router.getToServer()==null || StringUtils.isBlank(router.getToServer().getId())) {
+        if (router.getToServer() == null || StringUtils.isBlank(router.getToServer().getId())) {
             throw new RuntimeException("目标路由数据编号id为空");
         }
+    }
+
+    public boolean testConnection(ForwardRouter router) {
+        if (router.getFromServer() == null || router.getFromServer().getType() == null) {
+            return false;
+        }
+        for (IMqIntegration publish : messagePublishes) {
+            if (publish.type().equals(router.getFromServer().getType())) {
+                return publish.testConnect(router);
+            }
+        }
+        return false;
+    }
+
+    @Scheduled(fixedRate = 1000 * 60 * 30)
+    public void statusSync() {
+        log.info("==={}==服务转发状态同步开始=====", DateUtils.getDateTime());
+        Collection<List<ForwardRouter>> values = routerTable.values();
+        if (CollectionUtils.isEmpty(values)) {
+            log.info("=====服务转发配置为空同步结束=====");
+            return;
+        }
+        Integer online = 0;
+        Integer clientOffline = 0;
+        Integer serverOffline = 0;
+        Integer toatl = 0;
+        for (List<ForwardRouter> list : values) {
+            for (ForwardRouter router : list) {
+                if (StringUtils.isBlank(router.getStatus())) {
+                    router.setStatus(MQStuats.online.getCode());
+                }
+                if (router.getExpireTime() != null && router.getExpireTime().compareTo(new Date()) < 0) {
+                    deleteRouterTable(router);
+                    router.setStatus(MQStuats.expire.getCode());
+                } else {
+                    if (MQStuats.online.equals(router.getStatus())) {
+                        online++;
+                    } else if (MQStuats.client_offline.equals(router.getStatus())) {
+                        clientOffline++;
+                    } else {
+                        serverOffline++;
+                    }
+                }
+                toatl++;
+                forwardRouterService.updateStatus(router);
+            }
+        }
+        log.info("==={}==状态同步完成：在线：{},离线：{}(服务端离线：{},客服端离线：{})，总数：{}=====", DateUtils.getDateTime(),
+                online, clientOffline + serverOffline, serverOffline, clientOffline, toatl);
     }
 }
