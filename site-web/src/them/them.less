@@ -1,0 +1,108 @@
+/*
+* description: 统一样式变量设置入口，方便实现换肤和统一更换主题样式设置
+* author: yangchangzhi
+* company: 成理智源科技
+* date: 2019-08-08
+*/
+@import "./font-size";
+@import "./color";
+@import "./customer";
+@import './components/index';
+
+a {
+  color: @geo-highlight-color;
+}
+
+.ivu-btn {
+  padding: 4px 13px 4px;
+}
+
+.ivu-btn-small {
+  padding: 0 7px;
+}
+
+.ivu-btn-primary {
+  background-color: @geo-highlight-color;
+  border-color: @geo-highlight-color;
+
+  .ivu-icon {
+    color: @geo-deep-back-font;
+    vertical-align: middle;
+  }
+
+  span {
+    color: @geo-deep-back-font;
+    vertical-align: middle;
+  }
+}
+
+/* .ivu-btn-error {
+  background-color: @geo-overall-back;
+  .ivu-icon {
+    color: @erro-btn;
+  }
+  span {
+    color:  @erro-btn;
+  }
+} */
+// tab选项卡样式统一设置
+.ivu-tabs-nav .ivu-tabs-tab-active {
+  color: @geo-highlight-color;
+}
+
+.ivu-tabs-ink-bar {
+  background-color: @geo-highlight-color;
+}
+
+// 加载中动画
+.spin-icon-load {
+  animation: ani-demo-spin 1s linear infinite;
+}
+
+@keyframes ani-demo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.demo-spin-col {
+  height: 100px;
+  position: relative;
+  border: 1px solid #eee;
+}
+
+// 全局loading样式
+.global-lodaing {
+  z-index: 99999 !important;
+}
+.ivu-tooltip-content {
+  .ivu-tooltip-inner {
+    max-width: none;
+  }
+}
+/* .ivu-checkbox-inner {
+  font-family: "iconfont" !important;
+}
+
+.ivu-checkbox-checked .ivu-checkbox-inner:before {
+  content: '\E698';
+  color: #fff;
+  font-size: 16px;
+  position: absolute;
+  top: -2px;
+  left: -2px;
+}
+
+.ivu-checkbox-disabled.ivu-checkbox-checked .ivu-checkbox-inner {
+  background-color: rgba(0, 137, 255, 0.5);
+}
+
+.ivu-checkbox-inner:after, .ivu-checkbox-checked .ivu-checkbox-inner:after {
+  border: 0;
+} */

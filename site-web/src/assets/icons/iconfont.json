@@ -1,0 +1,107 @@
+{
+  "id": "2177487",
+  "name": "重庆预警模型",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "12944545",
+      "name": "开发中",
+      "font_class": "kaifazhong",
+      "unicode": "e65a",
+      "unicode_decimal": 58970
+    },
+    {
+      "icon_id": "6054768",
+      "name": "历史警情",
+      "font_class": "lishijingqing",
+      "unicode": "e650",
+      "unicode_decimal": 58960
+    },
+    {
+      "icon_id": "12730201",
+      "name": "预警模型",
+      "font_class": "yujingmoxing",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
+      "icon_id": "13412646",
+      "name": "警情统计",
+      "font_class": "jingqingtongji",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
+      "icon_id": "4041716",
+      "name": "QQ",
+      "font_class": "QQ",
+      "unicode": "e7ec",
+      "unicode_decimal": 59372
+    },
+    {
+      "icon_id": "6204898",
+      "name": "woman",
+      "font_class": "woman",
+      "unicode": "e800",
+      "unicode_decimal": 59392
+    },
+    {
+      "icon_id": "8510484",
+      "name": "meh",
+      "font_class": "meh",
+      "unicode": "e70d",
+      "unicode_decimal": 59149
+    },
+    {
+      "icon_id": "9080635",
+      "name": "bear",
+      "font_class": "bear",
+      "unicode": "e658",
+      "unicode_decimal": 58968
+    },
+    {
+      "icon_id": "11183325",
+      "name": "chuizhifanzhuan",
+      "font_class": "chuizhifanzhuan",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "11183369",
+      "name": "shuipingfanzhuan",
+      "font_class": "shuipingfanzhuan",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "12578938",
+      "name": "resize-vertical",
+      "font_class": "resize-vertical",
+      "unicode": "e6e8",
+      "unicode_decimal": 59112
+    },
+    {
+      "icon_id": "13223311",
+      "name": "frown",
+      "font_class": "frown",
+      "unicode": "e77d",
+      "unicode_decimal": 59261
+    },
+    {
+      "icon_id": "14014283",
+      "name": "man",
+      "font_class": "man",
+      "unicode": "e657",
+      "unicode_decimal": 58967
+    },
+    {
+      "icon_id": "15577567",
+      "name": "smile",
+      "font_class": "smile",
+      "unicode": "e68a",
+      "unicode_decimal": 59018
+    }
+  ]
+}
