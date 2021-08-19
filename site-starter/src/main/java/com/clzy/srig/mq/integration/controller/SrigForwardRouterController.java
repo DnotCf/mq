@@ -74,12 +74,6 @@ public class SrigForwardRouterController {
         return JsonResponse.success(true);
     }
 
-    @ApiOperation(value = "连接测试", notes = "连接测试")
-    @PostMapping("testConnection")
-    public JsonResponse testConnection(@RequestBody ForwardRouter entiy) {
-        return JsonResponse.success(forwardService.testConnection(entiy));
-    }
-
     @ApiOperation(value = "停止消费", notes = "停止消费")
     @GetMapping("stop")
     public JsonResponse stopConnection(String fromId) {

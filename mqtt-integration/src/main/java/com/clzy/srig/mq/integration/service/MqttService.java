@@ -36,6 +36,7 @@ public class MqttService {
         String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
         MqttClient client = mqttClientMap.get(connectUrl);
         if (client == null) {
+            log.info("=={}===MQTT连接开始=====",connectUrl);
             client = new MqttClient(connectUrl, server.getClientName(), new MemoryPersistence());
             MqttConnectOptions options = new MqttConnectOptions();
             options.setCleanSession(true);
@@ -48,6 +49,7 @@ public class MqttService {
             options.setConnectionTimeout(10);
             options.setKeepAliveInterval(20);
             client.connect(options);
+            log.info("==={}==MQTT连接完成=====", connectUrl);
         }
         return client;
     }

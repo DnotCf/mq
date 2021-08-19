@@ -3,6 +3,7 @@ package com.clzy.srig.mq.integration.controller;
 
 import com.clzy.geo.core.common.dto.common.JsonResponse;
 import com.clzy.geo.core.common.persistence.Page;
+import com.clzy.srig.mq.integration.entity.ForwardRouter;
 import com.clzy.srig.mq.integration.entity.MQServer;
 import com.clzy.srig.mq.integration.service.ForwardService;
 import com.clzy.srig.mq.integration.service.MQServerService;
@@ -30,7 +31,8 @@ public class SrigMqServerController {
 
     @Autowired
     private MQServerService service;
-
+    @Autowired
+    private ForwardService forwardService;
 
     @ApiOperation(value = "自定义分页条件排序获取信息", notes = "自定义分页条件排序获取信息")
     @PostMapping("page")
@@ -61,5 +63,14 @@ public class SrigMqServerController {
             service.delete(new MQServer(id));
         }
         return JsonResponse.success(true);
+    }
+
+    @ApiOperation(value = "连接测试", notes = "连接测试")
+    @PostMapping("testConnection")
+    public JsonResponse testConnection(@RequestBody MQServer entiy) {
+        ForwardRouter router = new ForwardRouter();
+        router.setFromServer(entiy);
+        router.setFromTopic(entiy.getTopic());
+        return JsonResponse.success(forwardService.testConnection(router));
     }
 }
