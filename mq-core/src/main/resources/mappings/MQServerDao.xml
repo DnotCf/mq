@@ -3,6 +3,7 @@
 <mapper namespace="com.clzy.srig.mq.integration.dao.MQServerDao">
     <sql id="mqServerColumns">
         a.ID          AS "id",
+        a.NAME        AS "name",
         a.IP          AS "ip",
         a.PORT        AS "port",
         a.PROTOCOL    AS "protocol",
@@ -15,9 +16,13 @@
         a.CLUSTER     AS "cluster",
         a.DEFAULT_PARAM AS "defaultParam",
         a.TAG AS "tag",
-        a.GROUP AS "group",
+        a.GROUP_ID AS "group",
+        a.TOPIC AS "topic",
         a.SECRET_KEY AS "secretKey",
-        a.ACCESS_KEY AS "accessKey"
+        a.ACCESS_KEY AS "accessKey",
+        a.NETWORK_TYPE AS "networkType",
+        a.VPN_ACCONT  AS "vpnAccount",
+        a.VPN_PASSWORD AS "vpnPassword"
     </sql>
 
     <sql id="mServersJoins">
@@ -38,7 +43,7 @@
         FROM SRIG_MQ_SERVER a
         <include refid="mServersJoins"/>
         <where>
-            a.DEL_FLAG = 1
+            a.DEL_FLAG = 0
             <if test="ip != null and ip != ''">
                 AND a.IP = #{ip}
             </if>
@@ -80,6 +85,7 @@
 
     <insert id="insert">
         INSERT INTO SRIG_MQ_SERVER(ID,
+                                   NAME,
                                    IP,
                                    PORT,
                                    CLIENT_NAME,
@@ -94,11 +100,12 @@
                                    CLUSTER,
                                    DEFAULT_PARAM,
                                    TAG,
-                                   GROUP,
+                                   GROUP_ID,
+                                   TOPIC,
                                    SECRET_KEY,
-                                   ACCESS_KEY
-                )
+                                   ACCESS_KEY)
         VALUES (#{id},
+                #{name},
                 #{ip},
                 #{port},
                 #{clientName},
@@ -114,34 +121,37 @@
                 #{defaultParam},
                 #{tag},
                 #{group},
+                #{topic},
                 #{secretKey},
-                #{accessKey}
-                       )
+                #{accessKey})
     </insert>
 
     <update id="update">
         UPDATE SRIG_MQ_SERVER
-        SET IP          = #{ip},
-            PORT        = #{port},
-            CLIENT_NAME = #{clientName},
-            PROTOCOL    = #{protocol},
-            TYPE        = #{type},
-            USERNAME    = #{username},
-            PASSWORD    = #{password},
-            UPDATE_TIME = #{updateDate},
-            CLUSTER = #{cluster},
-            RETRY = #{retry},
-            STATUS = #{status},
+        SET IP            = #{ip},
+            NAME          =#{name},
+            PORT          = #{port},
+            CLIENT_NAME   = #{clientName},
+            PROTOCOL      = #{protocol},
+            TYPE          = #{type},
+            USERNAME      = #{username},
+            PASSWORD      = #{password},
+            UPDATE_TIME   = #{updateDate},
+            CLUSTER       = #{cluster},
+            RETRY         = #{retry},
+            STATUS        = #{status},
             DEFAULT_PARAM = #{defaultParam},
             TAG=#{tag},
-            GROUP=#{group},
+            GROUP_ID=#{group},
+            TOPIC=#{topic},
             SECRET_KEY=#{secretKey},
             ACCESS_KEY=#{accessKey}
         WHERE ID = #{id}
     </update>
 
     <update id="delete">
-        UPDATE SRIG_MQ_SERVER SET DEL_FALG = 0
+        UPDATE SRIG_MQ_SERVER
+        SET DEL_FLAG = 1
         WHERE ID = #{id}
     </update>
 </mapper>

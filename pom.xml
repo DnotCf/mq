@@ -16,6 +16,7 @@
         <module>amqp-integration</module>
         <module>rocketmq-integration</module>
         <module>rocketmq-aliyun-integration</module>
+        <module>http-integration</module>
     </modules>
 
     <properties>

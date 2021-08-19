@@ -24,7 +24,7 @@ public class MQIntegrationApplication {
     }
 
     @Bean
-    public Docket webApiConfig(){
+    public Docket webApiConfig() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("webApi")
                 .apiInfo(new ApiInfo("api", "mq转发", "1.0", "21", new Contact("1", "123", "123@qq.com"), "213", "213"))

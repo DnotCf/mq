@@ -7,10 +7,11 @@ package com.clzy.srig.mq.integration.enums;
  * @Date: 2021/8/16 14:26
  */
 public enum MQStuats {
-    offline("0","离线或停用"),
+    offline("0", "离线"),
     online("1", "在线"),
-//    server_offline("2","数据提供服务离线"),
-//    client_offline("3","目标服务离线")
+    server_offline("2", "数据提供服务离线"),
+    client_offline("3", "目标服务离线"),
+    expire("4", "服务过期"),
     ;
 
     private String code;

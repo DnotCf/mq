@@ -45,9 +45,17 @@ public class RocketAliyunMqService {
         if (consumerMap.get(conectionUrl) != null) {
             return consumerMap.get(conectionUrl);
         }
-        log.info("==={}===阿里云rocketmq连接开始=====", conectionUrl);
+        ConsumerBean orderConsumerBean = build(router);
+        orderConsumerBean.start();
+        consumerMap.put(conectionUrl, orderConsumerBean);
+        return orderConsumerBean;
+    }
+
+    public ConsumerBean build(ForwardRouter router) {
+        String conectionUrl = getConectionUrl(router.getFromServer());
+        log.info("==={}===ConsumerBean 阿里云rocketmq连接开始=====", conectionUrl);
         MqConfig mqConfig = new MqConfig();
-//        JSONObject param = getDefaultParam(router.getFromServer().getDefaultParam());
+        JSONObject param = getDefaultParam(router.getFromServer().getDefaultParam());
         mqConfig.setSecretKey(router.getFromServer().getSecretKey());
         mqConfig.setAccessKey(router.getFromServer().getAccessKey());
         mqConfig.setOrderGroupId(router.getFromServer().getGroup());
@@ -63,6 +71,9 @@ public class RocketAliyunMqService {
         //配置文件
         Properties properties = mqConfig.getMqPropertie();
         properties.setProperty(PropertyKeyConst.GROUP_ID, mqConfig.getOrderGroupId());
+        properties.setProperty(PropertyKeyConst.ConsumeThreadNums, param.getString(PropertyKeyConst.ConsumeThreadNums));
+        properties.setProperty(PropertyKeyConst.ConsumeTimeout, param.getString(PropertyKeyConst.ConsumeTimeout));
+        properties.setProperty(PropertyKeyConst.MessageModel, param.getString(PropertyKeyConst.MessageModel));
         orderConsumerBean.setProperties(properties);
         //订阅关系
         Map<Subscription, MessageListener> subscriptionTable = new HashMap<>();
@@ -79,22 +90,35 @@ public class RocketAliyunMqService {
                     return Action.CommitMessage;
                 } catch (Exception e) {
                     //消费失败
+                    log.error("====rocketAliyun消费错误", e);
                     return Action.ReconsumeLater;
                 }
             }
         });
         //订阅多个topic如上面设置
         orderConsumerBean.setSubscriptionTable(subscriptionTable);
-        consumerMap.put(conectionUrl, orderConsumerBean);
-        log.info("==={}===阿里云rocketmq连接成功=====",conectionUrl);
+//        consumerMap.put(conectionUrl, orderConsumerBean);
+        log.info("==={}===ConsumerBean 阿里云rocketmq连接成功=====", conectionUrl);
         return orderConsumerBean;
     }
 
-    public ProducerBean buildOrderProducer(ForwardRouter server) {
-        String conectionUrl = getConectionUrl(server.getFromServer());
-        if (producerMap.get(conectionUrl) != null) {
-            return producerMap.get(conectionUrl);
+    public void testConnection(ForwardRouter router) {
+        if (router.getToServer() != null) {
+            ProducerBean producerBean = buildProducer(router);
+            producerBean.shutdown();
+            return;
         }
+        if (StringUtils.isBlank(router.getFromTopic())) {
+            router.setFromTopic("testConnection");
+        }
+        ConsumerBean build = build(router);
+        build.start();
+        build.shutdown();
+    }
+
+    public ProducerBean buildProducer(ForwardRouter server) {
+        String conectionUrl = getConectionUrl(server.getFromServer());
+        log.info("==={}===ProducerBean 阿里云rocketmq连接开始=====", conectionUrl);
         MqConfig mqConfig = new MqConfig();
 //        JSONObject param = getDefaultParam(server.getToServer().getDefaultParam());
         mqConfig.setSecretKey(server.getToServer().getSecretKey());
@@ -107,14 +131,24 @@ public class RocketAliyunMqService {
         orderProducerBean.setProperties(mqConfig.getMqPropertie());
         //启动
         orderProducerBean.start();
-        producerMap.put(conectionUrl, orderProducerBean);
+        log.info("==={}===ProducerBean 阿里云rocketmq连接成功=====", conectionUrl);
         return orderProducerBean;
+    }
+
+    public ProducerBean buildOrderProducer(ForwardRouter server) {
+        String conectionUrl = getConectionUrl(server.getFromServer());
+        if (producerMap.get(conectionUrl) != null) {
+            return producerMap.get(conectionUrl);
+        }
+        ProducerBean producerBean = buildProducer(server);
+        producerMap.put(conectionUrl, producerBean);
+        return producerBean;
     }
 
     public String getConectionUrl(MQServer server) {
         String namesrvAddr = server.getCluster();
         if (StringUtils.isBlank(namesrvAddr)) {
-            namesrvAddr =  String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
+            namesrvAddr = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
         }
         return namesrvAddr;
     }
@@ -123,7 +157,7 @@ public class RocketAliyunMqService {
         JSONObject object = null;
         if (StringUtils.isBlank(jsonStr)) {
             object = new JSONObject();
-        }else {
+        } else {
             object = JSONObject.parseObject(jsonStr);
         }
         if (StringUtils.isBlank(object.getString("tag"))) {
@@ -132,7 +166,25 @@ public class RocketAliyunMqService {
         if (StringUtils.isBlank(object.getString("group"))) {
             object.put("group", MQIntegration.defaultGroupName);
         }
+        if (StringUtils.isBlank(object.getString(PropertyKeyConst.ConsumeThreadNums))) {
+            object.put(PropertyKeyConst.ConsumeThreadNums, "1");
+        }
+        if (StringUtils.isBlank(object.getString(PropertyKeyConst.ConsumeTimeout))) {
+            object.put(PropertyKeyConst.ConsumeTimeout, "1000");
+        }
+        if (StringUtils.isBlank(object.getString(PropertyKeyConst.MessageModel))) {
+            object.put(PropertyKeyConst.MessageModel, "BROADCASTING");
+        }
         return object;
+    }
+
+    public void disConnect(MQServer server) {
+        String url = getConectionUrl(server);
+        ConsumerBean consumerBean = consumerMap.get(url);
+        if (consumerBean != null) {
+            consumerBean.shutdown();
+            consumerMap.remove(url);
+        }
     }
 
 }

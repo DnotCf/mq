@@ -2,20 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.clzy.srig.mq.integration.dao.ForwardRouterDao">
     <sql id="rsuColumns">
-        a.ID             AS "id",
+        a.ID AS "id",
         a.FROM_SERVER_ID AS "fromServer.id",
-        a.TO_SERVER_ID   AS "toServer.id",
-        a.FROM_TOPIC     AS "fromTopic",
-        a.TO_TOPIC       AS "toTopic",
-        a.EXPIRE_TIME    AS "expireTime",
-        a.STATUS    AS   "status",
+        a.TO_SERVER_ID AS "toServer.id",
+        a.FROM_TOPIC AS "fromTopic",
+        a.TO_TOPIC AS "toTopic",
+        a.EXPIRE_TIME AS "expireTime",
+        a.STATUS AS "status",
         <include refid="fromServerColumns"/>
         ,
         <include refid="toServerColumns"/>
     </sql>
 
     <sql id="fromServerColumns">
-        f.ID          AS "fromServer.id",
+        f.NAME        AS "fromServer.name",
         f.IP          AS "fromServer.ip",
         f.PORT        AS "fromServer.port",
         f.PROTOCOL    AS "fromServer.protocol",
@@ -26,14 +26,14 @@
         f.TAG         AS "fromServer.tag",
         f.SECRET_KEY  AS "fromServer.secretKey",
         f.ACCESS_KEY   AS "fromServer.accessKey",
-        f.GROUP       AS "fromServer.group",
+        f.GROUP_ID       AS "fromServer.group",
         f.CLUSTER     AS "fromServer.cluster",
+        f.TOPIC     AS "fromServer.topic",
         f.STATUS      AS "fromServer.stauts"
-
     </sql>
 
     <sql id="toServerColumns">
-        t.ID          AS "fromServer.id",
+        t.NAME        AS "toServer.name",
         t.IP          AS "toServer.ip",
         t.PORT        AS "toServer.port",
         t.PROTOCOL    AS "toServer.protocol",
@@ -44,14 +44,15 @@
         t.TAG         AS "toServer.tag",
         t.SECRET_KEY  AS "toServer.secretKey",
         t.ACCESS_KEY   AS "toServer.accessKey",
-        t.GROUP       AS "toServer.group",
+        t.GROUP_ID       AS "toServer.group",
         t.CLUSTER     AS "toServer.cluster",
+        t.TOPIC     AS "toServer.topic",
         t.STATUS      AS "toServer.stauts"
     </sql>
 
     <sql id="rsuJoins">
-        INNER JOIN SRIG_MQ_SERVER f ON f.ID = a.FROM_SERVER_ID AND f.DEL_FLAG = 1
-        INNER JOIN SRIG_MQ_SERVER t ON t.ID = a.TO_SERVER_ID AND t.DEL_FLAG = 1
+        INNER JOIN SRIG_MQ_SERVER f ON f.ID = a.FROM_SERVER_ID AND f.DEL_FLAG = 0
+        INNER JOIN SRIG_MQ_SERVER t ON t.ID = a.TO_SERVER_ID AND t.DEL_FLAG = 0
     </sql>
 
     <select id="get" resultType="ForwardRouter">
@@ -105,28 +106,40 @@
     <insert id="insert">
         INSERT INTO SRIG_FORWARD_ROUTER(ID,
                                         FROM_SERVER_ID,
-                                        FROM_SERVER_ID,
+                                        TO_SERVER_ID,
                                         FROM_TOPIC,
                                         TO_TOPIC,
                                         EXPIRE_TIME,
-                                        STATUS
-                             )
+                                        STATUS)
         VALUES (#{id},
                 #{fromServer.id},
                 #{toServer.id},
                 #{fromTopic},
                 #{toTopic},
                 #{expireTime},
-                #{status}
-                       )
+                #{status})
     </insert>
 
     <update id="update">
         UPDATE SRIG_FORWARD_ROUTER
         SET FROM_TOPIC = #{fromTopic},
-            TO_TOPIC   = #{toTopic},
+        TO_TOPIC = #{toTopic},
+        <if test="expireTime !=null">
             EXPIRE_TIME= #{expireTime},
-            STATUS =#{status}
+        </if>
+        STATUS =#{status}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE SRIG_FORWARD_ROUTER
+        SET
+                <if test="expireTime !=null" >
+                    EXPIRE_TIME= #{expireTime},
+                </if>
+                <if test="status !=null">
+                    STATUS =#{status}
+                </if>
         WHERE ID = #{id}
     </update>
 

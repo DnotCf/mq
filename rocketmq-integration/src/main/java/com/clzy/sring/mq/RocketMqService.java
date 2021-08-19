@@ -39,13 +39,19 @@ public class RocketMqService {
     public DefaultMQPushConsumer createConsumer(ForwardRouter router) throws MQClientException {
         MQServer server = router.getFromServer();
         String namesrvAddr = getConectionUrl(server);
-        if (StringUtils.isBlank(namesrvAddr)) {
-            namesrvAddr = String.format("%s:%d", server.getIp(), server.getPort());
-        }
         if (consumerMap.get(namesrvAddr) != null) {
             log.info("====={}===activeMQ连接服务已经存在=====", namesrvAddr);
             return consumerMap.get(namesrvAddr);
         }
+        DefaultMQPushConsumer consumer = build(router);
+        consumer.start();
+        consumerMap.put(namesrvAddr, consumer);
+        return consumer;
+    }
+
+    public DefaultMQPushConsumer build(ForwardRouter router) throws MQClientException {
+        MQServer server = router.getFromServer();
+        String namesrvAddr = getConectionUrl(server);
         log.info("====={}===activeMQ消费连接服务创建开始=====", namesrvAddr);
         JSONObject param = getDefaultParam(server.getDefaultParam());
         String group = server.getGroup();
@@ -53,6 +59,7 @@ public class RocketMqService {
             group = MQIntegration.defaultGroupName;
         }
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(group);
+
         consumer.setNamesrvAddr(namesrvAddr);
         consumer.setConsumeMessageBatchMaxSize(param.getInteger("consumeMessageBatchMaxSize"));
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
@@ -73,10 +80,24 @@ public class RocketMqService {
         if (StringUtils.isBlank(tag)) {
             tag = "*";
         }
-        consumer.subscribe(router.getFromTopic(), "*");
-        consumerMap.put(namesrvAddr, consumer);
+        consumer.subscribe(router.getFromTopic(), tag);
+//        consumerMap.put(namesrvAddr, consumer);
         log.info("====={}===activeMQ消费连接服务创建成功=====", namesrvAddr);
         return consumer;
+    }
+
+    public void testConnect(ForwardRouter router) throws MQClientException {
+        if (router.getToServer() != null) {
+            DefaultMQProducer producer = buildProducer(router.getToServer());
+            producer.shutdown();
+            return;
+        }
+        if (StringUtils.isBlank(router.getFromTopic())) {
+            router.setFromTopic("testConnect");
+        }
+        DefaultMQPushConsumer consumer = build(router);
+        consumer.start();
+        consumer.shutdown();
     }
 
     public DefaultMQProducer createProducer(MQServer server) throws MQClientException {
@@ -84,6 +105,13 @@ public class RocketMqService {
         if (producerMap.get(url) != null) {
             return producerMap.get(url);
         }
+        DefaultMQProducer producer = buildProducer(server);
+        producerMap.put(url, producer);
+        return producer;
+    }
+
+    public DefaultMQProducer buildProducer(MQServer server) throws MQClientException {
+        String url = getConectionUrl(server);
         log.info("====={}===activeMQ生产服务连接创建开始=====", url);
 //        JSONObject param = getDefaultParam(server.getDefaultParam());
         String group = server.getGroup();
@@ -99,7 +127,6 @@ public class RocketMqService {
             producer.setRetryTimesWhenSendAsyncFailed(server.getRetry());
         }
         producer.start();
-        producerMap.put(url, producer);
         log.info("====={}===activeMQ生产服务连接服务创建成功=====", url);
         return producer;
     }
@@ -116,7 +143,7 @@ public class RocketMqService {
         JSONObject object = null;
         if (StringUtils.isBlank(jsonStr)) {
             object = new JSONObject();
-        }else {
+        } else {
             object = JSONObject.parseObject(jsonStr);
         }
         if (StringUtils.isBlank(object.getString("consumeMessageBatchMaxSize"))) {
@@ -124,6 +151,18 @@ public class RocketMqService {
         }
 
         return object;
+    }
+
+    public void disConnect(MQServer server) {
+        String namesrvAddr = getConectionUrl(server);
+        if (StringUtils.isBlank(namesrvAddr)) {
+            namesrvAddr = String.format("%s:%d", server.getIp(), server.getPort());
+        }
+        DefaultMQPushConsumer consumer = consumerMap.get(namesrvAddr);
+        if (consumer != null) {
+            consumer.shutdown();
+            consumerMap.remove(namesrvAddr);
+        }
     }
 
 }

@@ -22,6 +22,11 @@ public class MQServer extends DataEntity<MQServer> {
     private String protocol;
 
     /**
+     * 数据源名称
+     */
+    private String name;
+
+    /**
      * 服务器地址
      */
     private String ip;
@@ -69,10 +74,32 @@ public class MQServer extends DataEntity<MQServer> {
      * 标签
      */
     private String tag;
-
+    /**
+     * 阿里云key
+     */
     private String secretKey;
+    /**
+     * 阿里云key
+     */
     private String accessKey;
+    /**
+     * mq消费gruopId
+     */
     private String group;
+    /**
+     * 网络类型 0内网，1外网
+     */
+    private String networkType;
+    /**
+     * vpn账号
+     */
+    private String vpnAccount;
+    /**
+     * vpn密码
+     */
+    private String vpnPassword;
+
+    private String topic;
     @Override
     public void doPreInsert() {
 
