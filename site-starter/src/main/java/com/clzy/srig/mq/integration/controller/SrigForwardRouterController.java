@@ -68,6 +68,9 @@ public class SrigForwardRouterController {
         String[] idsAry = ids.split(",");
         for (String id : idsAry) {
             ForwardRouter router = service.get(id);
+            if (router == null) {
+                continue;
+            }
             forwardService.deleteRouterTable(router);
             service.delete(new ForwardRouter(id));
         }
@@ -76,10 +79,22 @@ public class SrigForwardRouterController {
 
     @ApiOperation(value = "停止消费", notes = "停止消费")
     @GetMapping("stop")
-    public JsonResponse stopConnection(String fromId) {
-        forwardService.stopConsumer(service.get(fromId));
+    public JsonResponse stopConnection(String id) {
+        forwardService.stopConsumer(service.get(id));
         return JsonResponse.success(true);
     }
 
+    @ApiOperation(value = "启动映射消费", notes = "启动映射消费")
+    @GetMapping("start")
+    public JsonResponse startConnection(String id) {
+        forwardService.startConsumer(service.get(id));
+        return JsonResponse.success(true);
+    }
 
+//    @ApiOperation(value = "延长过期时间", notes = "延长过期时间")
+//    @GetMapping("expireTime")
+//    public JsonResponse startConnection(String id) {
+//        forwardService.startConsumer(service.get(id));
+//        return JsonResponse.success(true);
+//    }
 }
