@@ -17,6 +17,7 @@ public class ForwardRouterService extends CrudService<ForwardRouterDao, ForwardR
     @Override
     public void save(ForwardRouter entity) {
         if (entity.getToServer() != null) {
+            entity.getToServer().setSourceType(1);
             mqServerService.save(entity.getToServer());
         }
         super.save(entity);

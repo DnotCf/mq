@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping("/api/router")
 @Api(tags = "映射管理相关的接口")
-public class SrigForwardRouterController {
+public class SrigForwardRouterController extends BaseController {
 
     @Autowired
     private ForwardRouterService service;
@@ -38,15 +38,30 @@ public class SrigForwardRouterController {
 
     @ApiOperation(value = "自定义分页条件排序获取信息", notes = "自定义分页条件排序获取信息")
     @PostMapping("page")
-    public JsonResponse list(@RequestBody @ApiParam ForwardRouter entiy, HttpServletRequest request, HttpServletResponse response) {
+    public JsonResponse list(@RequestBody  ForwardRouter entity, HttpServletRequest request, HttpServletResponse response) {
         Page<ForwardRouter> page = new Page<>(request, response);
-        page = service.findPage(page, entiy);
+        entity.setSourceType(1);
+        page = service.findPage(page, entity);
         return JsonResponse.success(page);
     }
 
     @ApiOperation(value = "上传信息", notes = "上传信息")
     @PostMapping("save")
     public JsonResponse save(@RequestBody ForwardRouter entiy) {
+        String check = check(entiy.getToServer());
+        if (StringUtils.isNotBlank(check)) {
+            return JsonResponse.success("目标：" + check);
+        }
+        String from = check(entiy.getFromServer());
+        if (StringUtils.isNotBlank(from)) {
+            return JsonResponse.success("源数据：" + from);
+        }
+        if (StringUtils.isBlank(entiy.getFromTopic()) || StringUtils.isBlank(entiy.getToTopic())) {
+            return JsonResponse.success("源fromTopic或目标toTopic不为空");
+        }
+        if (entiy.getExpireTime() == null) {
+            return JsonResponse.success("过期时间不为空");
+        }
         String id = entiy.getId();
         service.save(entiy);
         if (StringUtils.isBlank(id)) {
@@ -81,14 +96,14 @@ public class SrigForwardRouterController {
     @ApiOperation(value = "停止消费", notes = "停止消费")
     @GetMapping("stop")
     public JsonResponse stopConnection(String id) {
-        forwardService.stopConsumer(service.get(id));
+        forwardService.deleteRouterTable(service.get(id));
         return JsonResponse.success(true);
     }
 
     @ApiOperation(value = "启动映射消费", notes = "启动映射消费")
     @GetMapping("start")
     public JsonResponse startConnection(String id) {
-        forwardService.startConsumer(service.get(id));
+        forwardService.addRouterTable(service.get(id));
         return JsonResponse.success(true);
     }
 
@@ -102,6 +117,10 @@ public class SrigForwardRouterController {
     @ApiOperation(value = "连接测试", notes = "连接测试")
     @PostMapping("testConnection")
     public JsonResponse testConnection(@RequestBody MQServer entiy) {
+        String check = check(entiy);
+        if (StringUtils.isNotBlank(check)) {
+            return JsonResponse.success(check);
+        }
         ForwardRouter router = new ForwardRouter();
         router.setToServer(entiy);
         router.setToTopic(entiy.getTopic());

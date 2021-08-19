@@ -18,6 +18,8 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @EnableScheduling
@@ -32,6 +34,8 @@ public class ForwardService {
 
     private ConcurrentHashMap<String, List<ForwardRouter>> routerTable = new ConcurrentHashMap<>();
 
+    private ExecutorService service = null;
+
     public void publish(MQServer mqServer, byte[] message) {
 
         List<ForwardRouter> list = getRouter(mqServer);
@@ -40,13 +44,15 @@ public class ForwardService {
             return;
         }
 
-        Collections.synchronizedCollection(list);
+//        Collection<ForwardRouter> routers = Collections.synchronizedCollection(list);
 
         for (ForwardRouter router : list) {
             if (router.getExpireTime() == null || router.getExpireTime().compareTo(new Date()) > 0) {
                 messagePublishes.forEach(p -> {
                     if (p.type().equals(router.getToServer().getType())) {
-                        p.onPublich(router, message);
+                        service.execute(() -> {
+                            p.onPublich(router, message);
+                        });
                     }
                 });
             }
@@ -70,6 +76,9 @@ public class ForwardService {
         if (Collections3.isEmpty(list)) {
             return;
         }
+        if (service == null) {
+            service = Executors.newFixedThreadPool(messagePublishes.size());
+        }
 
 //        Map<MQIntegration.ServerType, List<ForwardRouter>> routerMap = new HashMap<>();
 
@@ -92,6 +101,9 @@ public class ForwardService {
      * @param router
      */
     public void addRouterTable(ForwardRouter router) {
+        if (router == null) {
+            return;
+        }
         log.info("=={}=名称{}==源topic:{},目标topic:{}=添加路由表=====", DateUtils.getDateTime(), router.getFromServer().getName(), router.getFromTopic(), router.getToTopic());
         check(router);
         String fromId = router.getFromServer().getId();
@@ -104,7 +116,7 @@ public class ForwardService {
             List<ForwardRouter> finalRouters = routers;
             messagePublishes.forEach(s -> {
                 if (s.type().equals(router.getFromServer().getType())) {
-                    log.info("=====配置表==={}==", JSON.toJSONString(finalRouters.get(0)));
+//                    log.info("=====配置表==={}==", JSON.toJSONString(finalRouters.get(0)));
                     s.initReceiver(finalRouters);
                 }
             });
@@ -119,6 +131,9 @@ public class ForwardService {
      * @param router
      */
     public void deleteRouterTable(ForwardRouter router) {
+        if (router == null) {
+            return;
+        }
         log.info("=={}=名称{}=映射id:{}=topic:{}=删除路由表=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
         check(router);
         String fromId = router.getFromServer().getId();
@@ -141,6 +156,9 @@ public class ForwardService {
     }
 
     public void startConsumer(ForwardRouter router) {
+        if (router == null) {
+            return;
+        }
         log.info("=={}=名称{}=映射id:{}=topic:{}=启动消费=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
         messagePublishes.forEach(p -> {
             if (p.type().equals(router.getFromServer().getType())) {
@@ -155,6 +173,9 @@ public class ForwardService {
      * @param router
      */
     public void updateRouterTable(ForwardRouter router) {
+        if (router == null) {
+            return;
+        }
         log.info("=={}=名称{}=映射id:{}=topic:{}=更新路由表=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
         check(router);
         String fromId = router.getFromServer().getId();

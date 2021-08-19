@@ -68,7 +68,16 @@
         SELECT
         <include refid="rsuColumns"/>
         FROM SRIG_FORWARD_ROUTER a
-        <include refid="rsuJoins"/>
+        <choose>
+            <when test="sourceType == null">
+                <include refid="rsuJoins"/>
+            </when>
+            <otherwise>
+                RIGHT JOIN SRIG_MQ_SERVER f ON f.ID = a.FROM_SERVER_ID AND f.DEL_FLAG = 0 AND f.SOURCE_TYPE = 0
+                LEFT JOIN SRIG_MQ_SERVER t ON t.ID = a.TO_SERVER_ID AND t.DEL_FLAG = 0 AND f.SOURCE_TYPE = 1
+            </otherwise>
+        </choose>
+
         <where>
             <if test="fromTopic != null and fromTopic != ''">
                 AND a.FROM_TOPIC = #{fromTopic}
@@ -82,6 +91,7 @@
                 ORDER BY ${page.orderBy}
             </when>
             <otherwise>
+                ORDER BY a.EXPIRE_TIME
             </otherwise>
         </choose>
     </select>
