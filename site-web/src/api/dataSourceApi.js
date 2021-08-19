@@ -6,19 +6,40 @@ import axios from "@/libs/api.request";
 
 export const getSoruceList = ({ pageNo, pageSize }) => {
   return axios.request({
-    url: "/analysisTemplate/page?pageNo=" + pageNo + "&pageSize=" + pageSize,
+    url: "/router/page?pageNo=" + pageNo + "&pageSize=" + pageSize,
+    method: "post",
+    data: {}
+  });
+};
+
+/**
+ * 新增/修改数据源
+ */
+export const saveSoruce = data => {
+  return axios.request({
+    url: "/server/save",
+    data,
+    method: "post"
+  });
+};
+/**
+ * 删除数据源
+ */
+export const delSoruce = ids => {
+  ids = ids || [];
+  return axios.request({
+    url: "/server/delete?ids=" + ids.join(","),
     method: "post"
   });
 };
 
-
 /**
- * 新增修改数据源
+ * 测试数据源连接
  */
- export const saveSoruce = (data) => {
-    return axios.request({
-      url: '/server/save',
-      data,
-      method: 'post'
-    })
-  }
+export const testSoruce = data => {
+  return axios.request({
+    url: "/server/testConnection",
+    method: "post",
+    data
+  });
+};
