@@ -33,7 +33,7 @@
     </sql>
 
     <sql id="toServerColumns">
-        t.ID          AS "fromServer.id",
+        t.ID          AS "toServer.id",
         t.IP          AS "toServer.ip",
         t.PORT        AS "toServer.port",
         t.PROTOCOL    AS "toServer.protocol",
