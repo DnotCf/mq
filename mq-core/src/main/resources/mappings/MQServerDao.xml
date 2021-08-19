@@ -147,7 +147,7 @@
 
     <update id="delete">
         UPDATE SRIG_MQ_SERVER
-        SET DEL_FALG = 1
+        SET DEL_FLAG = 1
         WHERE ID = #{id}
     </update>
 </mapper>
