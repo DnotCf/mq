@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 2021-08-17
  */
 @RestController
-@RequestMapping("/server")
+@RequestMapping("/api/server")
 @Api(tags = "数据源相关的接口")
 public class SrigMqServerController {
 

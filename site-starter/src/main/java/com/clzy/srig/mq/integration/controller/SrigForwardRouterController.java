@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 2021-08-17
  */
 @RestController
-@RequestMapping("/router")
+@RequestMapping("/api/router")
 @Api(tags = "映射管理相关的接口")
 public class SrigForwardRouterController {
 
