@@ -87,6 +87,11 @@ public class RocketMqService {
     }
 
     public void testConnect(ForwardRouter router) throws MQClientException {
+        if (router.getToServer() != null) {
+            DefaultMQProducer producer = buildProducer(router.getToServer());
+            producer.shutdown();
+            return;
+        }
         if (StringUtils.isBlank(router.getFromTopic())) {
             router.setFromTopic("testConnect");
         }
@@ -100,6 +105,13 @@ public class RocketMqService {
         if (producerMap.get(url) != null) {
             return producerMap.get(url);
         }
+        DefaultMQProducer producer = buildProducer(server);
+        producerMap.put(url, producer);
+        return producer;
+    }
+
+    public DefaultMQProducer buildProducer(MQServer server) throws MQClientException {
+        String url = getConectionUrl(server);
         log.info("====={}===activeMQ生产服务连接创建开始=====", url);
 //        JSONObject param = getDefaultParam(server.getDefaultParam());
         String group = server.getGroup();
@@ -115,7 +127,6 @@ public class RocketMqService {
             producer.setRetryTimesWhenSendAsyncFailed(server.getRetry());
         }
         producer.start();
-        producerMap.put(url, producer);
         log.info("====={}===activeMQ生产服务连接服务创建成功=====", url);
         return producer;
     }

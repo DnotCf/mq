@@ -39,24 +39,26 @@ public class AmqpService {
 
     public Channel build(MQServer server) throws Exception {
         String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
-        Channel client = amqpClientMap.get(connectUrl);
-        if (client == null) {
-            log.info("=====AMQP服务=RabbitMq连接开始=====");
-            ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost(server.getIp());
-            factory.setPort(server.getPort());
-            factory.setUsername(server.getUsername());
-            factory.setPassword(server.getPassword());
-            factory.setVirtualHost(server.getClientName());
-            Connection connection = factory.newConnection();
-            client = connection.createChannel();
-            log.info("=====AMQP服务=RabbitMq连接完成=====");
+        log.info("=====AMQP服务=RabbitMq连接开始=====");
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost(server.getIp());
+        factory.setPort(server.getPort());
+        factory.setUsername(server.getUsername());
+        factory.setPassword(server.getPassword());
+        factory.setVirtualHost(server.getClientName());
+        Connection connection = factory.newConnection();
+        Channel client =  connection.createChannel();
+        log.info("=====AMQP服务=RabbitMq连接完成=====");
 //                amqpClientMap.put(connectUrl, client);
-        }
         return client;
     }
 
     public void testConnect(ForwardRouter router) throws Exception {
+        if (router.getToServer() != null) {
+            Channel build = build(router.getToServer());
+            build.close();
+            return;
+        }
         Channel client = build(router.getFromServer());
         if (StringUtils.isNotBlank(router.getFromTopic())) {
             client.queueDeclare(router.getFromTopic(), false, false, false, null);
@@ -80,7 +82,6 @@ public class AmqpService {
             } catch (TimeoutException e) {
                 e.printStackTrace();
             }
-
         }
     }
 

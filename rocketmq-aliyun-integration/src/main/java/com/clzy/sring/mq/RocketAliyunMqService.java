@@ -53,7 +53,7 @@ public class RocketAliyunMqService {
 
     public ConsumerBean build(ForwardRouter router) {
         String conectionUrl = getConectionUrl(router.getFromServer());
-        log.info("==={}===阿里云rocketmq连接开始=====", conectionUrl);
+        log.info("==={}===ConsumerBean 阿里云rocketmq连接开始=====", conectionUrl);
         MqConfig mqConfig = new MqConfig();
         JSONObject param = getDefaultParam(router.getFromServer().getDefaultParam());
         mqConfig.setSecretKey(router.getFromServer().getSecretKey());
@@ -98,11 +98,16 @@ public class RocketAliyunMqService {
         //订阅多个topic如上面设置
         orderConsumerBean.setSubscriptionTable(subscriptionTable);
 //        consumerMap.put(conectionUrl, orderConsumerBean);
-        log.info("==={}===阿里云rocketmq连接成功=====", conectionUrl);
+        log.info("==={}===ConsumerBean 阿里云rocketmq连接成功=====", conectionUrl);
         return orderConsumerBean;
     }
 
     public void testConnection(ForwardRouter router) {
+        if (router.getToServer() != null) {
+            ProducerBean producerBean = buildProducer(router);
+            producerBean.shutdown();
+            return;
+        }
         if (StringUtils.isBlank(router.getFromTopic())) {
             router.setFromTopic("testConnection");
         }
@@ -111,11 +116,9 @@ public class RocketAliyunMqService {
         build.shutdown();
     }
 
-    public ProducerBean buildOrderProducer(ForwardRouter server) {
+    public ProducerBean buildProducer(ForwardRouter server) {
         String conectionUrl = getConectionUrl(server.getFromServer());
-        if (producerMap.get(conectionUrl) != null) {
-            return producerMap.get(conectionUrl);
-        }
+        log.info("==={}===ProducerBean 阿里云rocketmq连接开始=====", conectionUrl);
         MqConfig mqConfig = new MqConfig();
 //        JSONObject param = getDefaultParam(server.getToServer().getDefaultParam());
         mqConfig.setSecretKey(server.getToServer().getSecretKey());
@@ -126,10 +129,20 @@ public class RocketAliyunMqService {
 //        mqConfig.setOrderTag(param.getString("tag"));
         ProducerBean orderProducerBean = new ProducerBean();
         orderProducerBean.setProperties(mqConfig.getMqPropertie());
-        //启
+        //启动
         orderProducerBean.start();
-        producerMap.put(conectionUrl, orderProducerBean);
+        log.info("==={}===ProducerBean 阿里云rocketmq连接成功=====", conectionUrl);
         return orderProducerBean;
+    }
+
+    public ProducerBean buildOrderProducer(ForwardRouter server) {
+        String conectionUrl = getConectionUrl(server.getFromServer());
+        if (producerMap.get(conectionUrl) != null) {
+            return producerMap.get(conectionUrl);
+        }
+        ProducerBean producerBean = buildProducer(server);
+        producerMap.put(conectionUrl, producerBean);
+        return producerBean;
     }
 
     public String getConectionUrl(MQServer server) {

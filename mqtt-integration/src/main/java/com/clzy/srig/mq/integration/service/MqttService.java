@@ -34,27 +34,30 @@ public class MqttService {
 
     public MqttClient build(MQServer server) throws MqttException {
         String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
-        MqttClient client = mqttClientMap.get(connectUrl);
-        if (client == null) {
-            log.info("=={}===MQTT连接开始=====",connectUrl);
-            client = new MqttClient(connectUrl, server.getClientName(), new MemoryPersistence());
-            MqttConnectOptions options = new MqttConnectOptions();
-            options.setCleanSession(true);
-            if (StringUtils.isNotBlank(server.getUsername())) {
-                options.setUserName(server.getUsername());
-            }
-            if (StringUtils.isNotBlank(server.getUsername())) {
-                options.setPassword(server.getPassword().toCharArray());
-            }
-            options.setConnectionTimeout(10);
-            options.setKeepAliveInterval(20);
-            client.connect(options);
-            log.info("==={}==MQTT连接完成=====", connectUrl);
+        log.info("=={}===MQTT连接开始=====",connectUrl);
+        MqttClient client = new MqttClient(connectUrl, server.getClientName(), new MemoryPersistence());
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setCleanSession(true);
+        if (StringUtils.isNotBlank(server.getUsername())) {
+            options.setUserName(server.getUsername());
         }
+        if (StringUtils.isNotBlank(server.getUsername())) {
+            options.setPassword(server.getPassword().toCharArray());
+        }
+        options.setConnectionTimeout(10);
+        options.setKeepAliveInterval(20);
+        client.connect(options);
+        log.info("==={}==MQTT连接完成=====", connectUrl);
         return client;
     }
 
     public void testConncet(ForwardRouter router) throws Exception {
+        if (router.getToServer() != null) {
+            MqttClient build = build(router.getToServer());
+            build.disconnect();
+            build.close(true);
+            return;
+        }
         MqttClient client = build(router.getFromServer());
         if (StringUtils.isNotBlank(router.getFromTopic())) {
             client.subscribe(router.getFromTopic().split(","));

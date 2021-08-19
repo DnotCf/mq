@@ -137,7 +137,9 @@
                 <if test="expireTime !=null" >
                     EXPIRE_TIME= #{expireTime},
                 </if>
-                STATUS =#{status}
+                <if test="status !=null">
+                    STATUS =#{status}
+                </if>
         WHERE ID = #{id}
     </update>
 

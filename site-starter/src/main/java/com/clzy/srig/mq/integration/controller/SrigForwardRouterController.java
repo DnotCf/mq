@@ -5,6 +5,7 @@ import com.clzy.geo.core.common.dto.common.JsonResponse;
 import com.clzy.geo.core.common.persistence.Page;
 import com.clzy.geo.core.utils.StringUtils;
 import com.clzy.srig.mq.integration.entity.ForwardRouter;
+import com.clzy.srig.mq.integration.entity.MQServer;
 import com.clzy.srig.mq.integration.service.ForwardRouterService;
 
 import com.clzy.srig.mq.integration.service.ForwardService;
@@ -91,10 +92,19 @@ public class SrigForwardRouterController {
         return JsonResponse.success(true);
     }
 
-//    @ApiOperation(value = "延长过期时间", notes = "延长过期时间")
-//    @GetMapping("expireTime")
-//    public JsonResponse startConnection(String id) {
-//        forwardService.startConsumer(service.get(id));
-//        return JsonResponse.success(true);
-//    }
+    @ApiOperation(value = "更新过期时间", notes = "更新过期时间")
+    @PostMapping("expireTime")
+    public JsonResponse updateExpireTime(@RequestBody ForwardRouter entiy) {
+        service.updateStatus(entiy);
+        return JsonResponse.success(true);
+    }
+
+    @ApiOperation(value = "连接测试", notes = "连接测试")
+    @PostMapping("testConnection")
+    public JsonResponse testConnection(@RequestBody MQServer entiy) {
+        ForwardRouter router = new ForwardRouter();
+        router.setToServer(entiy);
+        router.setToTopic(entiy.getTopic());
+        return JsonResponse.success(forwardService.testConnection(router));
+    }
 }

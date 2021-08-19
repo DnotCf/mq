@@ -92,6 +92,7 @@ public class ForwardService {
      * @param router
      */
     public void addRouterTable(ForwardRouter router) {
+        log.info("=={}=名称{}==源topic:{},目标topic:{}=添加路由表=====", DateUtils.getDateTime(), router.getFromServer().getName(), router.getFromTopic(), router.getToTopic());
         check(router);
         String fromId = router.getFromServer().getId();
         List<ForwardRouter> routers = routerTable.get(fromId);
@@ -118,6 +119,7 @@ public class ForwardService {
      * @param router
      */
     public void deleteRouterTable(ForwardRouter router) {
+        log.info("=={}=名称{}=映射id:{}=topic:{}=删除路由表=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
         check(router);
         String fromId = router.getFromServer().getId();
         List<ForwardRouter> routers = routerTable.get(fromId);
@@ -130,6 +132,7 @@ public class ForwardService {
     }
 
     public void stopConsumer(ForwardRouter router) {
+        log.info("=={}=名称{}=映射id:{}=topic:{}=停止消费=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
         messagePublishes.forEach(p -> {
             if (p.type().equals(router.getFromServer().getType())) {
                 p.disConnect(router);
@@ -138,6 +141,7 @@ public class ForwardService {
     }
 
     public void startConsumer(ForwardRouter router) {
+        log.info("=={}=名称{}=映射id:{}=topic:{}=启动消费=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
         messagePublishes.forEach(p -> {
             if (p.type().equals(router.getFromServer().getType())) {
                 p.connect(router);
@@ -151,6 +155,7 @@ public class ForwardService {
      * @param router
      */
     public void updateRouterTable(ForwardRouter router) {
+        log.info("=={}=名称{}=映射id:{}=topic:{}=更新路由表=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
         check(router);
         String fromId = router.getFromServer().getId();
         List<ForwardRouter> routers = routerTable.get(fromId);
@@ -175,18 +180,17 @@ public class ForwardService {
     }
 
     public boolean testConnection(ForwardRouter router) {
-        if (router.getFromServer() == null || router.getFromServer().getType() == null) {
-            return false;
-        }
         for (IMqIntegration publish : messagePublishes) {
-            if (publish.type().equals(router.getFromServer().getType())) {
+            if ((router.getFromServer() !=null && publish.type().equals(router.getFromServer().getType())) ||
+                    (router.getToServer() !=null && publish.type().equals(router.getToServer().getType()))
+            ) {
                 return publish.testConnect(router);
             }
         }
         return false;
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 30)
+    @Scheduled(fixedRate = 1000 * 60 * 1)
     public void statusSync() {
         log.info("==={}==服务转发状态同步开始=====", DateUtils.getDateTime());
         Collection<List<ForwardRouter>> values = routerTable.values();
@@ -207,9 +211,9 @@ public class ForwardService {
                     deleteRouterTable(router);
                     router.setStatus(MQStuats.expire.getCode());
                 } else {
-                    if (MQStuats.online.equals(router.getStatus())) {
+                    if (MQStuats.online.getCode().equals(router.getStatus())) {
                         online++;
-                    } else if (MQStuats.client_offline.equals(router.getStatus())) {
+                    } else if (MQStuats.client_offline.getCode().equals(router.getStatus())) {
                         clientOffline++;
                     } else {
                         serverOffline++;
