@@ -87,7 +87,7 @@ public class SrigMqServerController {
             return "数据源类型不为空";
         }
         if (StringUtils.isBlank(entity.getName())) {
-            return "数据源名称";
+            return "数据源名称不为空";
         }
         if (StringUtils.isBlank(entity.getTopic())) {
             return "topic不为空";
