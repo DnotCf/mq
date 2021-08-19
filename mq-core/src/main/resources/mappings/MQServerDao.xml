@@ -3,6 +3,7 @@
 <mapper namespace="com.clzy.srig.mq.integration.dao.MQServerDao">
     <sql id="mqServerColumns">
         a.ID          AS "id",
+        a.NAME        AS "name",
         a.IP          AS "ip",
         a.PORT        AS "port",
         a.PROTOCOL    AS "protocol",
@@ -84,6 +85,7 @@
 
     <insert id="insert">
         INSERT INTO SRIG_MQ_SERVER(ID,
+                                   NAME,
                                    IP,
                                    PORT,
                                    CLIENT_NAME,
@@ -103,6 +105,7 @@
                                    SECRET_KEY,
                                    ACCESS_KEY)
         VALUES (#{id},
+                #{name}
                 #{ip},
                 #{port},
                 #{clientName},
@@ -126,6 +129,7 @@
     <update id="update">
         UPDATE SRIG_MQ_SERVER
         SET IP            = #{ip},
+            NAME          =#{name},
             PORT          = #{port},
             CLIENT_NAME   = #{clientName},
             PROTOCOL      = #{protocol},

@@ -15,6 +15,7 @@
     </sql>
 
     <sql id="fromServerColumns">
+        f.NAME        AS "fromServer.name",
         f.IP          AS "fromServer.ip",
         f.PORT        AS "fromServer.port",
         f.PROTOCOL    AS "fromServer.protocol",
@@ -32,6 +33,7 @@
     </sql>
 
     <sql id="toServerColumns">
+        t.NAME        AS "toServer.name",
         t.IP          AS "toServer.ip",
         t.PORT        AS "toServer.port",
         t.PROTOCOL    AS "toServer.protocol",

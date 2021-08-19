@@ -22,6 +22,11 @@ public class MQServer extends DataEntity<MQServer> {
     private String protocol;
 
     /**
+     * 数据源名称
+     */
+    private String name;
+
+    /**
      * 服务器地址
      */
     private String ip;
