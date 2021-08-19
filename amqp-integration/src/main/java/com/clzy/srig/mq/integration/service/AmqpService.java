@@ -38,7 +38,7 @@ public class AmqpService {
     }
 
     public Channel build(MQServer server) throws Exception {
-        String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
+//        String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
         log.info("=====AMQP服务=RabbitMq连接开始=====");
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(server.getIp());

@@ -124,9 +124,9 @@ public class SrigMqServerController {
                 return "客户端名称不为空";
             }
         }else if (MQIntegration.ServerType.AMQP.equals(entity.getType())){
-            if (StringUtils.isBlank(entity.getProtocol())) {
-                return "传输协议不为空";
-            }
+//            if (StringUtils.isBlank(entity.getProtocol())) {
+//                return "传输协议不为空";
+//            }
             if (StringUtils.isBlank(entity.getIp())) {
                 return "ip地址不为空";
             }
