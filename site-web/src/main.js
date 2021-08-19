@@ -12,18 +12,25 @@ import { directive as clickOutside } from 'v-click-outside-x'
 import installPlugin from '@/plugin'
 import './index.less'
 import './them/them.less'
-import '@/assets/icons/iconfont.css'
+import '@/assets/fonts/iconfont.css'
 // import style
 import 'view-design/dist/styles/iview.css';
 import TreeTable from 'tree-table-vue'
 import VOrgTree from 'v-org-tree'
 import 'v-org-tree/dist/v-org-tree.css'
+
+// 引入svgIcon
+import '@/assets/icons';
+import SvgIcon from '@/components/svg-icon/svg-icon';
 // vue原型上全局属性和方法统一注册入口
 import Global from '@/libs/global'
 Vue.use(Global)
 // 实际打包时应该不引入mock
 /* eslint-disable */
 //if (process.env.NODE_ENV !== 'production') require('@/mock')
+
+Vue.component('SvgIcon', SvgIcon);
+
 
 Vue.use(ViewUI, {
   i18n: (key, value) => i18n.t(key, value)

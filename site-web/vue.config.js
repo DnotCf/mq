@@ -1,8 +1,8 @@
-const path = require('path')
+const path = require("path");
 
 const resolve = dir => {
-  return path.join(__dirname, dir)
-}
+  return path.join(__dirname, dir);
+};
 
 // 项目部署基础
 // 默认情况下，我们假设你的应用将被部署在域的根目录下,
@@ -12,9 +12,7 @@ const resolve = dir => {
 // 例如：https://www.foobar.com/my-app/
 // 需要将它改为'/my-app/'
 // iview-admin线上演示打包路径： https://file.iviewui.com/admin-dist/
-const BASE_URL = process.env.NODE_ENV === 'production'
-  ? '/'
-  : '/'
+const BASE_URL = process.env.NODE_ENV === "production" ? "/" : "/";
 
 module.exports = {
   // Project deployment base
@@ -31,20 +29,41 @@ module.exports = {
   lintOnSave: false,
   chainWebpack: config => {
     config.resolve.alias
-      .set('@', resolve('src')) // key,value自行定义，比如.set('@@', resolve('src/components'))
-      .set('_c', resolve('src/components'))
+      .set("@", resolve("src")) // key,value自行定义，比如.set('@@', resolve('src/components'))
+      .set("_c", resolve("src/components"));
+    const imagesRule = config.module.rule("images");
+    imagesRule
+      .test(/\.(png|jpe?g|gif|webp)(\?.*)?$/)
+      .exclude.add(resolve("src/assets/svg"))
+      .end();
+
+    config.module
+      .rule("svg")
+      .exclude.add(resolve("src/assets/icons"))
+      .end();
+
+    config.module
+      .rule("icons")
+      .test(/\.svg$/)
+      .include.add(resolve("src/assets/icons"))
+      .end()
+      .use("svg-sprite-loader")
+      .loader("svg-sprite-loader")
+      .options({
+        symbolId: "icon-[name]"
+      });
   },
   // 打包时不生成.map文件
   productionSourceMap: false,
   // 这里写你调用接口的基础路径，来解决跨域，如果设置了代理，那你本地开发环境的axios的baseUrl要写为 '' ，即空字符串
   devServer: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:8085/',  //这里后台的地址模拟的;应该填写你们真实的后台接口
-        changOrigin: true,  //允许跨域
-      },
+      "/api": {
+        target: "http://localhost:8085/", //这里后台的地址模拟的;应该填写你们真实的后台接口
+        changOrigin: true //允许跨域
+      }
     },
     port: 8082,
-    disableHostCheck:true
+    disableHostCheck: true
   }
-}
+};

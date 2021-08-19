@@ -1,4 +1,4 @@
-import Main from '@/components/main'
+import Main from "@/components/main";
 
 /**
  * iview-admin中meta除了原生参数外可配置的参数:
@@ -18,32 +18,35 @@ import Main from '@/components/main'
 
 export default [
   {
-    path: '/login',
-    name: 'login',
+    path: "/login",
+    name: "login",
     meta: {
-      title: 'Login - 登录',
-      hideInMenu: true
+      title: "Login - 登录",
+      hideInMenu: true,
+      icon: ""
     },
-    component: () => import('@/view/login/login.vue')
+    component: () => import("@/view/login/login.vue")
   },
   {
-    path: '/',
-    name: '_home',
-    redirect: '/home',
+    path: "/",
+    name: "_home",
+    redirect: "/home",
     component: Main,
     meta: {
-      notCache: true
+      notCache: true,
+      title: "",
+      icon: ""
     },
     children: [
       {
-        path: '/home',
-        name: 'warn_statistics',
+        path: "/home",
+        name: "data_forwarding",
         meta: {
-          title: '数据转发服务',
+          title: "数据转发服务",
           notCache: true,
-          icon: '_jingqingtongji'
+          icon: "_jingqingtongji"
         },
-        component: () => import('@/view/single-page/home')
+        component: () => import("@/view/single-page/home")
       }
     ]
   },
@@ -94,27 +97,33 @@ export default [
   //   }]
   // },
   {
-    path: '/401',
-    name: 'error_401',
+    path: "/401",
+    name: "error_401",
     meta: {
-      hideInMenu: true
+      hideInMenu: true,
+      title: "",
+      icon: ""
     },
-    component: () => import('@/view/error-page/401.vue')
+    component: () => import("@/view/error-page/401.vue")
   },
   {
-    path: '/500',
-    name: 'error_500',
+    path: "/500",
+    name: "error_500",
     meta: {
-      hideInMenu: true
+      hideInMenu: true,
+      title: "",
+      icon: ""
     },
-    component: () => import('@/view/error-page/500.vue')
+    component: () => import("@/view/error-page/500.vue")
   },
   {
-    path: '*',
-    name: 'error_404',
+    path: "*",
+    name: "error_404",
     meta: {
-      hideInMenu: true
+      hideInMenu: true,
+      title: "",
+      icon: ""
     },
-    component: () => import('@/view/error-page/404.vue')
+    component: () => import("@/view/error-page/404.vue")
   }
-]
+];
