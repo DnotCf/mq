@@ -33,6 +33,8 @@ public class ForwardRouter extends DataEntity<ForwardRouter> {
      */
     private Date expireTime;
 
+    private Integer sourceType;
+
     @Override
     public void doPreInsert() {
 
