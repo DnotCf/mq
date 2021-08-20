@@ -615,19 +615,17 @@
       </div>
     </div>
     <map-modal ref="mapNode"></map-modal>
-    <del-modal ref="delNode"></del-modal>
   </div>
 </template>
 <script>
 import SvgIcon from "@/components/svg-icon/svg-icon";
 import ListTables from "@/components/tables/tables";
 import MapModal from "./components/map-modal";
-import DelModal from "./components/del-modal";
 
 import dataSourceApi from "@/api/dataSourceApi";
 export default {
   name: "",
-  components: { ListTables, SvgIcon, MapModal, DelModal },
+  components: { ListTables, SvgIcon, MapModal },
   data() {
     return {
       columns: [
@@ -940,31 +938,29 @@ export default {
       this.isSource = true;
 
       console.log("删除数据源", this.isSource);
-
-      this.$refs.delNode.show(ids);
-      this.$Modal.confirm({
-        content: `<Icon type='ios-alert' /><p>你确定要删除吗？</p>`,
-        okText: "确定",
-        cancelText: "取消",
-        onOk: () => {
-          dataSourceApi
-            .delSoruce(ids)
-            .then(res => {
-              if (res.code === 200) {
-                this.formValidate = {};
-                this.isSourceDel = false;
-                this.$Message.success("删除成功!");
-                this.$refs.dataTables.refreshPageData();
-              } else {
-                this.$Message.error("删除数据源失败!");
-              }
-            })
-            .catch(err => {
-              this.$Message.error("删除数据源失败!");
-            });
-        },
-        onCancel: () => {}
-      });
+      // this.$Modal.confirm({
+      //   content: `<Icon type='ios-alert' /><p>你确定要删除吗？</p>`,
+      //   okText: "确定",
+      //   cancelText: "取消",
+      //   onOk: () => {
+      //     dataSourceApi
+      //       .delSoruce(ids)
+      //       .then(res => {
+      //         if (res.code === 200) {
+      //           this.formValidate = {};
+      //           this.isSourceDel = false;
+      //           this.$Message.success("删除成功!");
+      //           this.$refs.dataTables.refreshPageData();
+      //         } else {
+      //           this.$Message.error("删除数据源失败!");
+      //         }
+      //       })
+      //       .catch(err => {
+      //         this.$Message.error("删除数据源失败!");
+      //       });
+      //   },
+      //   onCancel: () => {}
+      // });
     },
     handleDelSource() {
       let ids = this.selectList.map(item => {
