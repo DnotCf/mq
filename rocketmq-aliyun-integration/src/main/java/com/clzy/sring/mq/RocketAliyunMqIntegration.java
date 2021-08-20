@@ -60,7 +60,7 @@ public class RocketAliyunMqIntegration implements IMqIntegration {
     @Override
     public void connect(ForwardRouter router) {
         try {
-            ConsumerBean consumer = aliyunMqService.buildOrderConsumer(router);
+            aliyunMqService.buildOrderConsumer(router);
         } catch (Exception e) {
             router.setStatus(MQStuats.server_offline.getCode());
             log.error("初始化RocketMq连接失败", e);

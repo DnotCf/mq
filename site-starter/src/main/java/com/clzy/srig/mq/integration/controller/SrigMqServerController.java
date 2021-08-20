@@ -1,6 +1,7 @@
 package com.clzy.srig.mq.integration.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.clzy.geo.core.common.dto.common.JsonResponse;
 import com.clzy.geo.core.common.persistence.Page;
 import com.clzy.geo.core.utils.StringUtils;
@@ -76,6 +77,16 @@ public class SrigMqServerController extends BaseController {
     @ApiOperation(value = "连接测试", notes = "连接测试")
     @PostMapping("testConnection")
     public JsonResponse testConnection(@RequestBody MQServer entiy) {
+        if (StringUtils.isNotBlank(entiy.getDefaultParam())) {
+            try {
+                JSONObject object = JSONObject.parseObject(entiy.getDefaultParam());
+                Boolean noCheck = object.getBoolean("check");
+                if (noCheck != null && noCheck == false) {
+                    return JsonResponse.success(true);
+                }
+            } catch (Exception e) {
+            }
+        }
         String check = check(entiy);
         if (StringUtils.isNotBlank(check)) {
             return JsonResponse.success(check);

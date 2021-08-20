@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author: tangs
@@ -36,13 +37,13 @@ import java.util.Properties;
 public class RocketAliyunMqService {
 
 
-    private Map<String, ConsumerBean> consumerMap = new HashMap<>();
-    private Map<String, ProducerBean> producerMap = new HashMap<>();
+    private ConcurrentHashMap<String, ConsumerBean> consumerMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, ProducerBean> producerMap = new ConcurrentHashMap<>();
 
     @Autowired
     private ForwardService forwardService;
 
-    public ConsumerBean buildOrderConsumer(ForwardRouter router) {
+    public synchronized ConsumerBean buildOrderConsumer(ForwardRouter router) {
         String conectionUrl = getConectionUrl(router.getFromServer());
         if (consumerMap.get(conectionUrl) != null) {
             return consumerMap.get(conectionUrl);
@@ -85,7 +86,6 @@ public class RocketAliyunMqService {
         subscriptionTable.put(subscription, new MessageListener() {
             @Override
             public Action consume(Message message, ConsumeContext context) {
-                log.debug("AliYunMQ Receive: " + message);
                 try {
                     //do something..
                     forwardService.publish(router.getFromServer(), message.getBody());
@@ -182,7 +182,7 @@ public class RocketAliyunMqService {
         }
     }
 
-    public ProducerBean buildProducer(ForwardRouter server) {
+    public  ProducerBean buildProducer(ForwardRouter server) {
         String conectionUrl = getConectionUrl(server.getToServer());
         log.info("==={}===ProducerBean 阿里云rocketmq连接开始=====", conectionUrl);
         MqConfig mqConfig = new MqConfig();
@@ -201,7 +201,7 @@ public class RocketAliyunMqService {
         return orderProducerBean;
     }
 
-    public ProducerBean buildOrderProducer(ForwardRouter server) {
+    public synchronized ProducerBean buildOrderProducer(ForwardRouter server) {
         String conectionUrl = getConectionUrl(server.getToServer());
         if (producerMap.get(conectionUrl) != null) {
             return producerMap.get(conectionUrl);
@@ -242,7 +242,7 @@ public class RocketAliyunMqService {
             object.put(PropertyKeyConst.MessageModel, "BROADCASTING");
         }
         if (object.getInteger("waitSec") == null) {
-            object.put("waitSec", 6);
+            object.put("waitSec", 10);
         }
         return object;
     }

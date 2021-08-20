@@ -14,13 +14,14 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Component
 public class AmqpService {
 
-    private Map<String, Channel> amqpClientMap = new HashMap<>();
+    private ConcurrentHashMap<String, Channel> amqpClientMap = new ConcurrentHashMap<>();
 
     public synchronized Channel getConnect(MQServer server) throws Exception {
         String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());

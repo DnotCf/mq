@@ -30,6 +30,9 @@ public class MqttIntegration implements IMqIntegration {
     public void onPublich(ForwardRouter router, byte[] message) {
         MQServer server = router.getToServer();
         try {
+            if (server.getRetry() != null && server.getRetry() < 0) {
+                return;
+            }
             MqttClient client = mqttService.getClient(server);
             client.publish(router.getToTopic(), message, 1, false);
             router.setStatus(MQStuats.online.getCode());
@@ -42,12 +45,11 @@ public class MqttIntegration implements IMqIntegration {
                 retry = 6;
                 server.setRetry(retry);
             }
-            server.setRetry(--retry);
-            if (server.getRetry() > 0) {
+            if (server.getRetry() >= 0) {
                 mqttService.disConnect(server);
                 log.info("=====MQTT producer剩余重试连接次数:{}=====", server.getRetry());
             }
-
+            server.setRetry(--retry);
         }
     }
 

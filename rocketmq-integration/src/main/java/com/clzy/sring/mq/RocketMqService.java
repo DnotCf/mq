@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author: tangs
@@ -37,10 +38,10 @@ public class RocketMqService {
 
     private Integer consumeMessageBatchMaxSize = 100;
 
-    private Map<String, DefaultMQPushConsumer> consumerMap = new HashMap<>();
-    private Map<String, DefaultMQProducer> producerMap = new HashMap<>();
+    private ConcurrentHashMap<String, DefaultMQPushConsumer> consumerMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, DefaultMQProducer> producerMap = new ConcurrentHashMap<>();
 
-    public DefaultMQPushConsumer createConsumer(ForwardRouter router) throws MQClientException {
+    public synchronized DefaultMQPushConsumer createConsumer(ForwardRouter router) throws MQClientException {
         MQServer server = router.getFromServer();
         String namesrvAddr = getConectionUrl(server);
         if (consumerMap.get(namesrvAddr) != null) {
@@ -84,7 +85,22 @@ public class RocketMqService {
         if (StringUtils.isBlank(tag)) {
             tag = "*";
         }
-        consumer.subscribe(router.getFromTopic(), tag);
+        if (router.getFromTopic().contains(",")) {
+            String[] topic = router.getFromTopic().split(",");
+            String[] tg = new String[topic.length];
+            if (tag.contains(",")) {
+                tg = tag.split(",");
+            }
+            for (int i = 0; i < topic.length; i++) {
+                if (i < tg.length && StringUtils.isNotBlank(tg[i])) {
+                    consumer.subscribe(topic[i], tg[i]);
+                }else {
+                    consumer.subscribe(topic[i], "*");
+                }
+            }
+        }else {
+            consumer.subscribe(router.getFromTopic(), tag);
+        }
 //        consumerMap.put(namesrvAddr, consumer);
         log.info("====={}===activeMQ消费连接服务创建成功=====", namesrvAddr);
         return consumer;
@@ -106,7 +122,7 @@ public class RocketMqService {
         consumer.shutdown();
     }
 
-    public DefaultMQProducer createProducer(MQServer server) throws MQClientException {
+    public synchronized DefaultMQProducer createProducer(MQServer server) throws MQClientException {
         String url = getConectionUrl(server);
         if (producerMap.get(url) != null) {
             return producerMap.get(url);

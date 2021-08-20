@@ -37,6 +37,9 @@ public class RocketMqIntegration implements IMqIntegration {
     public void onPublich(ForwardRouter router, byte[] message) {
         MQServer server = router.getToServer();
         try {
+            if (server.getRetry() != null && server.getRetry() < 0) {
+                return;
+            }
             DefaultMQProducer producer = rocketMqService.createProducer(server);
             Message msg = new Message(router.getToTopic(), message);
             producer.send(msg);
@@ -50,11 +53,11 @@ public class RocketMqIntegration implements IMqIntegration {
                 retry = 6;
                 server.setRetry(retry);
             }
-            server.setRetry(--retry);
             if (server.getRetry() >= 0) {
                 rocketMqService.disConnectProducer(server);
                 log.info("=====RocketMq producer剩余重试连接次数:{}=====", server.getRetry());
             }
+            server.setRetry(--retry);
         }
     }
 

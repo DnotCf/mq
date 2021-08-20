@@ -1,6 +1,7 @@
 package com.clzy.srig.mq.integration.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.clzy.geo.core.common.dto.common.JsonResponse;
 import com.clzy.geo.core.common.persistence.Page;
 import com.clzy.geo.core.utils.StringUtils;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -93,6 +96,30 @@ public class SrigForwardRouterController extends BaseController {
         return JsonResponse.success(true);
     }
 
+    @ApiOperation(value = "停止所有消费", notes = "停止所有消费")
+    @GetMapping("stopAll")
+    public JsonResponse stopAllConnection() {
+        List<ForwardRouter> list = service.findList(null);
+        for (ForwardRouter router : list) {
+            forwardService.deleteRouterTable(router);
+        }
+        return JsonResponse.success(list.size());
+    }
+
+    @ApiOperation(value = "启动所有消费", notes = "启动所有消费")
+    @GetMapping("startAll")
+    public JsonResponse startAllConnection() {
+        List<ForwardRouter> list = service.findList(null);
+        long count=0;
+        for (ForwardRouter router : list) {
+            if (router.getExpireTime() == null || router.getExpireTime().compareTo(new Date()) >= 0) {
+                forwardService.addRouterTable(router);
+                count++;
+            }
+        }
+        return JsonResponse.success(count);
+    }
+
     @ApiOperation(value = "停止消费", notes = "停止消费")
     @GetMapping("stop")
     public JsonResponse stopConnection(String id) {
@@ -117,6 +144,16 @@ public class SrigForwardRouterController extends BaseController {
     @ApiOperation(value = "连接测试", notes = "连接测试")
     @PostMapping("testConnection")
     public JsonResponse testConnection(@RequestBody MQServer entiy) {
+        if (StringUtils.isNotBlank(entiy.getDefaultParam())) {
+            try {
+                JSONObject object = JSONObject.parseObject(entiy.getDefaultParam());
+                Boolean noCheck = object.getBoolean("check");
+                if (noCheck != null && noCheck == false) {
+                    return JsonResponse.success(true);
+                }
+            } catch (Exception e) {
+            }
+        }
         String check = check(entiy);
         if (StringUtils.isNotBlank(check)) {
             return JsonResponse.success(check);
