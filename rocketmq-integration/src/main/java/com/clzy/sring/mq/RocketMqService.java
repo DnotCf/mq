@@ -171,4 +171,16 @@ public class RocketMqService {
         }
     }
 
+    public void disConnectProducer(MQServer server) {
+        String namesrvAddr = getConectionUrl(server);
+        if (StringUtils.isBlank(namesrvAddr)) {
+            namesrvAddr = String.format("%s:%d", server.getIp(), server.getPort());
+        }
+        DefaultMQProducer producer = producerMap.get(namesrvAddr);
+        if (producer != null) {
+            producer.shutdown();
+            consumerMap.remove(namesrvAddr);
+        }
+    }
+
 }

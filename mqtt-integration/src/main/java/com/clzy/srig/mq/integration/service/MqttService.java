@@ -2,12 +2,14 @@ package com.clzy.srig.mq.integration.service;
 
 import com.clzy.srig.mq.integration.entity.ForwardRouter;
 import com.clzy.srig.mq.integration.entity.MQServer;
+import com.clzy.srig.mq.integration.enums.MQStuats;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +36,7 @@ public class MqttService {
 
     public MqttClient build(MQServer server) throws MqttException {
         String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
-        log.info("=={}===MQTT连接开始=====",connectUrl);
+        log.info("=={}===MQTT 连接开始=====",connectUrl);
         MqttClient client = new MqttClient(connectUrl, server.getClientName(), new MemoryPersistence());
         MqttConnectOptions options = new MqttConnectOptions();
         options.setCleanSession(true);
@@ -47,13 +49,15 @@ public class MqttService {
         options.setConnectionTimeout(10);
         options.setKeepAliveInterval(20);
         client.connect(options);
-        log.info("==={}==MQTT连接完成=====", connectUrl);
+        log.info("==={}==MQTT 连接完成=====", connectUrl);
         return client;
     }
 
     public void testConncet(ForwardRouter router) throws Exception {
         if (router.getToServer() != null) {
             MqttClient build = build(router.getToServer());
+  /*          build.subscribe(router.getToTopic(),1);*/
+            build.publish(router.getToTopic(), "testMsg".getBytes(StandardCharsets.UTF_8), 1, false);
             build.disconnect();
             build.close(true);
             return;

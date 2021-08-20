@@ -37,6 +37,17 @@ public class MqttIntegration implements IMqIntegration {
             log.error("MQTT消息推送失败");
             e.printStackTrace();
             router.setStatus(MQStuats.client_offline.getCode());
+            Integer retry = server.getRetry();
+            if (retry == null) {
+                retry = 6;
+                server.setRetry(retry);
+            }
+            server.setRetry(--retry);
+            if (server.getRetry() > 0) {
+                mqttService.disConnect(server);
+                log.info("=====MQTT producer剩余重试连接次数:{}=====", server.getRetry());
+            }
+
         }
     }
 
