@@ -627,13 +627,14 @@
                     name="icon-loading"
                     class="demo-spin-icon-load"
                   ></svg-icon>
+                  <Icon type="ios-close-circle" color="red" v-else-if="!isSuccess" />
                    <svg-icon
-                  v-else
+                  v-else-if="isAdd"
                     name="icon-success"
                   ></svg-icon>
                 </Spin>
               </div>
-              <span class="checkoutTitle" :class="isLoad?'blue':'green'">{{ checkoutTitle }}</span>
+              <span class="checkoutTitle" :class="isAdd?'blue':isSuccess?'green':'red'">{{ checkoutTitle }}</span>
 
               <!-- <Spin fix>
                 <Icon type="ios-loading" size=18 ></Icon>
@@ -928,6 +929,7 @@ export default {
       selectList: [],
       isLoad: false,
       isShow: false,
+      isSuccess: false,
       checkoutTitle: "消息转发正在检验中，请稍后…"
     };
   },
@@ -962,13 +964,12 @@ export default {
     handleDelectSource() {
       if (!this.selectList.length) {
         return this.$Message.warning("请选择数据");
-        
       }
       let ids = this.selectList.map(item => {
         return item.fromServer.id;
       });
       this.$Modal.confirm({
-        content: "</svg-icon><p>你确定要删除吗？</p>",
+        content: "<Icon type='ios-alert' /><p>你确定要删除吗？</p>",
         okText: "确定",
         cancelText: "取消",
         onOk: () => {
@@ -1073,6 +1074,7 @@ export default {
     handleSubmit(val) {
       let isAdd = val;
       this.isLoad = true;
+      this.isAdd = true;
       this.isShow = true;
       let port = "";
       if (isAdd) {
@@ -1082,26 +1084,32 @@ export default {
       }
       this.$refs["formValidate"].validate(valid => {
         if (valid) {
-          console.log(this.formValidate, "this.formValidate");
-
           dataSourceApi[port](this.formValidate)
             .then(res => {
+              this.isLoad = false;
+              console.log(res.data);
               if (res.code === 200) {
-                this.selectList = [];
-                this.isLoad = false;
-                if (val) {
-                  this.checkoutTitle = "消息转发正在检验中，请稍后…";
-                  this.isShow = false;
-                  this.handleReset();
-                  this.isAdd = false;
-                  this.$Message.success("保存成功!");
+                let data = res.data;
+                if (data) {
+                  this.selectList = [];
+                  if (val) {
+                    this.checkoutTitle = "消息转发正在检验中，请稍后…";
+                    this.isShow = false;
+                    this.handleReset();
+                    this.isAdd = false;
+                    this.$Message.success("保存成功!");
+                  } else {
+                    this.checkoutTitle = "消息转发检验成功！";
+                    this.isAdd = true;
+                    this.isSuccess = true;
+                  }
                 } else {
-                  this.checkoutTitle = "消息转发检验成功！";
-                  this.isAdd = true;
+                  this.checkoutTitle = "消息转发检验失败！";
+                  this.isAdd = false;
+                  this.isSuccess = false;
                 }
               } else {
                 this.isLoad = false;
-
                 this.$Message.error("保存数据源失败!");
               }
             })
@@ -1120,6 +1128,10 @@ export default {
     handleReset() {
       this.$refs["formValidate"].resetFields();
       this.formValidate = {};
+      this.isShow = false;
+      this.isAdd = false;
+      this.isLoad = false;
+      this.isSuccess = false;
     }
   }
 };
