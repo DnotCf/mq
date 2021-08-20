@@ -1,5 +1,6 @@
 package com.clzy.srig.mq.integration.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.clzy.geo.core.utils.StringUtils;
 import com.clzy.srig.mq.integration.entity.MQServer;
 import com.clzy.srig.mq.integration.enums.MQIntegration;
@@ -17,6 +18,13 @@ public class BaseController {
         }
         if (StringUtils.isBlank(entity.getName())) {
             return "数据源名称不为空";
+        }
+        if (StringUtils.isNotBlank(entity.getDefaultParam())) {
+            try {
+                JSONObject.parseObject(entity.getDefaultParam());
+            } catch (Exception e) {
+                return "其他参数不为json字符串";
+            }
         }
         if (MQIntegration.ServerType.Aliyun_RocketMQ.equals(entity.getType())) {
             if (StringUtils.isBlank(entity.getCluster())) {

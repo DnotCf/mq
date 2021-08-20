@@ -153,6 +153,11 @@ public class ForwardService {
                 p.disConnect(router);
             }
         });
+        if (StringUtils.isNotBlank(router.getId())) {
+            router.setExpireTime(null);
+            router.setStatus(MQStuats.offline.getCode());
+            forwardRouterService.updateStatus(router);
+        }
     }
 
     public void startConsumer(ForwardRouter router) {

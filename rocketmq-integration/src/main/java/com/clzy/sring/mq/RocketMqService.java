@@ -11,13 +11,17 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
+import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageExt;
+import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,9 +90,11 @@ public class RocketMqService {
         return consumer;
     }
 
-    public void testConnect(ForwardRouter router) throws MQClientException {
+    public void testConnect(ForwardRouter router) throws Exception {
         if (router.getToServer() != null) {
             DefaultMQProducer producer = buildProducer(router.getToServer());
+            Message msg = new Message(router.getToTopic(), "TestConnectMessage".getBytes(StandardCharsets.UTF_8));
+            producer.send(msg);
             producer.shutdown();
             return;
         }
@@ -161,6 +167,18 @@ public class RocketMqService {
         DefaultMQPushConsumer consumer = consumerMap.get(namesrvAddr);
         if (consumer != null) {
             consumer.shutdown();
+            consumerMap.remove(namesrvAddr);
+        }
+    }
+
+    public void disConnectProducer(MQServer server) {
+        String namesrvAddr = getConectionUrl(server);
+        if (StringUtils.isBlank(namesrvAddr)) {
+            namesrvAddr = String.format("%s:%d", server.getIp(), server.getPort());
+        }
+        DefaultMQProducer producer = producerMap.get(namesrvAddr);
+        if (producer != null) {
+            producer.shutdown();
             consumerMap.remove(namesrvAddr);
         }
     }

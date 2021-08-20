@@ -105,7 +105,11 @@
                                    TOPIC,
                                    SECRET_KEY,
                                    ACCESS_KEY,
-                                   SOURCE_TYPE)
+                                   SOURCE_TYPE,
+                                   NETWORK_TYPE,
+                                   VPN_ACCONT,
+                                   VPN_PASSWORD
+                                    )
         VALUES (#{id},
                 #{name},
                 #{ip},
@@ -126,7 +130,11 @@
                 #{topic},
                 #{secretKey},
                 #{accessKey},
-                #{sourceType}       )
+                #{sourceType},
+                #{networkType},
+                #{vpnAccount},
+                #{vpnPassword}
+                       )
     </insert>
 
     <update id="update">
@@ -149,7 +157,10 @@
             TOPIC=#{topic},
             SECRET_KEY=#{secretKey},
             ACCESS_KEY=#{accessKey},
-            SOURCE_TYPE=#{sourceType}
+            SOURCE_TYPE=#{sourceType},
+            NETWORK_TYPE=#{networkType},
+            VPN_ACCONT=#{vpnAccount},
+            VPN_PASSWORD=#{vpnPassword}
         WHERE ID = #{id}
     </update>
 
