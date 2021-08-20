@@ -12,12 +12,13 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
 public class MqttService {
 
-    private Map<String, MqttClient> mqttClientMap = new HashMap<>();
+    private ConcurrentHashMap<String, MqttClient> mqttClientMap = new ConcurrentHashMap<>();
 
     public synchronized MqttClient getClient(MQServer server) throws MqttException {
         String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());

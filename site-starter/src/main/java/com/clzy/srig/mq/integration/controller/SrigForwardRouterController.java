@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -91,6 +93,28 @@ public class SrigForwardRouterController extends BaseController {
             service.delete(new ForwardRouter(id));
         }
         return JsonResponse.success(true);
+    }
+
+    @ApiOperation(value = "停止所有消费", notes = "停止所有消费")
+    @GetMapping("stopAll")
+    public JsonResponse stopAllConnection() {
+        List<ForwardRouter> list = service.findList(null);
+        for (ForwardRouter router : list) {
+            forwardService.deleteRouterTable(router);
+        }
+        return JsonResponse.success(list.size());
+    }
+
+    @ApiOperation(value = "启动所有消费", notes = "启动所有消费")
+    @GetMapping("startAll")
+    public JsonResponse startAllConnection() {
+        List<ForwardRouter> list = service.findList(null);
+        for (ForwardRouter router : list) {
+            if (router.getExpireTime() == null || router.getExpireTime().compareTo(new Date()) >= 0) {
+                forwardService.addRouterTable(router);
+            }
+        }
+        return JsonResponse.success(list.size());
     }
 
     @ApiOperation(value = "停止消费", notes = "停止消费")
