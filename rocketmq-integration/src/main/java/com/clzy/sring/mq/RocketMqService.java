@@ -85,7 +85,22 @@ public class RocketMqService {
         if (StringUtils.isBlank(tag)) {
             tag = "*";
         }
-        consumer.subscribe(router.getFromTopic(), tag);
+        if (router.getFromTopic().contains(",")) {
+            String[] topic = router.getFromTopic().split(",");
+            String[] tg = new String[topic.length];
+            if (tag.contains(",")) {
+                tg = tag.split(",");
+            }
+            for (int i = 0; i < topic.length; i++) {
+                if (i < tg.length && StringUtils.isNotBlank(tg[i])) {
+                    consumer.subscribe(topic[i], tg[i]);
+                }else {
+                    consumer.subscribe(topic[i], "*");
+                }
+            }
+        }else {
+            consumer.subscribe(router.getFromTopic(), tag);
+        }
 //        consumerMap.put(namesrvAddr, consumer);
         log.info("====={}===activeMQ消费连接服务创建成功=====", namesrvAddr);
         return consumer;

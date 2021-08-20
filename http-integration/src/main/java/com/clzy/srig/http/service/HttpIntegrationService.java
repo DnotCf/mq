@@ -13,7 +13,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class HttpIntegrationService {
 
-    private RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    private RestTemplate restTemplate;
 
     public void createConnect(MQServer server) {
         String url = getConectionUrl(server);
