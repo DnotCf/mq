@@ -242,7 +242,7 @@ public class RocketAliyunMqService {
             object.put(PropertyKeyConst.MessageModel, "BROADCASTING");
         }
         if (object.getInteger("waitSec") == null) {
-            object.put("waitSec", 6);
+            object.put("waitSec", 10);
         }
         return object;
     }
