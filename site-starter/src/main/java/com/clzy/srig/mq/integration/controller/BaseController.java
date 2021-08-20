@@ -23,7 +23,7 @@ public class BaseController {
             try {
                 JSONObject.parseObject(entity.getDefaultParam());
             } catch (Exception e) {
-                return "其他参数不为json字符串";
+                return "其他参数不为JSON格式";
             }
         }
         if (MQIntegration.ServerType.Aliyun_RocketMQ.equals(entity.getType())) {
@@ -61,7 +61,7 @@ public class BaseController {
                 return "端口不为空";
             }
             if (StringUtils.isBlank(entity.getClientName())) {
-                return "客户端名称不为空";
+                return "Client ID不为空";
             }
             if (StringUtils.isBlank(entity.getTopic())) {
                 return "topic不为空";
@@ -80,7 +80,7 @@ public class BaseController {
                 return "用户名密码不为空";
             }
             if (StringUtils.isBlank(entity.getClientName())) {
-                return "客户端名称不为空";
+                return "VirtualHost不为空";
             }
             if (StringUtils.isBlank(entity.getTopic())) {
                 return "topic不为空";
