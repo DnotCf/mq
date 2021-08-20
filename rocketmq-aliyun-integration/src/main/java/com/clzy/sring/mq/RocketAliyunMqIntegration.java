@@ -75,7 +75,12 @@ public class RocketAliyunMqIntegration implements IMqIntegration {
 
     @Override
     public boolean testConnect(ForwardRouter router) {
-        aliyunMqService.testConnection(router);
+        try {
+            aliyunMqService.testConnection(router);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
         return true;
     }
 }

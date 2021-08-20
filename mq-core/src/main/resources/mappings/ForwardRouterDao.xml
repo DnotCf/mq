@@ -29,7 +29,10 @@
         f.GROUP_ID       AS "fromServer.group",
         f.CLUSTER     AS "fromServer.cluster",
         f.TOPIC     AS "fromServer.topic",
-        f.STATUS      AS "fromServer.stauts"
+        f.STATUS      AS "fromServer.stauts",
+        f.NETWORK_TYPE AS "fromServer.networkType",
+        f.VPN_ACCONT  AS "fromServer.vpnAccount",
+        f.VPN_PASSWORD AS "fromServer.vpnPassword"
     </sql>
 
     <sql id="toServerColumns">
@@ -47,7 +50,10 @@
         t.GROUP_ID       AS "toServer.group",
         t.CLUSTER     AS "toServer.cluster",
         t.TOPIC     AS "toServer.topic",
-        t.STATUS      AS "toServer.stauts"
+        t.STATUS      AS "toServer.stauts",
+        t.NETWORK_TYPE AS "toServer.networkType",
+        t.VPN_ACCONT  AS "toServer.vpnAccount",
+        t.VPN_PASSWORD AS "toServer.vpnPassword"
     </sql>
 
     <sql id="rsuJoins">
@@ -66,24 +72,54 @@
 
     <select id="findList" resultType="ForwardRouter">
         SELECT
-        <include refid="rsuColumns"/>
+        <choose>
+            <when test="sourceType == null">
+                <include refid="rsuColumns"/>
+            </when>
+            <otherwise>
+                a.ID AS "id",
+                f.ID AS "fromServer.id",
+                t.ID AS "toServer.id",
+                a.FROM_TOPIC AS "fromTopic",
+                a.TO_TOPIC AS "toTopic",
+                a.EXPIRE_TIME AS "expireTime",
+                a.STATUS AS "status",
+                <include refid="fromServerColumns"/>
+                ,
+                <include refid="toServerColumns"/>
+            </otherwise>
+        </choose>
+
         FROM SRIG_FORWARD_ROUTER a
         <choose>
             <when test="sourceType == null">
                 <include refid="rsuJoins"/>
             </when>
             <otherwise>
-                RIGHT JOIN SRIG_MQ_SERVER f ON f.ID = a.FROM_SERVER_ID AND f.DEL_FLAG = 0 AND f.SOURCE_TYPE = 0
-                LEFT JOIN SRIG_MQ_SERVER t ON t.ID = a.TO_SERVER_ID AND t.DEL_FLAG = 0 AND f.SOURCE_TYPE = 1
+                RIGHT JOIN SRIG_MQ_SERVER f ON f.ID = a.FROM_SERVER_ID
+                LEFT JOIN SRIG_MQ_SERVER t ON t.ID = a.TO_SERVER_ID AND t.DEL_FLAG = 0 AND t.SOURCE_TYPE = 1
             </otherwise>
         </choose>
 
         <where>
+            AND f.DEL_FLAG = 0 AND f.SOURCE_TYPE = 0
             <if test="fromTopic != null and fromTopic != ''">
                 AND a.FROM_TOPIC = #{fromTopic}
             </if>
             <if test="toTopic != null and toTopic != ''">
                 AND a.TO_TOPIC = #{toTopic}
+            </if>
+            <if test="name !=null and name !=''">
+                AND f.NAME  LIKE CONCAT('%',#{name},'%')
+            </if>
+            <if test="networkType !=null">
+                AND f.NETWORK_TYPE = #{networkType}
+            </if>
+            <if test="type !=null and type !=''">
+                AND f.TYPE = #{type}
+            </if>
+            <if test="status !=null and status !=''">
+                AND a.STATUS = #{status}
             </if>
         </where>
         <choose>

@@ -35,6 +35,10 @@ public class ForwardRouter extends DataEntity<ForwardRouter> {
 
     private Integer sourceType;
 
+    private String type;
+    private String networkType;
+    private String name;
+
     @Override
     public void doPreInsert() {
 

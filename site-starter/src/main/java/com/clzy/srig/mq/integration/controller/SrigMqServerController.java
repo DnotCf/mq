@@ -50,6 +50,7 @@ public class SrigMqServerController extends BaseController {
         if (StringUtils.isNotBlank(check)) {
             return JsonResponse.success(check);
         }
+        entiy.setSourceType(0);
         service.save(entiy);
         return JsonResponse.success(true);
     }
