@@ -1,10 +1,12 @@
 import axios from "@/libs/api.request";
+let dataSourceApi = {};
+export default dataSourceApi;
 
 /**
  * 分页获取列表
  */
 
-export const getSoruceList = ({ pageNo, pageSize }) => {
+dataSourceApi.getSoruceList = ({ pageNo, pageSize }) => {
   return axios.request({
     url: "/router/page?pageNo=" + pageNo + "&pageSize=" + pageSize,
     method: "post",
@@ -15,7 +17,7 @@ export const getSoruceList = ({ pageNo, pageSize }) => {
 /**
  * 新增/修改数据源
  */
-export const saveSoruce = data => {
+dataSourceApi.saveSoruce = data => {
   return axios.request({
     url: "/server/save",
     data,
@@ -25,7 +27,7 @@ export const saveSoruce = data => {
 /**
  * 删除数据源
  */
-export const delSoruce = ids => {
+dataSourceApi.delSoruce = ids => {
   ids = ids || [];
   return axios.request({
     url: "/server/delete?ids=" + ids.join(","),
@@ -36,7 +38,7 @@ export const delSoruce = ids => {
 /**
  * 测试数据源连接
  */
-export const testSoruce = data => {
+dataSourceApi.testSoruce = data => {
   return axios.request({
     url: "/server/testConnection",
     method: "post",

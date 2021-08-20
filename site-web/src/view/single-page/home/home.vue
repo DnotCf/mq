@@ -57,97 +57,157 @@
               row.fromServer.name
             }}</template>
             <template slot-scope="{ row, index }" slot="sourceProtocol">
-              <!-- Aliyun_RocketMQ -->
-              <template v-if="row.fromServer.type === 'Aliyun_RocketMQ'">
-                <div class="list-content">
-                  <span class="list-nature">secretKey：</span
-                  >{{ row.fromServer.secretKey }}
-                </div>
-                <div class="list-content">
-                  <span class="list-nature">accessKey：</span
-                  >{{ row.fromServer.accessKey }}
-                </div>
-              </template>
-
-              <!-- RocketMQ -->
-              <template v-if="row.fromServer.type === 'Aliyun_RocketMQ'">
-                <div class="list-content">
-                  <span class="list-nature">单次最大消费条数：</span
-                  >{{ row.fromServer.total }}
-                </div>
-                <div class="list-content">
-                  <span class="list-nature">重试次数：</span
-                  >{{ row.fromServer.retry }}
-                </div>
-              </template>
-
-              <!-- HTTP RocketMQ 阿里云RocketMQ -->
-              <template
-                v-if="
-                  row.fromServer.type === 'HTTP' ||
-                  row.fromServer.type === 'RocketMQ' ||
-                  row.fromServer.type === 'Aliyun_RocketMQ'
-                "
-              >
-                <div class="list-content">
-                  <span class="list-nature">服务地址：</span
-                  >{{ row.fromServer.cluster }}
-                </div>
-              </template>
-              <!-- MQTT AMQP-->
               <div
-                v-if="
-                  row.fromServer.type == 'MQTT' || row.fromServer.type == 'AMQP'
-                "
+                :style="{
+                  overflow: row.isFold ? '' : 'hidden',
+                  height:
+                    row.isFold || row.fromServer.type === 'HTTP' ? '' : '90px',
+                }"
+                class="fold-box"
               >
-                <div class="list-content">
-                  <span class="list-nature">用户名：</span
-                  >{{ row.fromServer.username }}
+                <div
+                  @click="handleFold(row)"
+                  class="fold"
+                  v-show="row.fromServer.type !== 'HTTP'"
+                >
+                  <Icon
+                    type="ios-arrow-down"
+                    v-if="!row.isFold"
+                    color="#C8D5EA"
+                    size="24"
+                    title="展开"
+                  />
+                  <Icon
+                    type="ios-arrow-up"
+                    v-else
+                    color="#C8D5EA"
+                    size="24"
+                    title="收起"
+                  />
                 </div>
                 <div class="list-content">
-                  <span class="list-nature">密码：</span
-                  >{{ row.fromServer.password }}
+                  <span class="list-nature">数据源协议：</span>
+                  <span class="value-ellipsis">{{ row.fromServer.type }}</span>
                 </div>
-                <div class="list-content">
-                  <span class="list-nature">协议：</span
-                  >{{ row.fromServer.protocol }}
+                <!-- Aliyun_RocketMQ -->
+                <template v-if="row.fromServer.type === 'Aliyun_RocketMQ'">
+                  <div class="list-content">
+                    <span class="list-nature">secretKey：</span>
+                    <span class="value-ellipsis">{{
+                      row.fromServer.secretKey
+                    }}</span>
+                  </div>
+                  <div class="list-content">
+                    <span class="list-nature">accessKey：</span>
+                    <span class="value-ellipsis">{{
+                      row.fromServer.accessKey
+                    }}</span>
+                  </div>
+                </template>
+
+                <!-- RocketMQ -->
+                <template v-if="row.fromServer.type === 'Aliyun_RocketMQ'">
+                  <div class="list-content">
+                    <span class="list-nature">单次最大消费条数：</span>
+                    <span class="value-ellipsis">{{
+                      row.fromServer.total
+                    }}</span>
+                  </div>
+                  <div class="list-content">
+                    <span class="list-nature">重试次数：</span>
+                    <span class="value-ellipsis">{{
+                      row.fromServer.retry
+                    }}</span>
+                  </div>
+                </template>
+
+                <!-- HTTP RocketMQ 阿里云RocketMQ -->
+                <template
+                  v-if="
+                    row.fromServer.type === 'HTTP' ||
+                    row.fromServer.type === 'RocketMQ' ||
+                    row.fromServer.type === 'Aliyun_RocketMQ'
+                  "
+                >
+                  <div class="list-content">
+                    <span class="list-nature">服务地址：</span>
+                    <span class="value-ellipsis">{{
+                      row.fromServer.cluster
+                    }}</span>
+                  </div>
+                </template>
+                <!-- MQTT AMQP-->
+                <div
+                  v-if="
+                    row.fromServer.type == 'MQTT' ||
+                    row.fromServer.type == 'AMQP'
+                  "
+                >
+                  <div class="list-content">
+                    <span class="list-nature">用户名：</span>
+                    <span class="value-ellipsis">{{
+                      row.fromServer.username
+                    }}</span>
+                  </div>
+                  <div class="list-content">
+                    <span class="list-nature">密码：</span>
+                    <span class="value-ellipsis">{{
+                      row.fromServer.password
+                    }}</span>
+                  </div>
+                  <div class="list-content">
+                    <span class="list-nature">协议：</span>
+                    <span class="value-ellipsis">{{
+                      row.fromServer.protocol
+                    }}</span>
+                  </div>
+                  <div class="list-content">
+                    <span class="list-nature">ip：</span>
+                    <span class="value-ellipsis">{{ row.fromServer.ip }}</span>
+                  </div>
+                  <div class="list-content">
+                    <span class="list-nature">端口：</span>
+                    <span class="value-ellipsis">{{
+                      row.fromServer.port
+                    }}</span>
+                  </div>
                 </div>
-                <div class="list-content">
-                  <span class="list-nature">ip：</span>{{ row.fromServer.ip }}
-                </div>
-                <div class="list-content">
-                  <span class="list-nature">端口：</span
-                  >{{ row.fromServer.port }}
-                </div>
+                <!-- 阿里云RocketMQ rocketMQ  -->
+                <template
+                  v-if="
+                    row.fromServer.type === 'Aliyun_RocketMQ' ||
+                    row.fromServer.type === 'RocketMQ'
+                  "
+                >
+                  <div class="list-content">
+                    <span class="list-nature">所属组：</span>
+                    <span class="value-ellipsis">{{
+                      row.fromServer.group
+                    }}</span>
+                  </div>
+                  <div class="list-content">
+                    <span class="list-nature">tag：</span>
+                    <span class="value-ellipsis">{{ row.fromServer.tag }}</span>
+                  </div>
+                </template>
+                <!-- MQTT  AMQP 阿里云RocketMQ  RocketMQ -->
+                <template v-if="row.fromServer.type !== 'HTTP'">
+                  <div class="list-content">
+                    <span class="list-nature">topic：</span>
+                    <span class="value-ellipsis">{{
+                      row.fromServer.topic
+                    }}</span>
+                  </div>
+                  <div class="list-content">
+                    <span class="list-nature">其他参数：</span>
+                    <span class="value-ellipsis">{{
+                      row.fromServer.defaultParam
+                    }}</span>
+                  </div>
+                </template>
               </div>
-              <!-- 阿里云RocketMQ rocketMQ  -->
-              <template
-                v-if="
-                  row.fromServer.type === 'Aliyun_RocketMQ' ||
-                  row.fromServer.type === 'RocketMQ'
-                "
-              >
-                <div class="list-content">
-                  <span class="list-nature">所属组：</span
-                  >{{ row.fromServer.group }}
-                </div>
-                <div class="list-content">
-                  <span class="list-nature">tag：</span>{{ row.fromServer.tag }}
-                </div>
-              </template>
-              <!-- MQTT  AMQP 阿里云RocketMQ  RocketMQ -->
-              <template v-if="row.fromServer.type !== 'HTTP'">
-                <div class="list-content">
-                  <span class="list-nature">topic：</span
-                  >{{ row.fromServer.topic }}
-                </div>
-                <div class="list-content">
-                  <span class="list-nature">其他参数：</span
-                  >{{ row.fromServer.defaultParam }}
-                </div>
-              </template>
             </template>
-            <template slot-scope="{ row, index }" slot="newwork">
+            <template slot-scope="{ row, index }" slot="network">
               <div v-if="!Number(row.fromServer.networkType)">
                 <div class="list-content">
                   <span class="list-nature">账号：</span
@@ -256,7 +316,7 @@
                 </div>
               </template>
             </template>
-            <template slot-scope="{ row }" slot="newwork">
+            <template slot-scope="{ row }" slot="network">
               <div v-if="Number(row.networkType)">
                 <div class="list-content">
                   <span class="list-nature">账号：</span
@@ -361,7 +421,7 @@
             </FormItem>
             <div class="border-layout" v-show="formValidate.type">
               <!-- AMQP start -->
-              <template v-if="formValidate.type === 'AMQP'">
+              <div v-if="formValidate.type === 'AMQP'">
                 <FormItem label="用户名" prop="username">
                   <Input v-model="formValidate.username" placeholder=""></Input>
                 </FormItem>
@@ -373,11 +433,11 @@
                     autocomplete="new-password"
                   ></Input>
                 </FormItem>
-              </template>
+              </div>
               <!-- AMQP end -->
 
               <!-- Aliyun_RocketMQ start -->
-              <template v-if="formValidate.type === 'Aliyun_RocketMQ'">
+              <div v-if="formValidate.type === 'Aliyun_RocketMQ'">
                 <FormItem label="secretKey" prop="secretKey">
                   <Input
                     v-model="formValidate.secretKey"
@@ -391,11 +451,11 @@
                     placeholder=""
                   ></Input>
                 </FormItem>
-              </template>
+              </div>
               <!-- Aliyun_RocketMQ end -->
 
               <!-- EMQX start -->
-              <template v-if="formValidate.type === 'MQTT'">
+              <div v-if="formValidate.type === 'MQTT'">
                 <FormItem label="用户名">
                   <Input v-model="formValidate.username" placeholder=""></Input>
                 </FormItem>
@@ -407,11 +467,11 @@
                     autocomplete="new-password"
                   ></Input>
                 </FormItem>
-              </template>
+              </div>
               <!-- EMQX end -->
 
               <!-- RocketMQ start-->
-              <template v-if="formValidate.type === 'RocketMQ'">
+              <div v-if="formValidate.type === 'RocketMQ'">
                 <FormItem label="单次最大消费条数">
                   <Input v-model="formValidate.total" placeholder=""></Input>
                 </FormItem>
@@ -423,11 +483,11 @@
                     autocomplete="new-password"
                   ></Input>
                 </FormItem>
-              </template>
+              </div>
               <!-- RocketMQ end -->
 
               <!-- HTTP RocketMQ 阿里云RocketMQ-->
-              <template
+              <div
                 v-if="
                   formValidate.type === 'HTTP' ||
                   formValidate.type === 'RocketMQ' ||
@@ -435,12 +495,16 @@
                 "
               >
                 <FormItem label="协议地址" prop="cluster">
-                  <Input v-model="formValidate.cluster" placeholder=""></Input>
+                  <Input
+                    v-model="formValidate.cluster"
+                    placeholder=""
+                    type="text"
+                  ></Input>
                 </FormItem>
-              </template>
+              </div>
 
               <!-- MQTT AMQP-->
-              <template
+              <div
                 v-if="
                   formValidate.type === 'MQTT' || formValidate.type === 'AMQP'
                 "
@@ -458,7 +522,11 @@
                   ></Input>
                 </FormItem>
                 <FormItem label="协议" prop="protocol">
-                  <Input v-model="formValidate.protocol" placeholder=""></Input>
+                  <Input
+                    v-model="formValidate.protocol"
+                    placeholder=""
+                    type="text"
+                  ></Input>
                 </FormItem>
                 <FormItem label="ip" prop="ip">
                   <Input
@@ -470,10 +538,10 @@
                 <FormItem label="端口" prop="port">
                   <Input v-model="formValidate.port" placeholder=""></Input>
                 </FormItem>
-              </template>
+              </div>
 
               <!-- 阿里云RocketMQ rocketMQ  -->
-              <template
+              <div
                 v-if="
                   formValidate.type === 'Aliyun_RocketMQ' ||
                   formValidate.type === 'RocketMQ'
@@ -485,10 +553,10 @@
                 <FormItem label="tag" prop="tag">
                   <Input v-model="formValidate.tag" placeholder=""></Input>
                 </FormItem>
-              </template>
+              </div>
 
               <!-- MQTT  AMQP 阿里云RocketMQ  RocketMQ-->
-              <template v-if="formValidate.type !== 'HTTP'">
+              <div v-if="formValidate.type !== 'HTTP'">
                 <FormItem label="topic" prop="topic">
                   <Input v-model="formValidate.topic" placeholder=""></Input>
                 </FormItem>
@@ -500,7 +568,7 @@
                     placeholder=""
                   ></Input>
                 </FormItem>
-              </template>
+              </div>
             </div>
 
             <FormItem
@@ -526,20 +594,52 @@
                   v-model="formValidate.vpnPassword"
                   placeholder=""
                   type="password"
-                  autocomplete="vpnPassword"
+                  autocomplete="new-password"
                 ></Input>
               </FormItem>
             </template>
           </Form>
           <div class="page-modal-footer">
-            <Button type="primary" @click="handleSubmit('formValidate')">{{
-              btnTitle
-            }}</Button>
-            <Button
-              @click="handleReset('formValidate')"
-              style="margin-left: 8px"
-              >重置</Button
-            >
+            <div class="btn-box">
+                 <Button
+                type="primary"
+                @click="handleSubmit(1)"
+                :loading="isLoad"
+                v-if="isAdd"
+                >添加</Button>
+                <Button
+                type="primary"
+                @click="handleSubmit(0)"
+                :loading="isLoad"
+                v-else
+                >消息检测</Button>
+              <Button
+                @click="handleReset"
+                style="margin-left: 8px"
+                >重置</Button
+              >
+            </div>
+            <div v-show="isShow" class="demo-load-box">
+              <div class="demo-load">
+                <Spin fix>
+                  <svg-icon
+                  v-if="isLoad"
+                    name="icon-loading"
+                    class="demo-spin-icon-load"
+                  ></svg-icon>
+                   <svg-icon
+                  v-else
+                    name="icon-success"
+                  ></svg-icon>
+                </Spin>
+              </div>
+              <span class="checkoutTitle" :class="isLoad?'blue':'green'">{{ checkoutTitle }}</span>
+
+              <!-- <Spin fix>
+                <Icon type="ios-loading" size=18 ></Icon>
+                <div>Loading</div>
+            </Spin> -->
+            </div>
           </div>
         </div>
       </div>
@@ -551,12 +651,7 @@
 import SvgIcon from "@/components/svg-icon/svg-icon";
 import ListTables from "@/components/tables/tables";
 import MapModal from "./map-modal";
-import {
-  getSoruceList,
-  saveSoruce,
-  delSoruce,
-  testSoruce,
-} from "@/api/dataSourceApi";
+import dataSourceApi from "@/api/dataSourceApi";
 export default {
   name: "",
   components: { ListTables, SvgIcon, MapModal },
@@ -599,57 +694,65 @@ export default {
         {
           type: "selection",
           width: 60,
-          align: "center",
+          align: "center"
         },
         {
           title: "数据源名称",
-          slot: "name",
+          slot: "name"
         },
         {
           title: "选择数据源协议",
           slot: "sourceProtocol",
-          // filterMultiple: false,
-          // filters: [
-          //   {
-          //     label: "MQ",
-          //     value: 1,
-          //   },
-          //   {
-          //     label: "HTTP",
-          //     value: 2,
-          //   },
-          // ],
-          // filterMethod(value, row) {
-          //   console.log(value, row, 22);
-          //   if (value === 1) {
-          //     return row.age > 25;
-          //   } else if (value === 2) {
-          //     return row.age < 25;
-          //   }
-          // },
+          filterMultiple: false,
+          filters: [
+            {
+              label: "RabbitMQ",
+              value: "AMQP"
+            },
+            {
+              label: "阿里云RocketMQ",
+              value: "Aliyun_RocketMQ"
+            },
+            {
+              label: "RocketMQ",
+              value: "RocketMQ"
+            },
+            {
+              label: "EMQX",
+              value: "MQTT"
+            },
+            {
+              label: "HTTP",
+              value: "HTTP"
+            }
+          ],
+          filterMethod(value, row) {
+            console.log(value, row.fromServer.type == value, 22);
+            return row.fromServer.type == value;
+          }
         },
         {
           title: "选择网络",
-          slot: "newwork",
-          // filterMultiple: false,
-          // filters: [
-          //   {
-          //     label: "MQ",
-          //     value: 1,
-          //   },
-          //   {
-          //     label: "HTTP",
-          //     value: 2,
-          //   },
-          // ],
-          // filterMethod(value, row) {
-          //   return row.name.indexOf(value) > -1;
-          // },
+          slot: "network",
+          filterMultiple: false,
+          filters: [
+            {
+              label: "内网",
+              value: "0"
+            },
+            {
+              label: "外网",
+              value: "1"
+            }
+          ],
+          filterMethod(value, row) {
+            return row.fromServer.networkType.indexOf(value) > -1;
+          }
         },
         {
           title: "映射",
-          slot: "map",
-        },
+          slot: "map"
+        }
       ],
       isFold: true,
       formValidate: {
@@ -678,144 +781,154 @@ export default {
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         type: [
           {
             required: true,
             message: "请选择",
-            trigger: "change",
-          },
+            trigger: "change"
+          }
         ],
         cluster: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         protocol: [
           {
             required: true,
             message: "请选择",
-            trigger: "change",
-          },
+            trigger: "blur"
+          }
         ],
         ip: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         port: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         group: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         tag: [
           {
             required: true,
             message: "请选择",
-            trigger: "change",
-          },
+            trigger: "blur"
+          }
         ],
         topic: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         networkType: [
           {
             required: true,
             message: "请选择",
-            trigger: "change",
-          },
+            trigger: "change"
+          }
         ],
         username: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         password: [
           {
             required: true,
-            message: "请输入",
-            trigger: "blur",
-          },
+            validator: this.validatepasswd,
+            trigger: "blur"
+          }
         ],
         clientName: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         secretKey: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         accessKey: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
+        vpnPassword: [
+          {
+            required: false,
+            validator: this.validatepasswd,
+            trigger: "blur"
+          }
+        ]
       },
-      btnTitle: "消息检测",
+      isAdd: false,
       modalTitle: "添加数据源",
       typeProtocol: [
         {
           label: "RabbitMQ",
-          value: "AMQP",
+          value: "AMQP"
         },
         {
           label: "阿里云RocketMQ",
-          value: "Aliyun_RocketMQ",
+          value: "Aliyun_RocketMQ"
         },
         {
           label: "RocketMQ",
-          value: "RocketMQ",
+          value: "RocketMQ"
         },
         {
           label: "EMQX",
-          value: "MQTT",
+          value: "MQTT"
         },
         {
           label: "HTTP",
-          value: "HTTP",
-        },
+          value: "HTTP"
+        }
       ],
 
       networkList: [
         {
           label: "内网",
-          value: "0",
+          value: "0"
         },
         {
           label: "外网",
-          value: "1",
-        },
+          value: "1"
+        }
       ],
       selectList: [],
+      isLoad: false,
+      isShow: false,
+      checkoutTitle: "消息转发正在检验中，请稍后…"
     };
   },
   created() {},
@@ -832,7 +945,9 @@ export default {
     // 修改数据源
     handleModifySource() {
       if (this.selectList.length > 1) {
-        this.$Message.warning("只能选择一条数据");
+        return this.$Message.warning("只能选择一条数据");
+      } else if (!this.selectList.length) {
+        return this.$Message.warning("请选择数据");
       }
       this.modalTitle = "修改数据源";
       console.log(this.selectList[0], 999);
@@ -845,23 +960,34 @@ export default {
     },
     // 删除数据源
     handleDelectSource() {
-      let ids = this.selectList.map((item) => {
+      if (!this.selectList.length) {
+        return this.$Message.warning("请选择数据");
+        
+      }
+      let ids = this.selectList.map(item => {
         return item.fromServer.id;
       });
-      console.log("删除数据源", ids);
-
-      delSoruce(ids)
-        .then((res) => {
-          if (res.code === 200) {
-            this.formValidate = {};
-            this.$Message.success("删除成功!");
-          } else {
-            this.$Message.error("删除数据源失败!");
-          }
-        })
-        .catch((err) => {
-          this.$Message.error("删除数据源失败!");
-        });
+      this.$Modal.confirm({
+        content: "</svg-icon><p>你确定要删除吗？</p>",
+        okText: "确定",
+        cancelText: "取消",
+        onOk: () => {
+          dataSourceApi
+            .delSoruce(ids)
+            .then(res => {
+              if (res.code === 200) {
+                this.formValidate = {};
+                this.$Message.success("删除成功!");
+              } else {
+                this.$Message.error("删除数据源失败!");
+              }
+            })
+            .catch(err => {
+              this.$Message.error("删除数据源失败!");
+            });
+        },
+        onCancel: () => {}
+      });
     },
     // 删除映射
     handleDelectMap() {
@@ -873,78 +999,120 @@ export default {
       this.$refs.mapNode.show();
     },
     getSoruceList() {
-      getSoruceList({
-        pageNo: 1,
-        pageSize: 20,
-      })
-        .then((req) => {
-          console.log("22222", req.data);
-          this.dataList = req.data.list;
+      dataSourceApi
+        .getSoruceList({
+          pageNo: 1,
+          pageSize: 20
         })
-        .catch((err) => {});
+        .then(req => {
+          console.log("22222", req.data);
+
+          this.dataList = req.data.list.map(item => {
+            item.isFold = false;
+            return item;
+          });
+        })
+        .catch(err => {});
+    },
+    // 校验密码
+    validatepasswd(rule, value, callback) {
+      let regExp = new RegExp(/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/);
+      if (!value) {
+        callback(new Error("请输入密码"));
+      }
+      console.log(regExp.test(value), "regExp.test(value)");
+      if (!regExp.test(value)) {
+        callback(new Error("请输入6-12包含数字、大小写的密码"));
+      }
+      callback();
     },
     // 列表数据刷新
     loadPageData(pageNo, pageSize, search) {
-      return new Promise(function (resolve, reject) {
+      return new Promise(function(resolve, reject) {
         getSoruceList({
           pageNo: pageNo,
-          pageSize: pageSize,
+          pageSize: pageSize
         })
-          .then((req) => {
+          .then(req => {
             console.log("22222", req.data);
             // 处理数据，如果存在异常则提示
             resolve(req.data);
           })
-          .catch((err) => {
+          .catch(err => {
             // 异常处理,不用提示
             reject(err);
           });
       });
     },
     // 列表映射展开收起
-    handleFold() {
-      this.isFold = !this.isFold;
+    handleFold(val) {
+      val.isFold = !val.isFold;
     },
     // 选择数据源协议改变
     handleType() {
-      console.log("选择数据源协议改变");
-      // this.formValidate = {
-      //   clientName: "",
-      //   username: "",
-      //   password: "",
-      //   secretKey: "",
-      //   accessKey: "",
-      //   total: "",
-      //   retry: "",
-      //   cluster: "",
-      //   protocol: "",
-      //   ip: "",
-      //   port: "",
-      //   group: "",
-      //   tag: ""
-      // };
+      let initForm = {
+        clientName: "",
+        username: "",
+        password: "",
+        secretKey: "",
+        accessKey: "",
+        total: "",
+        retry: "",
+        cluster: "",
+        protocol: "",
+        ip: "",
+        port: "",
+        group: "",
+        tag: "",
+        topic: "",
+        defaultParam: ""
+      };
+      this.formValidate = { ...this.formValidate, ...initForm };
     },
-    // 提交 testSoruce saveSoruce
-    handleSubmit(name) {
-      this.$refs["formValidate"].validate((valid) => {
+    // 提交
+    handleSubmit(val) {
+      let isAdd = val;
+      this.isLoad = true;
+      this.isShow = true;
+      let port = "";
+      if (isAdd) {
+        port = "saveSoruce";
+      } else {
+        port = "testSoruce";
+      }
+      this.$refs["formValidate"].validate(valid => {
         if (valid) {
           console.log(this.formValidate, "this.formValidate");
 
-          saveSoruce(this.formValidate)
-            .then((res) => {
+          dataSourceApi[port](this.formValidate)
+            .then(res => {
               if (res.code === 200) {
                 this.selectList = [];
-                this.handleReset();
-                this.$Message.success("保存成功!");
+                this.isLoad = false;
+                if (val) {
+                  this.checkoutTitle = "消息转发正在检验中，请稍后…";
+                  this.isShow = false;
+                  this.handleReset();
+                  this.isAdd = false;
+                  this.$Message.success("保存成功!");
+                } else {
+                  this.checkoutTitle = "消息转发检验成功！";
+                  this.isAdd = true;
+                }
               } else {
+                this.isLoad = false;
+
                 this.$Message.error("保存数据源失败!");
               }
             })
-            .catch((err) => {
+            .catch(err => {
+              this.isLoad = false;
+
               console.log(err);
               this.$Message.error("服务器异常，请联系管理员!");
             });
         } else {
+          this.$Message.error("Fail!");
         }
       });
     },
@@ -952,8 +1120,8 @@ export default {
     handleReset() {
       this.$refs["formValidate"].resetFields();
       this.formValidate = {};
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="less" scoped>
