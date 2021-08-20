@@ -2,8 +2,15 @@ package com.clzy.srig.mq.integration.entity;
 
 import com.clzy.geo.core.common.persistence.DataEntity;
 import com.clzy.srig.mq.integration.enums.MQIntegration;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
+@JsonIgnoreProperties(value = {
+        "dbName","delFlag","deleted","errorCnt","errorList","errorReportByErrorList","isNewRecord","page"
+        ,"preFlag","sqlMap","updateDate","isNewRecord","remarks","createBy","createUserName","updateBy",
+        "updateUserName","deleted","orgUnitId","orgUnitName","extAttr1","extAttr2","extAttr3","extAttr4","extAttr5","extAttr6",
+        "extAttr7","extAttr8","extAttr9","extAttr10","extAttr11","extAttr12","extAttr13","extAttr14","extAttr15"
+})
 @Getter
 @Setter
 @Builder

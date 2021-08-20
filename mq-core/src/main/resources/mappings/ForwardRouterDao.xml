@@ -127,7 +127,7 @@
                 ORDER BY ${page.orderBy}
             </when>
             <otherwise>
-                ORDER BY a.EXPIRE_TIME
+                ORDER BY a.EXPIRE_TIME DESC
             </otherwise>
         </choose>
     </select>
