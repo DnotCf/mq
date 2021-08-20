@@ -12,46 +12,107 @@
             <span class="title-name">表格管理</span>
           </div>
           <div class="btn-layout">
-            <Dropdown class="dropdown-box">
+            <!-- <Dropdown class="dropdown-box">
               <Button type="primary" class="btn-box">
                 修改
                 <Icon type="ios-arrow-down"></Icon>
               </Button>
               <DropdownMenu slot="list" style="display: block">
-                <DropdownItem @click.native="handleModifySource"
-                  >数据源</DropdownItem
-                >
+                <DropdownItem @click.native="handleModifySource">
+                  数据源
+                </DropdownItem>
                 <DropdownItem @click.native="handleModifyMap"
                   >映射</DropdownItem
                 >
               </DropdownMenu>
-            </Dropdown>
-            <Dropdown class="dropdown-box">
+            </Dropdown> -->
+            <Poptip class="home-poptip" placement="bottom">
+              <Button type="primary" class="btn-box">
+                修改
+                <Icon type="ios-arrow-down"></Icon>
+              </Button>
+              <div slot="title"></div>
+              <div slot="content">
+                <div
+                  class="poptip-item"
+                  :class="isSourceModify ? 'active' : ''"
+                  @click="handleModifySource"
+                >
+                  数据源
+                </div>
+                <div
+                  class="poptip-item"
+                  :class="isMapModify ? 'active' : ''"
+                  @click="handleModifyMap"
+                >
+                  映射
+                </div>
+              </div>
+            </Poptip>
+            <Poptip class="home-poptip" placement="bottom">
+              <Button type="primary" class="btn-box">
+                删除
+                <Icon type="ios-arrow-down"></Icon>
+              </Button>
+              <div slot="title"></div>
+              <div slot="content">
+                <div @click.stop="handleDelectSource">
+                  
+                  <Poptip
+                   v-model="isSource"
+                    placement="bottom"
+                    class="del-poptip cs"
+                    confirm
+                    :disabled="!isSource"
+                    @on-ok="handleDelSource"
+                    :class="isSourceDel ? 'active' : ''"
+                  >
+                    <div class="poptip-item">数据源</div>
+                    <div slot="title">你确定要删除吗？</div>
+                  </Poptip>
+                </div>
+                <div @click="handleDelectMap">
+                  <div class="poptip-item">
+                    <Poptip
+                      placement="bottom"
+                      class="del-poptip"
+                      confirm
+                      :class="isMapDel ? 'active' : ''"
+                    >
+                      <div class="poptip-item">映射</div>
+                      <div slot="title">你确定要删除吗？</div>
+                    </Poptip>
+                  </div>
+                </div>
+              </div>
+            </Poptip>
+            <!-- <Dropdown class="dropdown-box">
               <Button type="primary" class="btn-box">
                 删除
                 <Icon type="ios-arrow-down"></Icon>
               </Button>
               <DropdownMenu slot="list">
-                <DropdownItem @click.native="handleDelectSource"
-                  >数据源</DropdownItem
-                >
+                <DropdownItem @click.native="handleDelectSource">
+                  数据源
+                </DropdownItem>
                 <DropdownItem @click.native="handleDelectMap"
                   >映射</DropdownItem
                 >
               </DropdownMenu>
-            </Dropdown>
+            </Dropdown> -->
             <Button type="primary" class="btn-box" @click="handleAddMap">
               添加映射
             </Button>
           </div>
         </div>
         <div class="page-list-box">
-          <Table
-            ref="selection"
+          <list-tables
+            ref="dataTables"
+            :height="550"
+            :hidePage="false"
+            :loadPageData="loadPageData"
             :columns="columns"
-            :data="dataList"
             class="table-box"
-            @on-select="handleSelect"
           >
             <template slot-scope="{ row, index }" slot="name">{{
               row.fromServer.name
@@ -107,12 +168,12 @@
 
                 <!-- RocketMQ -->
                 <template v-if="row.fromServer.type === 'Aliyun_RocketMQ'">
-                  <div class="list-content">
+                  <!-- <div class="list-content">
                     <span class="list-nature">单次最大消费条数：</span>
                     <span class="value-ellipsis">{{
                       row.fromServer.total
                     }}</span>
-                  </div>
+                  </div> -->
                   <div class="list-content">
                     <span class="list-nature">重试次数：</span>
                     <span class="value-ellipsis">{{
@@ -275,116 +336,7 @@
               </div>
               <span v-else>暂无映射</span>
             </template>
-          </Table>
-          <!-- <list-tables
-            ref="dataTables"
-            :height="550"
-            :border="true"
-            :hidePage="false"
-            :loadPageData="loadPageData"
-            :columns="columns"
-          >
-            <template slot-scope="{ row }" slot="name">{{
-              row.fromServer.name
-            }}</template>
-            <template slot-scope="{ row }" slot="sourceProtocol">
-              <div v-if="row.source == 'rabbitMQ' || row.source == 'emqx'">
-                <div class="list-content">
-                  <span class="list-nature">协议：</span
-                  >{{ row.fromServer.protocol }}
-                </div>
-                <div class="list-content">
-                  <span class="list-nature">ip：</span>{{ row.fromServer.ip }}
-                </div>
-                <div class="list-content">
-                  <span class="list-nature">端口：</span
-                  >{{ row.fromServer.port }}
-                </div>
-                <div class="list-content">
-                  <span class="list-nature">topic：</span
-                  >{{ row.fromServer.topic }}
-                </div>
-              </div>
-              <template v-else>
-                <div class="list-content">
-                  <span class="list-nature">服务地址：</span
-                  >{{ row.permission }}
-                </div>
-                <div class="list-content">
-                  <span class="list-nature">服务地址：</span
-                  >{{ row.permission }}
-                </div>
-              </template>
-            </template>
-            <template slot-scope="{ row }" slot="network">
-              <div v-if="Number(row.networkType)">
-                <div class="list-content">
-                  <span class="list-nature">账号：</span
-                  >{{ row.fromServer.vpnAccount }}
-                </div>
-                <div class="list-content">
-                  <span class="list-nature">密码：</span
-                  >{{ row.fromServer.vpnAccount }}
-                </div>
-              </div>
-              <div v-else>
-                <div class="list-content">
-                  <span class="list-nature">地址：</span
-                  >{{ row.fromServer.retry }}
-                </div>
-              </div>
-            </template>
-            <template slot-scope="{ row }" slot="map">
-              <div class="fold-box" v-if="row.map">
-                <div
-                  ref="mapNode"
-                  class="map-box"
-                  :style="{
-                    overflow: isFold ? 'hidden' : '',
-                    height: isFold ? '90px' : '',
-                  }"
-                >
-                  <div
-                    v-for="(item, index) in ceList"
-                    :key="index"
-                    class="list-content-box"
-                  >
-                    <div class="list-content">
-                      <span class="list-nature">选择数据源：</span
-                      >{{ item.name1 }}
-                    </div>
-                    <div class="list-content">
-                      <span class="list-nature">IP地址：</span>{{ item.name2 }}
-                    </div>
-                    <div class="list-content">
-                      <span class="list-nature"> 端口：</span>
-                      {{ item.name3 }}
-                    </div>
-                  </div>
-                </div>
-                <div class="source-status">
-                  <div class="status-radius"></div>
-                </div>
-                <div @click="handleFold" class="fold">
-                  <Icon
-                    type="ios-arrow-down"
-                    v-if="isFold"
-                    color="#C8D5EA"
-                    size="24"
-                    title="展开"
-                  />
-                  <Icon
-                    type="ios-arrow-up"
-                    v-else
-                    color="#C8D5EA"
-                    size="24"
-                    title="收起"
-                  />
-                </div>
-              </div>
-              <span v-else>暂无映射</span>
-            </template>
-          </list-tables> -->
+          </list-tables>
         </div>
       </div>
       <div class="page-modal-data-source-box page-content-common-box">
@@ -405,7 +357,7 @@
             <FormItem label="数据源名称" prop="name">
               <Input v-model="formValidate.name" placeholder=""></Input>
             </FormItem>
-            <FormItem label="选择数据源协议" prop="type">
+            <FormItem label="选择数据源协议" prop="type" v-if="isType">
               <Select
                 v-model="formValidate.type"
                 placeholder=""
@@ -472,9 +424,9 @@
 
               <!-- RocketMQ start-->
               <div v-if="formValidate.type === 'RocketMQ'">
-                <FormItem label="单次最大消费条数">
+                <!-- <FormItem label="单次最大消费条数">
                   <Input v-model="formValidate.total" placeholder=""></Input>
-                </FormItem>
+                </FormItem> -->
                 <FormItem label="重试次数">
                   <Input
                     v-model="formValidate.retry"
@@ -522,11 +474,14 @@
                   ></Input>
                 </FormItem>
                 <FormItem label="协议" prop="protocol">
-                  <Input
-                    v-model="formValidate.protocol"
-                    placeholder=""
-                    type="text"
-                  ></Input>
+                  <Select v-model="formValidate.protocol" placeholder="">
+                    <Option
+                      :value="item.value"
+                      v-for="(item, index) in protocolList"
+                      :key="index"
+                      >{{ item.label }}</Option
+                    >
+                  </Select>
                 </FormItem>
                 <FormItem label="ip" prop="ip">
                   <Input
@@ -536,7 +491,11 @@
                   ></Input>
                 </FormItem>
                 <FormItem label="端口" prop="port">
-                  <Input v-model="formValidate.port" placeholder=""></Input>
+                  <Input
+                    v-model="formValidate.port"
+                    placeholder=""
+                    autocomplete="on"
+                  ></Input>
                 </FormItem>
               </div>
 
@@ -548,10 +507,20 @@
                 "
               >
                 <FormItem label="所属组" prop="group">
-                  <Input v-model="formValidate.group" placeholder=""></Input>
+                  <Input
+                    v-model="formValidate.group"
+                    placeholder=""
+                    type="text"
+                    autocomplete="new-password"
+                  ></Input>
                 </FormItem>
                 <FormItem label="tag" prop="tag">
-                  <Input v-model="formValidate.tag" placeholder=""></Input>
+                  <Input
+                    v-model="formValidate.tag"
+                    placeholder=""
+                    type="text"
+                    autocomplete="new-password"
+                  ></Input>
                 </FormItem>
               </div>
 
@@ -601,21 +570,21 @@
           </Form>
           <div class="page-modal-footer">
             <div class="btn-box">
-                 <Button
+              <Button
                 type="primary"
                 @click="handleSubmit(1)"
                 :loading="isLoad"
                 v-if="isAdd"
-                >添加</Button>
-                <Button
+                >{{ btnTitle }}</Button
+              >
+              <Button
                 type="primary"
                 @click="handleSubmit(0)"
                 :loading="isLoad"
                 v-else
-                >消息检测</Button>
-              <Button
-                @click="handleReset"
-                style="margin-left: 8px"
+                >消息检测</Button
+              >
+              <Button @click="handleReset" style="margin-left: 8px"
                 >重置</Button
               >
             </div>
@@ -623,74 +592,44 @@
               <div class="demo-load">
                 <Spin fix>
                   <svg-icon
-                  v-if="isLoad"
+                    v-if="isLoad"
                     name="icon-loading"
                     class="demo-spin-icon-load"
                   ></svg-icon>
-                  <Icon type="ios-close-circle" color="red" v-else-if="!isSuccess" />
-                   <svg-icon
-                  v-else-if="isAdd"
-                    name="icon-success"
-                  ></svg-icon>
+                  <Icon
+                    type="ios-close-circle"
+                    color="red"
+                    v-else-if="!isSuccess"
+                  />
+                  <svg-icon v-else-if="isAdd" name="icon-success"></svg-icon>
                 </Spin>
               </div>
-              <span class="checkoutTitle" :class="isAdd?'blue':isSuccess?'green':'red'">{{ checkoutTitle }}</span>
-
-              <!-- <Spin fix>
-                <Icon type="ios-loading" size=18 ></Icon>
-                <div>Loading</div>
-            </Spin> -->
+              <span
+                class="checkoutTitle"
+                :class="isLoad ? 'blue' : isSuccess ? 'green' : 'red'"
+                >{{ checkoutTitle }}</span
+              >
             </div>
           </div>
         </div>
       </div>
     </div>
     <map-modal ref="mapNode"></map-modal>
+    <del-modal ref="delNode"></del-modal>
   </div>
 </template>
 <script>
 import SvgIcon from "@/components/svg-icon/svg-icon";
 import ListTables from "@/components/tables/tables";
-import MapModal from "./map-modal";
+import MapModal from "./components/map-modal";
+import DelModal from "./components/del-modal";
+
 import dataSourceApi from "@/api/dataSourceApi";
 export default {
   name: "",
-  components: { ListTables, SvgIcon, MapModal },
+  components: { ListTables, SvgIcon, MapModal, DelModal },
   data() {
     return {
-      ceList: [
-        // {
-        //   name1: "二绕数据源1",
-        //   name2: "192.168.0.0",
-        //   name3: "9990"
-        // },
-        // {
-        //   name1: "二绕数据源2",
-        //   name2: "192.168.0.0",
-        //   name3: "9990"
-        // },
-        // {
-        //   name1: "二绕数据源3",
-        //   name2: "192.168.0.0",
-        //   name3: "9990"
-        // }
-      ],
-      dataList: [
-        // {
-        //   name: "二绕车辆协同数据",
-        //   permission: "192.168.0.0",
-        //   network: 1,
-        //   map: 1,
-        //   source: "rabbitMQ"
-        // },
-        // {
-        //   name: "二绕车辆协同数据",
-        //   permission: "192.168.0.0",
-        //   network: 0,
-        //   map: 0,
-        //   source: "rocketMQ"
-        // }
-      ],
       columns: [
         {
           type: "selection",
@@ -699,7 +638,9 @@ export default {
         },
         {
           title: "数据源名称",
-          slot: "name"
+          slot: "name",
+          align: "center",
+          width: 100
         },
         {
           title: "选择数据源协议",
@@ -736,6 +677,8 @@ export default {
           title: "选择网络",
           slot: "network",
           filterMultiple: false,
+          width: 150,
+
           filters: [
             {
               label: "内网",
@@ -752,7 +695,8 @@ export default {
         },
         {
           title: "映射",
-          slot: "map"
+          slot: "map",
+          align: "center"
         }
       ],
       isFold: true,
@@ -803,7 +747,7 @@ export default {
           {
             required: true,
             message: "请选择",
-            trigger: "blur"
+            trigger: "change"
           }
         ],
         ip: [
@@ -830,7 +774,7 @@ export default {
         tag: [
           {
             required: true,
-            message: "请选择",
+            message: "请输入",
             trigger: "blur"
           }
         ],
@@ -858,7 +802,8 @@ export default {
         password: [
           {
             required: true,
-            validator: this.validatepasswd,
+             message: "请输入",
+            // validator: this.validatepasswd,
             trigger: "blur"
           }
         ],
@@ -886,13 +831,28 @@ export default {
         vpnPassword: [
           {
             required: false,
-            validator: this.validatepasswd,
+             message: "请输入",
+            // validator: this.validatepasswd,
             trigger: "blur"
           }
         ]
       },
       isAdd: false,
       modalTitle: "添加数据源",
+      protocolList: [
+        {
+          label: "tcp协议",
+          value: "tcp"
+        },
+        {
+          label: "websocket协议",
+          value: "ws"
+        },
+        {
+          label: "http协议",
+          value: "http"
+        }
+      ],
       typeProtocol: [
         {
           label: "RabbitMQ",
@@ -930,7 +890,14 @@ export default {
       isLoad: false,
       isShow: false,
       isSuccess: false,
-      checkoutTitle: "消息转发正在检验中，请稍后…"
+      btnTitle: "添加",
+      checkoutTitle: "消息转发正在检验中，请稍后…",
+      isType: true,
+      isSource: false,
+      isSourceDel: false,
+      isMapModify: false,
+      isSourceModify: false,
+      isMapDel: false
     };
   },
   created() {},
@@ -939,19 +906,19 @@ export default {
   },
   computed: {},
   methods: {
-    // 选中列表
-    handleSelect(list) {
-      console.log(list, "选中列表");
-      this.selectList = list;
-    },
     // 修改数据源
     handleModifySource() {
+      this.isSourceModify = true;
+
+      this.selectList = this.$refs.dataTables.currentSelectRows;
       if (this.selectList.length > 1) {
         return this.$Message.warning("只能选择一条数据");
       } else if (!this.selectList.length) {
         return this.$Message.warning("请选择数据");
       }
       this.modalTitle = "修改数据源";
+      this.btnTitle = "修改";
+      this.handleReset();
       console.log(this.selectList[0], 999);
       this.formValidate = this.selectList[0].fromServer;
       this.formValidate.port = String(this.formValidate.port);
@@ -959,17 +926,24 @@ export default {
     // 修改映射
     handleModifyMap() {
       this.$refs.mapNode.show();
+      this.isMapModify = true;
     },
     // 删除数据源
     handleDelectSource() {
+      this.visible = false;
+      this.selectList = this.$refs.dataTables.currentSelectRows;
       if (!this.selectList.length) {
+        this.isSource = false;
         return this.$Message.warning("请选择数据");
       }
-      let ids = this.selectList.map(item => {
-        return item.fromServer.id;
-      });
+      this.isSourceDel = true;
+      this.isSource = true;
+
+      console.log("删除数据源", this.isSource);
+
+      this.$refs.delNode.show(ids);
       this.$Modal.confirm({
-        content: "<Icon type='ios-alert' /><p>你确定要删除吗？</p>",
+        content: `<Icon type='ios-alert' /><p>你确定要删除吗？</p>`,
         okText: "确定",
         cancelText: "取消",
         onOk: () => {
@@ -978,7 +952,9 @@ export default {
             .then(res => {
               if (res.code === 200) {
                 this.formValidate = {};
+                this.isSourceDel = false;
                 this.$Message.success("删除成功!");
+                this.$refs.dataTables.refreshPageData();
               } else {
                 this.$Message.error("删除数据源失败!");
               }
@@ -989,6 +965,26 @@ export default {
         },
         onCancel: () => {}
       });
+    },
+    handleDelSource() {
+      let ids = this.selectList.map(item => {
+        return item.fromServer.id;
+      });
+      dataSourceApi
+        .delSoruce(ids)
+        .then(res => {
+          if (res.code === 200) {
+            this.formValidate = {};
+            this.isSourceDel = false;
+            this.$Message.success("删除成功!");
+            this.$refs.dataTables.refreshPageData();
+          } else {
+            this.$Message.error("删除数据源失败!");
+          }
+        })
+        .catch(err => {
+          this.$Message.error("删除数据源失败!");
+        });
     },
     // 删除映射
     handleDelectMap() {
@@ -1030,14 +1026,20 @@ export default {
     // 列表数据刷新
     loadPageData(pageNo, pageSize, search) {
       return new Promise(function(resolve, reject) {
-        getSoruceList({
-          pageNo: pageNo,
-          pageSize: pageSize
-        })
+        dataSourceApi
+          .getSoruceList({
+            pageNo: pageNo,
+            pageSize: pageSize
+          })
           .then(req => {
-            console.log("22222", req.data);
+            let data = req.data;
+            data.list.map(item => {
+              item.isFold = false;
+              return item;
+            });
+            console.log("22222", data);
             // 处理数据，如果存在异常则提示
-            resolve(req.data);
+            resolve(data);
           })
           .catch(err => {
             // 异常处理,不用提示
@@ -1068,13 +1070,14 @@ export default {
         topic: "",
         defaultParam: ""
       };
+      this.isType = false;
+      this.isType = true;
       this.formValidate = { ...this.formValidate, ...initForm };
     },
     // 提交
     handleSubmit(val) {
       let isAdd = val;
       this.isLoad = true;
-      this.isAdd = true;
       this.isShow = true;
       let port = "";
       if (isAdd) {
@@ -1098,6 +1101,10 @@ export default {
                     this.handleReset();
                     this.isAdd = false;
                     this.$Message.success("保存成功!");
+                    this.modalTitle = "添加数据源";
+                    this.btnTitle = "添加";
+
+                    this.$refs.dataTables.refreshPageData();
                   } else {
                     this.checkoutTitle = "消息转发检验成功！";
                     this.isAdd = true;
@@ -1132,6 +1139,10 @@ export default {
       this.isAdd = false;
       this.isLoad = false;
       this.isSuccess = false;
+      this.isSourceDel = false;
+      this.isMapModify = false;
+      this.isSourceModify = false;
+      this.isMapDel = false;
     }
   }
 };

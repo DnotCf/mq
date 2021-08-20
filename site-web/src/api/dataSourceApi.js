@@ -34,7 +34,6 @@ dataSourceApi.delSoruce = ids => {
     method: "post"
   });
 };
-
 /**
  * 测试数据源连接
  */
@@ -45,3 +44,14 @@ dataSourceApi.testSoruce = data => {
     data
   });
 };
+/**
+ * 添加映射
+ */
+ dataSourceApi.saveMap = data => {
+  return axios.request({
+    url: "/router/save",
+    method: "post",
+    data
+  });
+};
+

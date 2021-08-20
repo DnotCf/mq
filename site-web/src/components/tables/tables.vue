@@ -115,6 +115,11 @@
             <slot name="header" slot="header"></slot>
             <slot name="footer" slot="footer"></slot>
             <slot name="loading" slot="loading"></slot>
+             <template v-for="item in insideColumns" slot-scope="{ row }"
+            :slot="item.slot">
+                <slot :name="item.slot" :row="row">
+                </slot>
+            </template>
         </Table>
 
         <!-- 表头自定义 -->
@@ -148,15 +153,15 @@
 </template>
 
 <script>
-import TablesEdit from './edit.vue'
-import handleBtns from './handle-btns'
-import HeaderPop from './customer/headerPop.vue'
-import MicSelect from '@/components/mic-select'
-import ColorIcons from '_c/color-icons'
-import Icons from '_c/icons'
+import TablesEdit from "./edit.vue";
+import handleBtns from "./handle-btns";
+import HeaderPop from "./customer/headerPop.vue";
+import MicSelect from "@/components/mic-select";
+import ColorIcons from "_c/color-icons";
+import Icons from "_c/icons";
 
 export default {
-  name: 'Tables',
+  name: "Tables",
   components: {
     HeaderPop,
     MicSelect,
@@ -166,8 +171,8 @@ export default {
   props: {
     columns: {
       type: Array,
-      default () {
-        return []
+      default() {
+        return [];
       }
     },
     autoRefresh: {
@@ -207,8 +212,8 @@ export default {
     },
     rowClassName: {
       type: Function,
-      default () {
-        return ''
+      default() {
+        return "";
       }
     },
     context: {
@@ -246,7 +251,7 @@ export default {
      */
     searchPlace: {
       type: String,
-      default: 'top'
+      default: "top"
     },
     /**
      * @description 加载数据函数（外部设置),页码、分页变化时会调用
@@ -293,33 +298,33 @@ export default {
    * @on-cancel-edit 返回值 {Object} 同上
    * @on-save-edit 返回值 {Object} ：除上面三个参数外，还有一个value: 修改后的数据
    */
-  data () {
+  data() {
     return {
       value: [],
       insideColumns: [],
       numberColumns: [], // 要转换为数字的列
       searchColumns: [],
       insideTableData: [],
-      edittingCellId: '',
-      edittingText: '',
-      searchValue: '',
+      edittingCellId: "",
+      edittingText: "",
+      searchValue: "",
       searchValueDate: [],
       searchIsDate: false,
       showSearch: {
-        'input': false,
-        'select': false,
-        'date': false,
-        'box': false
+        input: false,
+        select: false,
+        date: false,
+        box: false
       },
       searchKey: [],
-      searchType: ['input', 'select', 'date', 'box'],
+      searchType: ["input", "select", "date", "box"],
       searchTypeObj: {},
       searchKeyOption: {}, // linx 每一个字段的搜索配置
       searchDicType: {},
       searchDicUrl: {},
       searchSelectSelf: {},
       searchOptions: [],
-      tableHeight: 'auto',
+      tableHeight: "auto",
       pageNo: 1,
       pageSize: 20,
       pageTotal: 0,
@@ -327,13 +332,13 @@ export default {
       currentSelectRows: [],
       loadPageDataHandler: this.loadPageData,
       tableColumnsChecked: [], // 当前选中的列
-      columnKey: '', // 当前打开自定义列的列key
+      columnKey: "", // 当前打开自定义列的列key
       isPopBoxShow: false, // 自定义列弹出框状态
       top: 0,
       left: 0,
       selectKey: [],
-      slectDicType: '',
-      slectDicUrl: '',
+      slectDicType: "",
+      slectDicUrl: "",
       hasFilter: false,
       searchSelfObject: {},
       searchObject: {}, // 查询条件  //供外部调用
@@ -341,13 +346,13 @@ export default {
       searchSelectTerm: [],
       searchModel: {},
       openActive: false,
-      searchBarTxt: '查询条件',
+      searchBarTxt: "查询条件",
       btnIndex: 0,
       searchModelDefault: {}
-    }
+    };
   },
   methods: {
-    suportEdit (item, index) {
+    suportEdit(item, index) {
       item.render = (h, params) => {
         return h(TablesEdit, {
           props: {
@@ -357,45 +362,52 @@ export default {
             editable: this.editable
           },
           on: {
-            'input': val => {
-              this.edittingText = val
+            input: val => {
+              this.edittingText = val;
             },
-            'on-start-edit': (params) => {
-              this.edittingCellId = `editting-${params.index}-${params.column.key}`
-              this.$emit('on-start-edit', params)
+            "on-start-edit": params => {
+              this.edittingCellId = `editting-${params.index}-${
+                params.column.key
+              }`;
+              this.$emit("on-start-edit", params);
             },
-            'on-cancel-edit': (params) => {
-              this.edittingCellId = ''
-              this.$emit('on-cancel-edit', params)
+            "on-cancel-edit": params => {
+              this.edittingCellId = "";
+              this.$emit("on-cancel-edit", params);
             },
-            'on-save-edit': (params) => {
-              this.value[params.row.initRowIndex][params.column.key] = this.edittingText
-              this.$emit('input', this.value)
-              this.$emit('on-save-edit', Object.assign(params, {
-                value: this.edittingText
-              }))
-              this.edittingCellId = ''
+            "on-save-edit": params => {
+              this.value[params.row.initRowIndex][
+                params.column.key
+              ] = this.edittingText;
+              this.$emit("input", this.value);
+              this.$emit(
+                "on-save-edit",
+                Object.assign(params, {
+                  value: this.edittingText
+                })
+              );
+              this.edittingCellId = "";
             }
           }
-        })
-      }
-      return item
+        });
+      };
+      return item;
     },
-    surportHandle (item) {
-      let options = item.options || []
-      let insideBtns = []
+    surportHandle(item) {
+      let options = item.options || [];
+      let insideBtns = [];
       options.forEach(item => {
-        if (handleBtns[item]) insideBtns.push(handleBtns[item])
-      })
-      let btns = item.button ? [].concat(insideBtns, item.button) : insideBtns
+        if (handleBtns[item]) insideBtns.push(handleBtns[item]);
+      });
+      let btns = item.button ? [].concat(insideBtns, item.button) : insideBtns;
       item.render = (h, params) => {
-        params.tableData = this.value
-        return h('div', btns.map(item => item(h, params, this)))
-      }
-      return item
+        params.tableData = this.value;
+        return h("div", btns.map(item => item(h, params, this)));
+      };
+      return item;
     },
-    surportCustomerHead (item, index) {
-      let vm = this
+    surportCustomerHead(item, index) {
+      let vm = this;
       item.renderHeader = (h, params) => {
         return h(HeaderPop, {
           props: {
@@ -404,61 +416,66 @@ export default {
             isPopBoxShow: this.isPopBoxShow
           },
           on: {
-            'show-pop': (e) => {
-              vm.columnKey = vm.columns[e.targetColKeyIx].key
-              vm.top = e.clientY
-              vm.left = e.clientX
+            "show-pop": e => {
+              vm.columnKey = vm.columns[e.targetColKeyIx].key;
+              vm.top = e.clientY;
+              vm.left = e.clientX;
 
               if (vm.popHeaderX && vm.popHeaderX !== 0) {
-                vm.left = vm.left - vm.popHeaderX
+                vm.left = vm.left - vm.popHeaderX;
               }
               if (vm.popHeaderY && vm.popHeaderY !== 0) {
-                vm.top = vm.top - vm.popHeaderY
+                vm.top = vm.top - vm.popHeaderY;
               }
 
-              vm.isPopBoxShow = true
+              vm.isPopBoxShow = true;
             },
-            'on-sorted': (index, sort) => {
+            "on-sorted": (index, sort) => {
               // linx 默认是本地搜索，需要远程排序，单独指定
               if (!params.column.remote) {
                 if (sort === 1) {
-                  vm.$refs.tablesMain.handleSort(index, 'asc')
+                  vm.$refs.tablesMain.handleSort(index, "asc");
                 } else if (sort === 2) {
-                  vm.$refs.tablesMain.handleSort(index, 'desc')
+                  vm.$refs.tablesMain.handleSort(index, "desc");
                 }
-                return
+                return;
               }
 
               // 排序规则，升序还是降序
-              let sortType = 'asc'
+              let sortType = "asc";
               if (sort === 1) {
                 // TODO linx 需要改成后台异步搜索
-                sortType = 'asc'
+                sortType = "asc";
               } else if (sort === 2) {
-                sortType = 'desc'
+                sortType = "desc";
               }
               // 搜索的key
-              let keySearch = params.column.key
+              let keySearch = params.column.key;
               if (params.column.search && params.column.search.key) {
-                keySearch = params.column.search.key
+                keySearch = params.column.search.key;
               }
               // 判断是否已经有搜索条件
-              let flag = !((vm.searchKey === undefined || vm.searchKey === '' || vm.searchKey == null || vm.searchKey === 'false'))
+              let flag = !(
+                vm.searchKey === undefined ||
+                vm.searchKey === "" ||
+                vm.searchKey == null ||
+                vm.searchKey === "false"
+              );
               if (flag) {
                 if (vm.hasFilter) {
                   vm.searchSelfObject.orderBy = {
                     key: keySearch,
                     type: sortType
-                  }
+                  };
 
-                  vm.refreshPageData(vm.searchSelfObject)
+                  vm.refreshPageData(vm.searchSelfObject);
                 } else {
                   vm.refreshPageData({
                     orderBy: {
                       key: keySearch,
                       type: sortType
                     }
-                  })
+                  });
                 }
               } else {
                 vm.refreshPageData({
@@ -466,81 +483,87 @@ export default {
                     key: keySearch,
                     type: sortType
                   }
-                })
+                });
               }
             }
           }
+        });
+      };
+      return item;
+    },
+    changeTableColumns() {
+      var cols = [];
+      this.tableColumnsChecked
+        .sort(function(a, b) {
+          return a - b;
         })
-      }
-      return item
+        .forEach(key => {
+          cols.push(this.columns[key]);
+        });
+      this.insideColumns = cols;
     },
-    changeTableColumns () {
-      var cols = []
-      this.tableColumnsChecked.sort(function (a, b) {
-        return a - b
-      }).forEach((key) => {
-        cols.push(this.columns[key])
-      })
-      this.insideColumns = cols
-    },
-    handleColumns (columns) {
-      const that = this
-      that.insideColumns = []
-      that.tableColumnsChecked = []
-      this.numberColumns = []
-      this.searchKey = []
-      this.searchModelDefault = {}
-      columns.forEach(function (item, index) {
+    handleColumns(columns) {
+      const that = this;
+      that.insideColumns = [];
+      that.tableColumnsChecked = [];
+      this.numberColumns = [];
+      this.searchKey = [];
+      this.searchModelDefault = {};
+      columns.forEach(function(item, index) {
         if (!item.hidden) {
-          let res = item
-          const _flag = !item.noEditHeader
-          if (res.editable) res = that.suportEdit(res, index)
-          if (res.key === 'handle') res = that.surportHandle(res)
+          let res = item;
+          const _flag = !item.noEditHeader;
+          if (res.editable) res = that.suportEdit(res, index);
+          if (res.key === "handle") res = that.surportHandle(res);
           if (that.customHeader && _flag) {
-            res = that.surportCustomerHead(res, index)
-            that.tableColumnsChecked.push(index)
+            res = that.surportCustomerHead(res, index);
+            that.tableColumnsChecked.push(index);
           }
-          that.insideColumns.push(res)
+          that.insideColumns.push(res);
         }
-        if (item.type === 'number') {
-          that.numberColumns.push(item.key)
+        if (item.type === "number") {
+          that.numberColumns.push(item.key);
         }
         /* numberColumns */
-      })
-      var hasSearch = false
+      });
+      var hasSearch = false;
       columns.map(item => {
         if (item.search && this.searchType.indexOf(item.search.type) > -1) {
-          var _item = Object.assign({}, item)
-          if (item.search.key && item.search.key !== '') {
-            _item.key = item.search.key
+          var _item = Object.assign({}, item);
+          if (item.search.key && item.search.key !== "") {
+            _item.key = item.search.key;
           }
 
-          this.searchKeyOption[_item.key] = _item.search.option
-          this.searchTypeObj[_item.key] = _item.search.type
-          if (_item.search.dicType && _item.search.dicType !== '') {
-            this.searchDicType[_item.key] = _item.search.dicType
-          } else if (_item.search.url && _item.search.url !== '') {
-            this.searchDicUrl[_item.key] = _item.search.url
-          } else if (_item.search.custom && _item.search.options && _item.search.options.length > 0) {
+          this.searchKeyOption[_item.key] = _item.search.option;
+          this.searchTypeObj[_item.key] = _item.search.type;
+          if (_item.search.dicType && _item.search.dicType !== "") {
+            this.searchDicType[_item.key] = _item.search.dicType;
+          } else if (_item.search.url && _item.search.url !== "") {
+            this.searchDicUrl[_item.key] = _item.search.url;
+          } else if (
+            _item.search.custom &&
+            _item.search.options &&
+            _item.search.options.length > 0
+          ) {
             this.searchSelectSelf[_item.key] = {
               custom: _item.search.custom,
               options: _item.search.options
-            }
+            };
           }
 
           // 回显查询条件
           if (_item.search.choose) {
-            this.searchKey.push(_item.key)
-            this.searchModelDefault[_item.key] = _item.search.chooseValue
+            this.searchKey.push(_item.key);
+            this.searchModelDefault[_item.key] = _item.search.chooseValue;
           }
 
-          this.searchColumns.push(_item)
+          this.searchColumns.push(_item);
           // console.log(this.searchColumns)
           if (!hasSearch) {
-            hasSearch = true
+            hasSearch = true;
           }
         }
-      })
+      });
       // if (hasSearch) {
       //   this.searchColumns.push({
       //     key: 'false',
@@ -549,57 +572,62 @@ export default {
       //   })
       // }
     },
-    setDefaultSearchKey () {
+    setDefaultSearchKey() {
       if (this.columns && this.columns.length > 0) {
-        this.searchKey = this.columns[0].key !== 'handle' ? this.columns[0].key : (this.columns.length > 1 ? this.columns[1].key : '')
+        this.searchKey =
+          this.columns[0].key !== "handle"
+            ? this.columns[0].key
+            : this.columns.length > 1
+              ? this.columns[1].key
+              : "";
       } else {
-        this.searchKey = []
+        this.searchKey = [];
       }
     },
-    handleClear (e) {
-      if (e.target.value === '') this.insideTableData = this.value
+    handleClear(e) {
+      if (e.target.value === "") this.insideTableData = this.value;
     },
-    searchEnter () {
-      this.handleSearch()
+    searchEnter() {
+      this.handleSearch();
     },
-    timeSearchChange (v,t) {
-      this.handleSearch()
+    timeSearchChange(v, t) {
+      this.handleSearch();
     },
-    handleSearch () {
+    handleSearch() {
       // TODO linx 需要改成后台异步搜索
       // linx fix bug#461 无条件时点击搜索无反应。改成查询全部，也可作为刷新使用
       if (this.hasFilter) {
-        this.refreshPageData(this.searchSelfObject)
+        this.refreshPageData(this.searchSelfObject);
       } else {
-        this.refreshPageData()
+        this.refreshPageData();
       }
       // this.insideTableData = this.value.filter(item => item[this.searchKey].indexOf(this.searchValue) > -1)
     },
-    handleTableData () {
+    handleTableData() {
       if (this.numberColumns.length > 0) {
-        this.numberColumns.map((numberItem) => {
+        this.numberColumns.map(numberItem => {
           this.insideTableData = this.value.map((item, index) => {
-            let res = item
+            let res = item;
             if (res[numberItem]) {
-              res[numberItem] = parseFloat(res[numberItem])
+              res[numberItem] = parseFloat(res[numberItem]);
             }
-            res.initRowIndex = index
-            return res
-          })
-        })
+            res.initRowIndex = index;
+            return res;
+          });
+        });
       } else {
         this.insideTableData = this.value.map((item, index) => {
-          let res = item
-          res.initRowIndex = index
-          return res
-        })
+          let res = item;
+          res.initRowIndex = index;
+          return res;
+        });
       }
     },
-    refreshPageData (searchSelf) {
+    refreshPageData(searchSelf) {
       // 刷新数据就清理选择项
-      this.currentSelectRows = []
-      let pageNo = this.pageNo
-      let pageSize = this.pageSize
+      this.currentSelectRows = [];
+      let pageNo = this.pageNo;
+      let pageSize = this.pageSize;
       // let search = {}
       // let flag = !((this.searchKey === 'false' || this.searchKey === undefined || this.searchKey === ''))
       // if (flag) {
@@ -613,35 +641,43 @@ export default {
       //     }
       //   }
       // }
-      let searchObject = {}
+      let searchObject = {};
       for (let key in this.searchModel) {
-        if (this.searchModel[key] === '' || this.searchModel[key] === null) {
-          delete this.searchModel[key]
+        if (this.searchModel[key] === "" || this.searchModel[key] === null) {
+          delete this.searchModel[key];
         }
       }
       if (searchSelf) {
-        this.hasFilter = true
-        this.searchSelfObject = JSON.parse(JSON.stringify(searchSelf))
-        searchObject = searchSelf
+        this.hasFilter = true;
+        this.searchSelfObject = JSON.parse(JSON.stringify(searchSelf));
+        searchObject = searchSelf;
         if (Object.keys(this.searchModel) !== 0) {
           for (let key in this.searchModel) {
             // linx 支持 obj.key.key 的多重点方法选择的字符串转换为对象
-            if (key.indexOf('.') > -1) {
-              this.parserObjStr(searchObject, key.split('.'), this.searchModel[key])
+            if (key.indexOf(".") > -1) {
+              this.parserObjStr(
+                searchObject,
+                key.split("."),
+                this.searchModel[key]
+              );
             } else {
-              searchObject[key] = this.searchModel[key]
+              searchObject[key] = this.searchModel[key];
             }
           }
         }
       } else {
-        this.hasFilter = false
-        this.searchSelfObject = {}
+        this.hasFilter = false;
+        this.searchSelfObject = {};
         for (let key in this.searchModel) {
           // linx 支持 obj.key.key 的多重点方法选择的字符串转换为对象
-          if (key.indexOf('.') > -1) {
-            this.parserObjStr(searchObject, key.split('.'), this.searchModel[key])
+          if (key.indexOf(".") > -1) {
+            this.parserObjStr(
+              searchObject,
+              key.split("."),
+              this.searchModel[key]
+            );
           } else {
-            searchObject[key] = this.searchModel[key]
+            searchObject[key] = this.searchModel[key];
           }
         }
       }
@@ -656,99 +692,113 @@ export default {
       //     });
       //   }
       // }
-      this.changeSearchObject(searchObject)
-      this.searchObject = searchObject // 供外部调用
+      this.changeSearchObject(searchObject);
+      this.searchObject = searchObject; // 供外部调用
 
-      this.loading = true
-      this.loadPageDataHandler(pageNo, pageSize, searchObject).then(data => {
-        this.pageTotal = data.count
-        this.value = data.list
-        this.loading = false
-      }).catch(err => {
-        this.pageTotal = 0
-        this.value = []
-        this.loading = false
-        this.$Message.error(err.message || '服务异常')
-      })
+      this.loading = true;
+      this.loadPageDataHandler(pageNo, pageSize, searchObject)
+        .then(data => {
+          this.pageTotal = data.count;
+          this.value = data.list;
+          this.loading = false;
+        })
+        .catch(err => {
+          this.pageTotal = 0;
+          this.value = [];
+          this.loading = false;
+          this.$Message.error(err.message || "服务异常");
+        });
     },
     toLastTime(date) {
-        let result = null
-        if (date) {
-            result = new Date(date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + ' 23:59:59')
-        }
-      return result
+      let result = null;
+      if (date) {
+        result = new Date(
+          date.getFullYear() +
+            "/" +
+            (date.getMonth() + 1) +
+            "/" +
+            date.getDate() +
+            " 23:59:59"
+        );
+      }
+      return result;
     },
     changeSearchObject(searchObject) {
-      this.columns.map(item=>{
+      this.columns.map(item => {
         if (item.search) {
-          if (item.search.type === 'date') {
-            let key = item.search.key?item.search.key:item.key
+          if (item.search.type === "date") {
+            let key = item.search.key ? item.search.key : item.key;
             if (searchObject[key]) {
-              searchObject[key][1] = this.toLastTime(searchObject[key][1])
+              searchObject[key][1] = this.toLastTime(searchObject[key][1]);
             }
           }
         }
-      })
+      });
     },
-    exportCsv (params) {
-      this.$refs.tablesMain.exportCsv(params)
+    exportCsv(params) {
+      this.$refs.tablesMain.exportCsv(params);
     },
-    clearCurrentRow () {
-      this.$refs.tablesMain.clearCurrentRow()
+    clearCurrentRow() {
+      this.$refs.tablesMain.clearCurrentRow();
     },
     // hcj更多按钮change回调
-    onMoreSelectChange (btnItem, index, value) {
+    onMoreSelectChange(btnItem, index, value) {
       // this.expandMoreBtn = false
-      this.toolbtns[index].isOpen = false
+      this.toolbtns[index].isOpen = false;
       if (value) {
         btnItem.selectBtnList.forEach(item => {
-          if (value === item.value && item.click && typeof (item.click) === 'function') {
-            item.click(this.currentSelectRows)
+          if (
+            value === item.value &&
+            item.click &&
+            typeof item.click === "function"
+          ) {
+            item.click(this.currentSelectRows);
           }
-        })
+        });
       }
     },
-    clickMoreBtn (btnIndex) {
+    clickMoreBtn(btnIndex) {
       // this.toolbtns[index].isOpen = !this.toolbtns[index].isOpen
-      this.btnIndex = btnIndex
+      this.btnIndex = btnIndex;
       this.toolbtns.forEach((item, index) => {
         if (btnIndex == index) {
-          item.isOpen = !item.isOpen
+          item.isOpen = !item.isOpen;
         } else {
-          item.isOpen = false
+          item.isOpen = false;
         }
-      })
+      });
     },
-    onCurrentChange (currentRow, oldCurrentRow) {
-      this.$emit('on-current-change', currentRow, oldCurrentRow)
+    onCurrentChange(currentRow, oldCurrentRow) {
+      this.$emit("on-current-change", currentRow, oldCurrentRow);
     },
-    onSelect (selection, row) {
+    onSelect(selection, row) {
       // this.$refs.tablesMain.selectAll(false)
       // linx 单选模式下，有选择时，吧其他的给取消选中
-      this.$emit('on-select', selection, row)
+      this.$emit("on-select", selection, row);
     },
-    onSelectCancel (selection, row) {
-      this.$emit('on-select-cancel', selection, row)
+    onSelectCancel(selection, row) {
+      this.$emit("on-select-cancel", selection, row);
     },
-    onSelectAll (selection) {
-      this.$emit('on-select-all', selection)
+    onSelectAll(selection) {
+      this.$emit("on-select-all", selection);
     },
-    onSelectionChange (selection) {
-      this.currentSelectRows = selection
-      this.$emit('on-selection-change', selection)
+    onSelectionChange(selection) {
+      console.log("111",selection)
+      this.currentSelectRows = selection;
+      this.$emit("on-selection-change", selection);
     },
-    onSortChange (column, key, order) {
-      this.$emit('on-sort-change', column, key, order)
+    onSortChange(column, key, order) {
+      this.$emit("on-sort-change", column, key, order);
     },
-    onFilterChange (row) {
-      this.$emit('on-filter-change', row)
+    onFilterChange(row) {
+      this.$emit("on-filter-change", row);
     },
-    onRowClick (row, index) {
-      row.select = true
+    onRowClick(row, index) {
+      row.select = true;
       // linx 单击时，取消选中的，然后重新勾选
-      this.$refs.tablesMain.selectAll(false)
-      this.$refs.tablesMain.toggleSelect(index)
-      this.$emit('on-row-click', row, index)
+      this.$refs.tablesMain.selectAll(false);
+      this.$refs.tablesMain.toggleSelect(index);
+      this.$emit("on-row-click", row, index);
       // linx 单击行时，延时执行，如果时双击，会清除单击的执行
       /* this.timer && clearTimeout(this.timer)
       this.timer = setTimeout(()=>{
@@ -757,65 +807,67 @@ export default {
           this.$emit('on-row-click', row, index)
       },200) */
     },
-    onRowDblclick (row, index) {
+    onRowDblclick(row, index) {
       // linx 如果触发了双击，则清除单击执行
       // this.timer && clearTimeout(this.timer)
-      this.$emit('on-row-dblclick', row, index)
+      this.$emit("on-row-dblclick", row, index);
     },
-    onExpand (row, status) {
-      this.$emit('on-expand', row, status)
+    onExpand(row, status) {
+      this.$emit("on-expand", row, status);
     },
     // 分页回调
-    onPageNoChange (pageNo) {
-      this.pageNo = pageNo
+    onPageNoChange(pageNo) {
+      this.pageNo = pageNo;
       if (this.hasFilter) {
-        this.refreshPageData(this.searchSelfObject)
+        this.refreshPageData(this.searchSelfObject);
       } else {
-        this.refreshPageData()
+        this.refreshPageData();
       }
     },
-    onPageSizeChange (pageSize) {
-      this.pageSize = pageSize
+    onPageSizeChange(pageSize) {
+      this.pageSize = pageSize;
       if (this.hasFilter) {
-        this.refreshPageData(this.searchSelfObject)
+        this.refreshPageData(this.searchSelfObject);
       } else {
-        this.refreshPageData()
+        this.refreshPageData();
       }
     },
     // 工具条按钮点击回调
-    onBtnClick (btnItem, ix) {
-      if (btnItem.click && typeof (btnItem.click) === 'function') {
-        btnItem.loading = true
-        this.$set(this.toolbtns, ix, btnItem)
-        var rtn = btnItem.click(this.currentSelectRows)
+    onBtnClick(btnItem, ix) {
+      if (btnItem.click && typeof btnItem.click === "function") {
+        btnItem.loading = true;
+        this.$set(this.toolbtns, ix, btnItem);
+        var rtn = btnItem.click(this.currentSelectRows);
         // 更新按钮状态
         if (rtn && rtn.constructor === Promise) {
-          rtn.then(() => {
-            btnItem.loading = false
-            this.$set(this.toolbtns, ix, btnItem)
-          }).catch(() => {
-            btnItem.loading = false
-            this.$set(this.toolbtns, ix, btnItem)
-          })
+          rtn
+            .then(() => {
+              btnItem.loading = false;
+              this.$set(this.toolbtns, ix, btnItem);
+            })
+            .catch(() => {
+              btnItem.loading = false;
+              this.$set(this.toolbtns, ix, btnItem);
+            });
         } else {
-          btnItem.loading = false
-          this.$set(this.toolbtns, ix, btnItem)
+          btnItem.loading = false;
+          this.$set(this.toolbtns, ix, btnItem);
         }
       }
     },
-    clearAllSearchCon () {
-      this.searchSelectTerm = []
-      this.searchModel = {}
-      this.searchKey = []
-      this.searchBarTxt = '查询条件'
-      this.handleSearch()
+    clearAllSearchCon() {
+      this.searchSelectTerm = [];
+      this.searchModel = {};
+      this.searchKey = [];
+      this.searchBarTxt = "查询条件";
+      this.handleSearch();
     },
-    chooseSearchSelect (val) {
-      let needRefresh = false
-      this.searchSelectTerm = []
-      var selectedList = []
-      val.forEach((item) => {
-        selectedList.push(item.value)
+    chooseSearchSelect(val) {
+      let needRefresh = false;
+      this.searchSelectTerm = [];
+      var selectedList = [];
+      val.forEach(item => {
+        selectedList.push(item.value);
         this.searchSelectTerm.push({
           label: item.label,
           name: item.value,
@@ -823,29 +875,41 @@ export default {
           type: this.searchTypeObj[item.value],
           dicType: this.searchDicType[item.value],
           dicUrl: this.searchDicUrl[item.value],
-          custom: this.searchSelectSelf[item.value] && this.searchSelectSelf[item.value].custom,
-          options: this.searchSelectSelf[item.value] && this.searchSelectSelf[item.value].options
-        })
-        if (this.searchModel[item.value] === '' || this.searchModel[item.value] === null || this.searchModel[item.value] === undefined) {
-          if (this.searchModelDefault[item.value] || this.searchModelDefault[item.value] === 0 || this.searchModelDefault[item.value] === '0') {
-            this.searchModel[item.value] = this.searchModelDefault[item.value]
-            needRefresh = true
-          } else if (this.searchTypeObj[item.value] === 'date') {
-            this.searchModel[item.value] = []
+          custom:
+            this.searchSelectSelf[item.value] &&
+            this.searchSelectSelf[item.value].custom,
+          options:
+            this.searchSelectSelf[item.value] &&
+            this.searchSelectSelf[item.value].options
+        });
+        if (
+          this.searchModel[item.value] === "" ||
+          this.searchModel[item.value] === null ||
+          this.searchModel[item.value] === undefined
+        ) {
+          if (
+            this.searchModelDefault[item.value] ||
+            this.searchModelDefault[item.value] === 0 ||
+            this.searchModelDefault[item.value] === "0"
+          ) {
+            this.searchModel[item.value] = this.searchModelDefault[item.value];
+            needRefresh = true;
+          } else if (this.searchTypeObj[item.value] === "date") {
+            this.searchModel[item.value] = [];
           } else {
-            this.searchModel[item.value] = null
+            this.searchModel[item.value] = null;
           }
         }
-      })
+      });
       for (const key in this.searchModel) {
         if (selectedList.indexOf(key) < 0) {
-          delete this.searchModel[key]
+          delete this.searchModel[key];
         }
       }
       if (this.searchSelectTerm.length > 0) {
-        this.searchBarTxt = '已选中' + this.searchSelectTerm.length + '项'
+        this.searchBarTxt = "已选中" + this.searchSelectTerm.length + "项";
       } else {
-        this.searchBarTxt = '查询条件'
+        this.searchBarTxt = "查询条件";
       }
       // var flag = val !== 'false'
 
@@ -877,87 +941,97 @@ export default {
       //   this.slectDicUrl = ''
       // }
       this.$nextTick(() => {
-        this.caculHeight()
+        this.caculHeight();
         if (needRefresh) {
-          this.handleSearch()
+          this.handleSearch();
         }
-      })
+      });
     },
-    onOpenChange (val) {
-      this.openActive = !!val
+    onOpenChange(val) {
+      this.openActive = !!val;
     },
-    onSelectChange () {
-      this.handleSearch()
+    onSelectChange() {
+      this.handleSearch();
     },
-    btnSelectChange (type, index) {
-      this.$emit('toolbtn-select-change', type, index)
+    btnSelectChange(type, index) {
+      this.$emit("toolbtn-select-change", type, index);
     },
-    parserObjStr (obj, props, val) {
-      let key = props[0]
+    parserObjStr(obj, props, val) {
+      let key = props[0];
       if (!obj[key]) {
-        obj[key] = {}
+        obj[key] = {};
       }
       if (props.length <= 1) {
-        obj[key] = val
+        obj[key] = val;
       } else {
-        props.splice(0, 1)
-        obj[key] = this.parserObjStr({}, props, val)
+        props.splice(0, 1);
+        obj[key] = this.parserObjStr({}, props, val);
       }
-      return obj
+      return obj;
     },
-    caculHeight () {
-      if (this.height && this.height !== 'auto') {
+    caculHeight() {
+      if (this.height && this.height !== "auto") {
         // 手动设置高度
-        this.tableHeight = this.height
+        this.tableHeight = this.height;
       } else {
         // 自动计算表格高度
         // 设置表格高度 = 浏览器高度 - 顶部标题 - 内容区域上下内边距 - 表格工具条区域 - 底部分页控件（如果有） - 减去外部位移
-        let headerHeight = document.getElementById('geoHeaderRef').clientHeight
-        let tableToolHeight = this.$refs.tableTop.offsetHeight
+        let headerHeight = document.getElementById("geoHeaderRef").clientHeight;
+        let tableToolHeight = this.$refs.tableTop.offsetHeight;
         if (!headerHeight) {
-          headerHeight = 50
+          headerHeight = 50;
         }
-        this.tableHeight = document.documentElement.clientHeight - headerHeight - 18 * 2 - tableToolHeight - 38 - this.$props
-          .offsetTop
+        this.tableHeight =
+          document.documentElement.clientHeight -
+          headerHeight -
+          18 * 2 -
+          tableToolHeight -
+          38 -
+          this.$props.offsetTop;
       }
 
       if (this.excessHeight > 0) {
-        this.tableHeight = this.tableHeight - this.excessHeight
+        this.tableHeight = this.tableHeight - this.excessHeight;
       }
     },
     // 给类型为"更多"的下拉按钮增加 是否显示isOpen 属性
-    handleToolbtns () {
+    handleToolbtns() {
       this.toolbtns.forEach(item => {
-        if (item.selectType === 'moreSelectBtn') {
-          item.isOpen = false
+        if (item.selectType === "moreSelectBtn") {
+          item.isOpen = false;
         }
-      })
+      });
     },
     // 点击除"更多"按钮以外的页面将其隐藏
-    handleShowMoreBtn () {
-      document.addEventListener('click', (e) => {
-        const cName = e.target.className
-        const pName = (e.target.parentNode && e.target.parentNode.className) || ''
-        if (pName !== 'more-btn-info' && cName !== 'icon iconfont icon-table-more-btn' && cName !== 'icon iconfont icon-table-more-btn-up') {
-          this.handleToolbtns()
+    handleShowMoreBtn() {
+      document.addEventListener("click", e => {
+        const cName = e.target.className;
+        const pName =
+          (e.target.parentNode && e.target.parentNode.className) || "";
+        if (
+          pName !== "more-btn-info" &&
+          cName !== "icon iconfont icon-table-more-btn" &&
+          cName !== "icon iconfont icon-table-more-btn-up"
+        ) {
+          this.handleToolbtns();
         }
-      })
+      });
     },
-    setTableWidthChange () {
-      let len = this.columns.length
+    setTableWidthChange() {
+      let len = this.columns.length;
       this.columns.forEach((item, index) => {
         if (item.title && !item.width && index < len - 1) {
-          this.$set(this.columns[index], 'width', item.title * 14 + 72)
+          this.$set(this.columns[index], "width", item.title * 14 + 72);
         }
-        this.$set(this.columns[index], 'resizable', true)
-      })
+        this.$set(this.columns[index], "resizable", true);
+      });
     },
     // 新旧column长度不一致为页面内改变column的情况，不是拖动改变列宽的情况，才运行处理column的函数 hcj-1220
     // column改变后要重新设置resizable属性 hcj-1220
-    pushColumnsInTable (newColumns, oldColumns) {
+    pushColumnsInTable(newColumns, oldColumns) {
       if (newColumns.length !== oldColumns.length) {
-        this.handleColumns(newColumns)
-        this.setTableWidthChange()
+        this.handleColumns(newColumns);
+        this.setTableWidthChange();
       }
     },
     /**
@@ -965,75 +1039,74 @@ export default {
      * @description 表格按钮是更多下拉类型的时候判断内部按钮是否有可以显示的，
      * 如果内部全部不显示，则更多也不现实
      */
-    isShowMoreButton (btnList) {
+    isShowMoreButton(btnList) {
       for (let i = 0; i < btnList.length; i++) {
         if (btnList[i].notAuth) {
-          return true
+          return true;
         } else if (this.$canShowButton(btnList[i].id)) {
-          return true
+          return true;
         }
       }
-      return false
+      return false;
     }
   },
   watch: {
     columns: {
-      handler (newColumns, oldColumns) {
+      handler(newColumns, oldColumns) {
         // this.handleColumns(newColumns)
         // this.setDefaultSearchKey()
-        this.pushColumnsInTable(newColumns, oldColumns)
+        this.pushColumnsInTable(newColumns, oldColumns);
       },
       deep: true
     },
-    value (val) {
-      this.handleTableData()
+    value(val) {
+      this.handleTableData();
       // this.handleSearch()
     },
-    height (val) {
-      this.tableHeight = val
+    height(val) {
+      this.tableHeight = val;
     }
   },
-  mounted () {
-    this.caculHeight()
+  mounted() {
+    this.caculHeight();
     if (this.autoRefresh) {
-      this.refreshPageData()
+      this.refreshPageData();
     }
-    this.setTableWidthChange()
+    this.setTableWidthChange();
 
-    this.handleColumns(this.columns)
+    this.handleColumns(this.columns);
     // this.setDefaultSearchKey()
-    this.handleTableData()
+    this.handleTableData();
 
     for (var key in this.$refs) {
-      if (key.indexOf('micSelect') === 0) {
-        this.selectKey.push(key)
+      if (key.indexOf("micSelect") === 0) {
+        this.selectKey.push(key);
       }
     }
 
-    this.$emit('table-loaded', this.tableHeight)
+    this.$emit("table-loaded", this.tableHeight);
     // this.$emit('table-loaded', document.documentElement.clientHeight - this.$props.offsetTop - 64 - 18 * 2 - 46);
-    this.handleToolbtns()
-    this.handleShowMoreBtn()
+    this.handleToolbtns();
+    this.handleShowMoreBtn();
   },
-  created () {
+  created() {
     // this.toolbtns.map(item=>{
     //  item.loading = false;
     // });
   }
-}
+};
 </script>
 <style lang="less">
-    /**
+/**
      *  linx fix bug#298 每个页面的筛选框被遮挡了部分
      */
-    .geo-table-content {
-        .search-con {
-
-            .ivu-select-single .ivu-select-selection .ivu-select-placeholder,
-            .ivu-select-single .ivu-select-selection .ivu-select-selected-value {
-                height: 28px !important;
-                border-radius: 5px 0 0 5px !important;
-            }
-        }
+.geo-table-content {
+  .search-con {
+    .ivu-select-single .ivu-select-selection .ivu-select-placeholder,
+    .ivu-select-single .ivu-select-selection .ivu-select-selected-value {
+      height: 28px !important;
+      border-radius: 5px 0 0 5px !important;
     }
+  }
+}
 </style>
