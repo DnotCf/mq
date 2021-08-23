@@ -217,7 +217,15 @@
         border-radius: 50%;
         width: 10px;
         height: 10px;
+      }
+      .green {
         background: #a0d911;
+      }
+      .red {
+        background: red;
+      }
+      .orange {
+        background: orange;
       }
     }
     .fold {
@@ -250,7 +258,7 @@
   /deep/.ivu-poptip-arrow {
     display: none;
   }
-  /deep/.ivu-poptip-body{
+  /deep/.ivu-poptip-body {
     padding: 0;
   }
   .poptip-item {
@@ -258,7 +266,9 @@
     line-height: 36px;
     padding-left: 12px;
     cursor: pointer;
+    width: 100%;
   }
+
 }
 .active {
   background: #d7e5fc;
@@ -275,7 +285,17 @@
   /deep/.ivu-poptip-arrow {
     display: block;
   }
-  /deep/.ivu-poptip-body{
+  /deep/.ivu-poptip-body {
     padding: 8px 16px !important;
+    .ivu-icon {
+      display: none !important;
+    }
+    .ivu-poptip-body-message {
+      padding-left: 0px !important;
+    }
+  }
+  /deep/.ivu-poptip-footer button {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    color: #a6b4cf;
   }
 }

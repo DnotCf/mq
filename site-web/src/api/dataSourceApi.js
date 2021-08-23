@@ -47,11 +47,30 @@ dataSourceApi.testSoruce = data => {
 /**
  * 添加映射
  */
- dataSourceApi.saveMap = data => {
+dataSourceApi.saveMap = data => {
   return axios.request({
     url: "/router/save",
     method: "post",
     data
   });
 };
-
+/**
+ * 测试映射连接
+ */
+dataSourceApi.testMap = data => {
+  return axios.request({
+    url: "/router/testConnection",
+    method: "post",
+    data
+  });
+};
+/**
+ * 删除映射
+ */
+ dataSourceApi.delMap = ids => {
+  ids = ids || [];
+  return axios.request({
+    url: "/router/delete?ids=" + ids.join(","),
+    method: "post"
+  });
+};

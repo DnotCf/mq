@@ -12,70 +12,61 @@
             <span class="title-name">表格管理</span>
           </div>
           <div class="btn-layout">
-            <!-- <Dropdown class="dropdown-box">
-              <Button type="primary" class="btn-box">
-                修改
-                <Icon type="ios-arrow-down"></Icon>
-              </Button>
-              <DropdownMenu slot="list" style="display: block">
-                <DropdownItem @click.native="handleModifySource">
-                  数据源
-                </DropdownItem>
-                <DropdownItem @click.native="handleModifyMap"
-                  >映射</DropdownItem
-                >
-              </DropdownMenu>
-            </Dropdown> -->
-            <Poptip class="home-poptip" placement="bottom">
-              <Button type="primary" class="btn-box">
-                修改
-                <Icon type="ios-arrow-down"></Icon>
-              </Button>
-              <div slot="title"></div>
-              <div slot="content">
-                <div
-                  class="poptip-item"
-                  :class="isSourceModify ? 'active' : ''"
-                  @click="handleModifySource"
-                >
-                  数据源
-                </div>
-                <div
-                  class="poptip-item"
-                  :class="isMapModify ? 'active' : ''"
-                  @click="handleModifyMap"
-                >
-                  映射
-                </div>
-              </div>
-            </Poptip>
-            <Poptip class="home-poptip" placement="bottom">
-              <Button type="primary" class="btn-box">
-                删除
-                <Icon type="ios-arrow-down"></Icon>
-              </Button>
-              <div slot="title"></div>
-              <div slot="content">
-                <div @click.stop="handleDelectSource">
-                  
-                  <Poptip
-                   v-model="isSource"
-                    placement="bottom"
-                    class="del-poptip cs"
-                    confirm
-                    :disabled="!isSource"
-                    @on-ok="handleDelSource"
-                    :class="isSourceDel ? 'active' : ''"
+            <div name="toolbar">
+              <Poptip class="home-poptip" placement="bottom" trigger="hover">
+                <Button type="primary" class="btn-box">
+                  修改
+                  <Icon type="ios-arrow-down"></Icon>
+                </Button>
+                <div slot="title"></div>
+                <div slot="content">
+                  <div
+                    class="poptip-item"
+                    :class="isSourceModify ? 'active' : ''"
+                    @click="handleModifySource()"
                   >
-                    <div class="poptip-item">数据源</div>
-                    <div slot="title">你确定要删除吗？</div>
-                  </Poptip>
+                    数据源
+                  </div>
+                  <div
+                    class="poptip-item"
+                    :class="isMapModify ? 'active' : ''"
+                    @click="handleModifyMap"
+                  >
+                    映射
+                  </div>
                 </div>
-                <div @click="handleDelectMap">
-                  <div class="poptip-item">
+              </Poptip>
+              <Poptip class="home-poptip" placement="bottom">
+                <Button type="primary" class="btn-box">
+                  删除
+                  <Icon type="ios-arrow-down"></Icon>
+                </Button>
+                <div slot="title"></div>
+                <div slot="content">
+                  <div @click.stop="handleDelectSource">
                     <Poptip
+                      v-model="isSource"
+                      placement="bottom"
+                      class="del-poptip cs"
+                      confirm
+                      :disabled="!isSource"
+                      @on-ok="handleDelSource"
+                      :class="isSourceDel ? 'active' : ''"
+                    >
+                      <div class="poptip-item">数据源</div>
+                      <div slot="title">
+                        <svg-icon name="icon-warn"></svg-icon>
+                        你确定要删除吗？
+                      </div>
+                    </Poptip>
+                  </div>
+                  <div @click="handleDelectMap">
+                    <Poptip
+                      v-model="isMap"
                       placement="bottom"
                       class="del-poptip"
+                      :disabled="!isSource"
+                      @on-ok="handleDelMap"
                       confirm
                       :class="isMapDel ? 'active' : ''"
                     >
@@ -84,25 +75,11 @@
                     </Poptip>
                   </div>
                 </div>
-              </div>
-            </Poptip>
-            <!-- <Dropdown class="dropdown-box">
-              <Button type="primary" class="btn-box">
-                删除
-                <Icon type="ios-arrow-down"></Icon>
+              </Poptip>
+              <Button type="primary" class="btn-box" @click="handleAddMap">
+                添加映射
               </Button>
-              <DropdownMenu slot="list">
-                <DropdownItem @click.native="handleDelectSource">
-                  数据源
-                </DropdownItem>
-                <DropdownItem @click.native="handleDelectMap"
-                  >映射</DropdownItem
-                >
-              </DropdownMenu>
-            </Dropdown> -->
-            <Button type="primary" class="btn-box" @click="handleAddMap">
-              添加映射
-            </Button>
+            </div>
           </div>
         </div>
         <div class="page-list-box">
@@ -279,24 +256,47 @@
                   >{{ row.fromServer.vpnAccount }}
                 </div>
               </div>
-              <div v-else>
+              <!-- <div v-else>
                 <div class="list-content">
                   <span class="list-nature">地址：</span
                   >{{ row.fromServer.retry }}
                 </div>
-              </div>
+              </div> -->
             </template>
             <template slot-scope="{ row, index }" slot="map">
-              <div class="fold-box" v-if="Number(row.fromServer.map)">
+              <div class="fold-box" v-if="row.toServer">
                 <div
-                  ref="mapNode"
                   class="map-box"
                   :style="{
-                    overflow: isFold ? 'hidden' : '',
-                    height: isFold ? '90px' : '',
+                    overflow: row.isFold ? '' : 'hidden',
+                    height: row.isFold ? '' : '90px',
                   }"
                 >
-                  <div
+                  <div class="list-content">
+                    <span class="list-nature">选择数据源：</span
+                    >{{ row.fromServer.name }}
+                  </div>
+                  <div class="list-content">
+                    <span class="list-nature">IP地址：</span
+                    >{{ row.toServer.ip }}
+                  </div>
+                  <div class="list-content">
+                    <span class="list-nature"> 端口：</span>
+                    {{ row.toServer.port }}
+                  </div>
+                  <div class="list-content">
+                    <span class="list-nature"> topic：</span>
+                    {{ row.toServer.topic }}
+                  </div>
+                  <div class="list-content">
+                    <span class="list-nature"> 映射给予方：</span>
+                    {{ row.toServer.name }}
+                  </div>
+                  <div class="list-content">
+                    <span class="list-nature"> 映射数据源协议：</span>
+                    {{ row.toServer.type }}
+                  </div>
+                  <!-- <div
                     v-for="(item, index) in ceList"
                     :key="index"
                     class="list-content-box"
@@ -312,15 +312,24 @@
                       <span class="list-nature"> 端口：</span>
                       {{ item.name3 }}
                     </div>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="source-status">
-                  <div class="status-radius"></div>
+                  <div
+                    :class="
+                      row.status == 1
+                        ? 'green'
+                        : row.status == 4
+                        ? 'orange'
+                        : 'red'
+                    "
+                    class="status-radius"
+                  ></div>
                 </div>
-                <div @click="handleFold" class="fold">
+                <div @click="handleFold(row)" class="fold">
                   <Icon
                     type="ios-arrow-down"
-                    v-if="isFold"
+                    v-if="!row.isFold"
                     color="#C8D5EA"
                     size="24"
                     title="展开"
@@ -495,6 +504,7 @@
                     v-model="formValidate.port"
                     placeholder=""
                     autocomplete="on"
+                    number
                   ></Input>
                 </FormItem>
               </div>
@@ -644,6 +654,7 @@ export default {
           title: "选择数据源协议",
           slot: "sourceProtocol",
           filterMultiple: false,
+          width: 300,
           filters: [
             {
               label: "RabbitMQ",
@@ -667,7 +678,6 @@ export default {
             }
           ],
           filterMethod(value, row) {
-            console.log(value, row.fromServer.type == value, 22);
             return row.fromServer.type == value;
           }
         },
@@ -675,7 +685,7 @@ export default {
           title: "选择网络",
           slot: "network",
           filterMultiple: false,
-          width: 150,
+          width: 200,
 
           filters: [
             {
@@ -694,31 +704,18 @@ export default {
         {
           title: "映射",
           slot: "map",
-          align: "center"
+          align: "center",
+               width: 250,
+        },
+        {
+          title: "最新同步时间",
+          align: "center",
+          key: "updateDate",
+               width: 200,
         }
       ],
       isFold: true,
-      formValidate: {
-        // name: "",
-        // accessKey: "", //阿里云RocketMq认证参数accesKey
-        // secretKey: "",
-        // clientName: "", //客户端连接名称
-        // cluster: "", //服务地址（协议+ip+端口或ip+端口）
-        // type: "", //MQ映射类型
-        // topic: "", //mq消费topic
-        // group: "", //mq消费的groupId
-        // tag: "", //mq消费的tag
-        // ip: "", //ip地址
-        // port: 0, //端口
-        // username: "", //用户名
-        // password: "", //密码
-        // protocol: "", //协议
-        // retry: "", //重试次数
-        // networkType: "", //网络类型
-        // vpnAccount: "", //vpn账号
-        // vpnPassword: "", //vpn密码
-        // defaultParam: "{}"
-      },
+      formValidate: {},
       ruleValidate: {
         name: [
           {
@@ -759,7 +756,8 @@ export default {
           {
             required: true,
             message: "请输入",
-            trigger: "blur"
+            trigger: "blur",
+            type: "number"
           }
         ],
         group: [
@@ -800,7 +798,7 @@ export default {
         password: [
           {
             required: true,
-             message: "请输入",
+            message: "请输入",
             // validator: this.validatepasswd,
             trigger: "blur"
           }
@@ -829,7 +827,7 @@ export default {
         vpnPassword: [
           {
             required: false,
-             message: "请输入",
+            message: "请输入",
             // validator: this.validatepasswd,
             trigger: "blur"
           }
@@ -895,72 +893,58 @@ export default {
       isSourceDel: false,
       isMapModify: false,
       isSourceModify: false,
+      isMap: false,
       isMapDel: false
     };
   },
   created() {},
-  mounted() {
-    this.getSoruceList();
-  },
+  mounted() {},
   computed: {},
   methods: {
+    // 获取列表勾选数据
+    getList() {
+      this.selectList = this.$refs.dataTables.currentSelectRows;
+      if (!this.selectList.length) {
+        this.isSource = false;
+        this.isMap = false;
+        return this.$Message.warning("请选择数据");
+      }
+    },
     // 修改数据源
     handleModifySource() {
       this.isSourceModify = true;
-
-      this.selectList = this.$refs.dataTables.currentSelectRows;
+      // 获取列表勾选数据
+      this.getList();
       if (this.selectList.length > 1) {
         return this.$Message.warning("只能选择一条数据");
-      } else if (!this.selectList.length) {
-        return this.$Message.warning("请选择数据");
       }
       this.modalTitle = "修改数据源";
       this.btnTitle = "修改";
       this.handleReset();
-      console.log(this.selectList[0], 999);
       this.formValidate = this.selectList[0].fromServer;
-      this.formValidate.port = String(this.formValidate.port);
     },
     // 修改映射
     handleModifyMap() {
-      this.$refs.mapNode.show();
+      // 获取列表勾选数据
+      this.getList();
+      if (this.selectList.length > 1) {
+        return this.$Message.warning("只能选择一条数据");
+      }
+
+      if (!this.selectList[0].toServer)
+        return this.$Message.warning("暂无映射数据");
+      this.$refs.mapNode.show(1, this.selectList[0]);
       this.isMapModify = true;
     },
+
     // 删除数据源
     handleDelectSource() {
-      this.visible = false;
-      this.selectList = this.$refs.dataTables.currentSelectRows;
-      if (!this.selectList.length) {
-        this.isSource = false;
-        return this.$Message.warning("请选择数据");
-      }
       this.isSourceDel = true;
+      // 获取列表勾选数据
+      this.getList();
+      if (!this.selectList[0].toServer)
+        return this.$Message.warning("暂无映射数据");
       this.isSource = true;
-
-      console.log("删除数据源", this.isSource);
-      // this.$Modal.confirm({
-      //   content: `<Icon type='ios-alert' /><p>你确定要删除吗？</p>`,
-      //   okText: "确定",
-      //   cancelText: "取消",
-      //   onOk: () => {
-      //     dataSourceApi
-      //       .delSoruce(ids)
-      //       .then(res => {
-      //         if (res.code === 200) {
-      //           this.formValidate = {};
-      //           this.isSourceDel = false;
-      //           this.$Message.success("删除成功!");
-      //           this.$refs.dataTables.refreshPageData();
-      //         } else {
-      //           this.$Message.error("删除数据源失败!");
-      //         }
-      //       })
-      //       .catch(err => {
-      //         this.$Message.error("删除数据源失败!");
-      //       });
-      //   },
-      //   onCancel: () => {}
-      // });
     },
     handleDelSource() {
       let ids = this.selectList.map(item => {
@@ -979,33 +963,42 @@ export default {
           }
         })
         .catch(err => {
-          this.$Message.error("删除数据源失败!");
+          this.$Message.error("服务器异常请联系管理员!");
         });
     },
     // 删除映射
     handleDelectMap() {
+      this.isMapDel = true;
+      // 获取列表勾选数据
+      this.getList();
+      this.isMap = true;
       console.log("删除映射");
+    },
+    handleDelMap() {
+      let ids = this.selectList.map(item => {
+        return item.id;
+      });
+      dataSourceApi
+        .delMap(ids)
+        .then(res => {
+          if (res.code === 200) {
+            this.formValidate = {};
+            this.isSourceDel = false;
+            this.$Message.success("删除成功!");
+            this.$refs.dataTables.refreshPageData();
+          } else {
+            this.$Message.error("删除数据源失败!");
+          }
+        })
+        .catch(err => {
+          this.$Message.error("服务器异常请联系管理员!");
+        });
     },
     // 添加映射
     handleAddMap() {
-      console.log("添加映射");
-      this.$refs.mapNode.show();
-    },
-    getSoruceList() {
-      dataSourceApi
-        .getSoruceList({
-          pageNo: 1,
-          pageSize: 20
-        })
-        .then(req => {
-          console.log("22222", req.data);
-
-          this.dataList = req.data.list.map(item => {
-            item.isFold = false;
-            return item;
-          });
-        })
-        .catch(err => {});
+      this.$nextTick(() => {
+        this.$refs.mapNode.show(0);
+      });
     },
     // 校验密码
     validatepasswd(rule, value, callback) {
@@ -1013,7 +1006,6 @@ export default {
       if (!value) {
         callback(new Error("请输入密码"));
       }
-      console.log(regExp.test(value), "regExp.test(value)");
       if (!regExp.test(value)) {
         callback(new Error("请输入6-12包含数字、大小写的密码"));
       }
@@ -1033,7 +1025,6 @@ export default {
               item.isFold = false;
               return item;
             });
-            console.log("22222", data);
             // 处理数据，如果存在异常则提示
             resolve(data);
           })
@@ -1072,21 +1063,20 @@ export default {
     },
     // 提交
     handleSubmit(val) {
-      let isAdd = val;
-      this.isLoad = true;
-      this.isShow = true;
-      let port = "";
-      if (isAdd) {
-        port = "saveSoruce";
-      } else {
-        port = "testSoruce";
-      }
       this.$refs["formValidate"].validate(valid => {
         if (valid) {
+          let isAdd = val;
+          this.isLoad = true;
+          this.isShow = true;
+          let port = "";
+          if (isAdd) {
+            port = "saveSoruce";
+          } else {
+            port = "testSoruce";
+          }
           dataSourceApi[port](this.formValidate)
             .then(res => {
               this.isLoad = false;
-              console.log(res.data);
               if (res.code === 200) {
                 let data = res.data;
                 if (data) {
@@ -1096,7 +1086,7 @@ export default {
                     this.isShow = false;
                     this.handleReset();
                     this.isAdd = false;
-                    this.$Message.success("保存成功!");
+                    this.$Message.success(this.btnTitle + "成功!");
                     this.modalTitle = "添加数据源";
                     this.btnTitle = "添加";
 
@@ -1118,8 +1108,6 @@ export default {
             })
             .catch(err => {
               this.isLoad = false;
-
-              console.log(err);
               this.$Message.error("服务器异常，请联系管理员!");
             });
         } else {
