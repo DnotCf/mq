@@ -39,8 +39,8 @@ public class AmqpService {
     }
 
     public Channel build(MQServer server) throws Exception {
-//        String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
-        log.info("=====AMQP服务=RabbitMq连接开始=====");
+        String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
+        log.info("={}====AMQP服务=RabbitMq连接开始=====",connectUrl);
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(server.getIp());
         factory.setPort(server.getPort());
@@ -49,7 +49,7 @@ public class AmqpService {
         factory.setVirtualHost(server.getClientName());
         Connection connection = factory.newConnection();
         Channel client =  connection.createChannel();
-        log.info("=====AMQP服务=RabbitMq连接完成=====");
+        log.info("=={}===AMQP服务=RabbitMq连接完成=====",connectUrl);
 //                amqpClientMap.put(connectUrl, client);
         return client;
     }
@@ -77,12 +77,10 @@ public class AmqpService {
         if (client != null) {
             try {
                 client.close();
-                amqpClientMap.remove(connectUrl);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (TimeoutException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+            amqpClientMap.remove(connectUrl);
         }
     }
 

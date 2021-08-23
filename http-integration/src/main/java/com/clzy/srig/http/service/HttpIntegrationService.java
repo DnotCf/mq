@@ -57,12 +57,7 @@ public class HttpIntegrationService {
             return;
         }
         JSONObject param = getDefaultParam(server.getDefaultParam());
-        runTasks.put(url, threadPoolTaskScheduler.schedule(new Runnable() {
-            @Override
-            public void run() {
-                consumer(server);
-            }
-        }, Instant.parse(param.getString("cron"))));
+        runTasks.put(url, threadPoolTaskScheduler.schedule(() -> consumer(server), Instant.parse(param.getString("cron"))));
     }
 
     public void disConnect(MQServer server) {

@@ -179,7 +179,7 @@ public class RocketAliyunMqService {
         }
         orderConsumerBean.shutdown();
         if (cos[0]) {
-            throw new RuntimeException("AliyunMq测试消费失败");
+            throw new RuntimeException("AliyunRocketMQ测试消费失败!!!");
         }
     }
 
@@ -248,7 +248,7 @@ public class RocketAliyunMqService {
         return object;
     }
 
-    public void disConnect(MQServer server) {
+    public synchronized void disConnect(MQServer server) {
         String url = getConectionUrl(server);
         ConsumerBean consumerBean = consumerMap.get(url);
         if (consumerBean != null) {

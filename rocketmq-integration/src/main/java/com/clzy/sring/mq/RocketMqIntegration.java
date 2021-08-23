@@ -48,16 +48,12 @@ public class RocketMqIntegration implements IMqIntegration {
             log.error("RocketMq消息推送失败");
             router.setStatus(MQStuats.client_offline.getCode());
             e.printStackTrace();
-            Integer retry = server.getRetry();
-            if (retry == null) {
-                retry = 6;
-                server.setRetry(retry);
-            }
-            if (server.getRetry() >= 0) {
+            if (server.getRetry() == null || server.getRetry() > 0) {
                 rocketMqService.disConnectProducer(server);
-                log.info("=====RocketMq producer剩余重试连接次数:{}=====", server.getRetry());
+                onPublich(router, message);
+                server.setRetry(-1);
+                log.info("=====RocketMq producer重试连接=====");
             }
-            server.setRetry(--retry);
         }
     }
 
