@@ -39,15 +39,21 @@ public class AmqpIntegration implements IMqIntegration {
             router.setStatus(MQStuats.online.getCode());
         } catch (Exception e) {
             log.error("AMQP消息推送失败");
+            e.printStackTrace();
             router.setStatus(MQStuats.client_offline.getCode());
             if (server.getRetry() == null || server.getRetry() > 0) {
                 server.setRetry(-1);
                 amqpService.disConnect(server);
-                onPublich(router, message);
-                log.info("=====AMQP(RabbitMQ) producer重试连接=====");
+                try {
+                    log.info("=====AMQP(RabbitMQ) producer重试连接=====");
+                    Channel client = amqpService.getConnect(server);
+                    client.queueDeclare(router.getToTopic(), false, false, false, null);
+                    client.basicPublish("", router.getToTopic(), null, message);
+                    router.setStatus(MQStuats.online.getCode());
+                }catch (Exception e1){
+                    router.setStatus(MQStuats.client_offline.getCode());
+                }
             }
-
-            e.printStackTrace();
         }
     }
 

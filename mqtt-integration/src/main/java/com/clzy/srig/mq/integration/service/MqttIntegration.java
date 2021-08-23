@@ -43,8 +43,14 @@ public class MqttIntegration implements IMqIntegration {
             if (server.getRetry() == null || server.getRetry() > 0) {
                 server.setRetry(-1);
                 mqttService.disConnect(server);
-                onPublich(router, message);
-                log.info("=====MQTT producer重试连接=====");
+                try {
+                    log.info("=====MQTT producer重试连接=====");
+                    MqttClient client = mqttService.getClient(server);
+                    client.publish(router.getToTopic(), message, 1, false);
+                    router.setStatus(MQStuats.online.getCode());
+                } catch (Exception e1) {
+                    router.setStatus(MQStuats.client_offline.getCode());
+                }
             }
         }
     }

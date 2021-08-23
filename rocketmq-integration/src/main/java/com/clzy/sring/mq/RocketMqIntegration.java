@@ -49,10 +49,18 @@ public class RocketMqIntegration implements IMqIntegration {
             router.setStatus(MQStuats.client_offline.getCode());
             e.printStackTrace();
             if (server.getRetry() == null || server.getRetry() > 0) {
-                rocketMqService.disConnectProducer(server);
-                onPublich(router, message);
                 server.setRetry(-1);
-                log.info("=====RocketMq producer重试连接=====");
+                rocketMqService.disConnectProducer(server);
+                try {
+                    log.info("=====RocketMq producer重试连接=====");
+                    DefaultMQProducer producer = rocketMqService.createProducer(server);
+                    Message msg = new Message(router.getToTopic(), message);
+                    producer.send(msg);
+                    router.setStatus(MQStuats.online.getCode());
+                } catch (Exception e1) {
+                    router.setStatus(MQStuats.client_offline.getCode());
+                }
+
             }
         }
     }
