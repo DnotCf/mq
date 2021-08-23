@@ -87,6 +87,7 @@ public class RocketAliyunMqService {
             @Override
             public Action consume(Message message, ConsumeContext context) {
                 try {
+                    log.debug("AliYunMQ Receive: " + message);
                     //do something..
                     forwardService.publish(router.getFromServer(), message.getBody());
                     return Action.CommitMessage;
@@ -178,7 +179,7 @@ public class RocketAliyunMqService {
         }
         orderConsumerBean.shutdown();
         if (cos[0]) {
-            throw new RuntimeException("AliyunMq测试消费失败");
+            throw new RuntimeException("AliyunRocketMQ测试消费失败!!!");
         }
     }
 
@@ -216,7 +217,7 @@ public class RocketAliyunMqService {
         if (StringUtils.isBlank(namesrvAddr)) {
             namesrvAddr = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
         }
-        return namesrvAddr;
+        return namesrvAddr.trim();
     }
 
     public JSONObject getDefaultParam(String jsonStr) {
@@ -247,7 +248,7 @@ public class RocketAliyunMqService {
         return object;
     }
 
-    public void disConnect(MQServer server) {
+    public synchronized void disConnect(MQServer server) {
         String url = getConectionUrl(server);
         ConsumerBean consumerBean = consumerMap.get(url);
         if (consumerBean != null) {

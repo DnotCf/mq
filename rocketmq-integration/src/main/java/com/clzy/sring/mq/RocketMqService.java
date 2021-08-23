@@ -175,27 +175,27 @@ public class RocketMqService {
         return object;
     }
 
-    public void disConnect(MQServer server) {
+    public synchronized void disConnect(MQServer server) {
         String namesrvAddr = getConectionUrl(server);
         if (StringUtils.isBlank(namesrvAddr)) {
             namesrvAddr = String.format("%s:%d", server.getIp(), server.getPort());
         }
         DefaultMQPushConsumer consumer = consumerMap.get(namesrvAddr);
         if (consumer != null) {
-            consumer.shutdown();
             consumerMap.remove(namesrvAddr);
+            consumer.shutdown();
         }
     }
 
-    public void disConnectProducer(MQServer server) {
+    public synchronized void disConnectProducer(MQServer server) {
         String namesrvAddr = getConectionUrl(server);
         if (StringUtils.isBlank(namesrvAddr)) {
             namesrvAddr = String.format("%s:%d", server.getIp(), server.getPort());
         }
         DefaultMQProducer producer = producerMap.get(namesrvAddr);
         if (producer != null) {
+            producerMap.remove(namesrvAddr);
             producer.shutdown();
-            consumerMap.remove(namesrvAddr);
         }
     }
 

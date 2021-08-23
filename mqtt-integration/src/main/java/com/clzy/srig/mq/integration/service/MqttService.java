@@ -93,12 +93,12 @@ public class MqttService {
         MqttClient client = mqttClientMap.get(connectUrl);
         if (client != null) {
             try {
-                client.close(true);
                 client.disconnect();
-                mqttClientMap.remove(connectUrl);
-            } catch (MqttException e) {
+                client.close(true);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+            mqttClientMap.remove(connectUrl);
         }
     }
 

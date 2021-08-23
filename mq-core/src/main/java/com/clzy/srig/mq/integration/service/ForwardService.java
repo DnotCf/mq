@@ -218,7 +218,7 @@ public class ForwardService {
 
     @Scheduled(fixedRate = 1000 * 60 * 1)
     public void statusSync() {
-        log.info("==={}==服务转发状态同步开始=====", DateUtils.getDateTime());
+//        log.info("==={}==服务转发状态同步开始=====", DateUtils.getDateTime());
         Collection<List<ForwardRouter>> values = routerTable.values();
         if (CollectionUtils.isEmpty(values)) {
             log.info("=====服务转发配置为空同步结束=====");
@@ -244,6 +244,9 @@ public class ForwardService {
                     } else {
                         serverOffline++;
                     }
+                }
+                if (router.getToServer() != null) {
+                    router.getToServer().setRetry(1);
                 }
                 toatl++;
                 forwardRouterService.updateStatus(router);
