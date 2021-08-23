@@ -87,6 +87,7 @@ public class RocketAliyunMqService {
             @Override
             public Action consume(Message message, ConsumeContext context) {
                 try {
+                    log.debug("AliYunMQ Receive: " + message);
                     //do something..
                     forwardService.publish(router.getFromServer(), message.getBody());
                     return Action.CommitMessage;
@@ -216,7 +217,7 @@ public class RocketAliyunMqService {
         if (StringUtils.isBlank(namesrvAddr)) {
             namesrvAddr = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
         }
-        return namesrvAddr;
+        return namesrvAddr.trim();
     }
 
     public JSONObject getDefaultParam(String jsonStr) {
