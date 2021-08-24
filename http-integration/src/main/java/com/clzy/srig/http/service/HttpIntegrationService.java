@@ -102,43 +102,43 @@ public class HttpIntegrationService {
     }
 
     public void postConsumer(MQServer server, String url, JSONObject param) {
-        if (server.getNetworkType().equals("0") && StringUtils.isNotBlank(server.getVpnAccount())) {
-            RestTemplate restTemplate1 = new RestTemplate();
-            SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-            // 请注意，我这里是在241机器上，借助tinyproxy搭建了一个http的代理，并设置端口为18888，所以可以正常演示代理访问
-            // 拉源码运行的小伙，需要注意使用自己的代理来替换
-            requestFactory.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(server.getIp(), server.getPort())));
-            restTemplate1.setRequestFactory(requestFactory);
-            MultiValueMap map = new LinkedMultiValueMap();
-            ResponseEntity<String> post = restTemplate1.postForEntity(url, map, String.class);
-            if (post.getStatusCode().equals(HttpStatus.OK)) {
-                forwardService.publish(server, post.getBody().getBytes(StandardCharsets.UTF_8));
-            }
-        }else {
+//        if (server.getNetworkType().equals("0") && StringUtils.isNotBlank(server.getVpnAccount())) {
+//            RestTemplate restTemplate1 = new RestTemplate();
+//            SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+//            // 请注意，我这里是在241机器上，借助tinyproxy搭建了一个http的代理，并设置端口为18888，所以可以正常演示代理访问
+//            // 拉源码运行的小伙，需要注意使用自己的代理来替换
+//            requestFactory.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(server.getIp(), server.getPort())));
+//            restTemplate1.setRequestFactory(requestFactory);
+//            MultiValueMap map = new LinkedMultiValueMap();
+//            ResponseEntity<String> post = restTemplate1.postForEntity(url, map, String.class);
+//            if (post.getStatusCode().equals(HttpStatus.OK)) {
+//                forwardService.publish(server, post.getBody().getBytes(StandardCharsets.UTF_8));
+//            }
+//        }else {
 
             MultiValueMap map = new LinkedMultiValueMap();
             ResponseEntity<String> post = restTemplate.postForEntity(url, map, String.class);
             if (post.getStatusCode().equals(HttpStatus.OK)) {
                 forwardService.publish(server, post.getBody().getBytes(StandardCharsets.UTF_8));
             }
-        }
+//        }
     }
 
     public void getConsumer(MQServer server, String url, JSONObject param) {
         String object = null;
-        if (server.getNetworkType().equals("0") && StringUtils.isNotBlank(server.getVpnAccount())) {
-            RestTemplate restTemplate1 = new RestTemplate();
-            SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-
-            requestFactory.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(server.getIp(), server.getPort())));
-
-            restTemplate1.setRequestFactory(requestFactory);
-            HttpEntity<String> ans =
-                    restTemplate1.getForEntity(url, String.class);
-            object = ans.getBody();
-        }else {
-            restTemplate.getForObject(url, String.class);
-        }
+//        if (server.getNetworkType().equals("0") && StringUtils.isNotBlank(server.getVpnAccount())) {
+//            RestTemplate restTemplate1 = new RestTemplate();
+//            SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+//
+//            requestFactory.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(server.getIp(), server.getPort())));
+//
+//            restTemplate1.setRequestFactory(requestFactory);
+//            HttpEntity<String> ans =
+//                    restTemplate1.getForEntity(url, String.class);
+//            object = ans.getBody();
+//        }else {
+        object = restTemplate.getForObject(url, String.class);
+//        }
         if (StringUtils.isNotBlank(object)) {
             forwardService.publish(server, object.getBytes(StandardCharsets.UTF_8));
         }

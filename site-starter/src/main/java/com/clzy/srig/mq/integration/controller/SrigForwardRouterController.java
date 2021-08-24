@@ -7,6 +7,7 @@ import com.clzy.geo.core.common.persistence.Page;
 import com.clzy.geo.core.utils.StringUtils;
 import com.clzy.srig.mq.integration.entity.ForwardRouter;
 import com.clzy.srig.mq.integration.entity.MQServer;
+import com.clzy.srig.mq.integration.enums.MQStuats;
 import com.clzy.srig.mq.integration.service.ForwardRouterService;
 
 import com.clzy.srig.mq.integration.service.ForwardService;
@@ -114,6 +115,9 @@ public class SrigForwardRouterController extends BaseController {
         for (ForwardRouter router : list) {
             if (router.getExpireTime() == null || router.getExpireTime().compareTo(new Date()) >= 0) {
                 forwardService.addRouterTable(router);
+                router.setExpireTime(null);
+                router.setStatus(MQStuats.online.getCode());
+                service.updateStatus(router);
                 count++;
             }
         }
