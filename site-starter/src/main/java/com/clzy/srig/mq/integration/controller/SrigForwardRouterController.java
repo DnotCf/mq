@@ -54,17 +54,19 @@ public class SrigForwardRouterController extends BaseController {
     public JsonResponse save(@RequestBody ForwardRouter entiy) {
         String check = check(entiy.getToServer());
         if (StringUtils.isNotBlank(check)) {
-            return JsonResponse.success("目标：" + check);
+            check = "映射目标：" + check;
+            return JsonResponse.error(-1, check, check);
         }
         String from = check(entiy.getFromServer());
         if (StringUtils.isNotBlank(from)) {
-            return JsonResponse.success("源数据：" + from);
+            from = "源数据：" + from;
+            return JsonResponse.error(-1, from, from);
         }
         if (StringUtils.isBlank(entiy.getFromTopic()) || StringUtils.isBlank(entiy.getToTopic())) {
-            return JsonResponse.success("源fromTopic或目标toTopic不为空");
+            return JsonResponse.error(-1,"源fromTopic或目标toTopic不为空","源fromTopic或目标toTopic不为空");
         }
         if (entiy.getExpireTime() == null) {
-            return JsonResponse.success("过期时间不为空");
+            return JsonResponse.error(-1, "过期时间不为空", "过期时间不为空");
         }
         String id = entiy.getId();
         service.save(entiy);
@@ -160,7 +162,7 @@ public class SrigForwardRouterController extends BaseController {
         }
         String check = check(entiy);
         if (StringUtils.isNotBlank(check)) {
-            return JsonResponse.success(check);
+            return JsonResponse.error(-1, check, check);
         }
         ForwardRouter router = new ForwardRouter();
         router.setToServer(entiy);

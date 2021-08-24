@@ -17,7 +17,7 @@ public class BaseController {
             return "数据源类型不为空";
         }
         if (StringUtils.isBlank(entity.getName())) {
-            return "数据源名称不为空";
+            return "映射给予方或数据源名称不为空";
         }
         if (StringUtils.isNotBlank(entity.getDefaultParam())) {
             try {

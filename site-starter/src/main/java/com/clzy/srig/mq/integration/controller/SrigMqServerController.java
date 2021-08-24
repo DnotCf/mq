@@ -49,7 +49,7 @@ public class SrigMqServerController extends BaseController {
     public JsonResponse save(@RequestBody MQServer entiy) {
         String check = check(entiy);
         if (StringUtils.isNotBlank(check)) {
-            return JsonResponse.success(check);
+            return JsonResponse.error(-1, check, check);
         }
         if (entiy.getSourceType() == null) {
             entiy.setSourceType(0);
@@ -89,7 +89,7 @@ public class SrigMqServerController extends BaseController {
         }
         String check = check(entiy);
         if (StringUtils.isNotBlank(check)) {
-            return JsonResponse.success(check);
+            return JsonResponse.error(-1, check, check);
         }
         ForwardRouter router = new ForwardRouter();
         router.setFromServer(entiy);
