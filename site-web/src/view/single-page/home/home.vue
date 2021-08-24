@@ -224,12 +224,6 @@
                       row.fromServer.topic
                     }}</span>
                   </div>
-                  <div class="list-content">
-                    <span class="list-nature">其他参数：</span>
-                    <span class="value-ellipsis">{{
-                      row.fromServer.defaultParam
-                    }}</span>
-                  </div>
                 </template>
               </div>
             </template>
@@ -254,6 +248,7 @@
                     height: row.isFold ? '' : '90px',
                   }"
                 >
+                
                   <div class="list-content">
                     <span class="list-nature">数据源：</span>
                     <span class="value-ellipsis">{{
@@ -279,6 +274,13 @@
                   <div class="list-content">
                     <span class="list-nature">映射数据源协议：</span>
                     <span class="value-ellipsis">{{ row.toServer.type }}</span>
+                  </div>
+                  
+                  <div class="list-content">
+                    <span class="list-nature">过期时间：</span>
+                    <span class="value-ellipsis">{{
+                      row.expireTime
+                    }}</span>
                   </div>
                 </div>
                 <div class="source-status">
@@ -453,13 +455,13 @@ export default {
         {
           type: "selection",
           width: 60,
-          align: "center",
+          align: "center"
         },
         {
           title: "数据源名称",
           slot: "name",
           align: "center",
-          width: 100,
+          width: 100
         },
         {
           title: "选择数据源协议",
@@ -469,28 +471,28 @@ export default {
           filters: [
             {
               label: "RabbitMQ",
-              value: "AMQP",
+              value: "AMQP"
             },
             {
               label: "阿里云RocketMQ",
-              value: "Aliyun_RocketMQ",
+              value: "Aliyun_RocketMQ"
             },
             {
               label: "RocketMQ",
-              value: "RocketMQ",
+              value: "RocketMQ"
             },
             {
               label: "EMQX",
-              value: "MQTT",
+              value: "MQTT"
             },
             {
               label: "HTTP",
-              value: "HTTP",
-            },
+              value: "HTTP"
+            }
           ],
           filterMethod(value, row) {
             return row.fromServer.type == value;
-          },
+          }
         },
         {
           title: "选择网络",
@@ -501,29 +503,29 @@ export default {
           filters: [
             {
               label: "内网",
-              value: "0",
+              value: "0"
             },
             {
               label: "外网",
-              value: "1",
-            },
+              value: "1"
+            }
           ],
           filterMethod(value, row) {
             return row.fromServer.networkType.indexOf(value) > -1;
-          },
+          }
         },
         {
           title: "映射",
           slot: "map",
           align: "center",
-          width: 250,
+          width: 250
         },
         {
           title: "最新同步时间",
           align: "center",
           key: "updateDate",
-          width: 200,
-        },
+          width: 200
+        }
       ],
       isFold: true,
       formValidate: {},
@@ -532,166 +534,166 @@ export default {
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         type: [
           {
             required: true,
             message: "请选择",
-            trigger: "change",
-          },
+            trigger: "change"
+          }
         ],
         cluster: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         protocol: [
           {
             required: true,
             message: "请选择",
-            trigger: "change",
-          },
+            trigger: "change"
+          }
         ],
         ip: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         port: [
           {
             required: true,
             message: "请输入",
             trigger: "blur",
-            type: "number",
-          },
+            type: "number"
+          }
         ],
         group: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         tag: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         topic: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         networkType: [
           {
             required: true,
             message: "请选择",
-            trigger: "change",
-          },
+            trigger: "change"
+          }
         ],
         username: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         password: [
           {
             required: true,
             message: "请输入",
             // validator: this.validatepasswd,
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         clientName: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         secretKey: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         accessKey: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         vpnPassword: [
           {
             required: false,
             message: "请输入",
             // validator: this.validatepasswd,
-            trigger: "blur",
-          },
-        ],
+            trigger: "blur"
+          }
+        ]
       },
       isAdd: false,
       modalTitle: "添加数据源",
       protocolList: [
         {
           label: "tcp协议",
-          value: "tcp",
+          value: "tcp"
         },
         {
           label: "websocket协议",
-          value: "ws",
+          value: "ws"
         },
         {
           label: "http协议",
-          value: "http",
-        },
+          value: "http"
+        }
       ],
       typeProtocol: [
         {
           label: "RabbitMQ",
-          value: "AMQP",
+          value: "AMQP"
         },
         {
           label: "阿里云RocketMQ",
-          value: "Aliyun_RocketMQ",
+          value: "Aliyun_RocketMQ"
         },
         {
           label: "RocketMQ",
-          value: "RocketMQ",
+          value: "RocketMQ"
         },
         {
           label: "EMQX",
-          value: "MQTT",
+          value: "MQTT"
         },
         {
           label: "HTTP",
-          value: "HTTP",
-        },
+          value: "HTTP"
+        }
       ],
 
       networkList: [
         {
           label: "内网",
-          value: "0",
+          value: "0"
         },
         {
           label: "外网",
-          value: "1",
-        },
+          value: "1"
+        }
       ],
       isLoad: false,
       isShow: false,
@@ -707,7 +709,7 @@ export default {
       pageSize: 10,
       pageTotal: 0,
       enableTitle: "停用所有映射",
-      enableVal: 1,
+      enableVal: 1
     };
   },
   created() {},
@@ -720,12 +722,12 @@ export default {
       dataSourceApi
         .getSoruceList({
           pageNo: this.pageNo,
-          pageSize: this.pageSize,
+          pageSize: this.pageSize
         })
-        .then((req) => {
+        .then(req => {
           if (req.code === 200) {
             let data = req.data;
-            this.list = data.list.map((item) => {
+            this.list = data.list.map(item => {
               item.isFold = false;
               return item;
             });
@@ -734,7 +736,7 @@ export default {
             this.$Message.error(err.msg || "数据源列表获取失败!");
           }
         })
-        .catch((err) => {
+        .catch(err => {
           this.$Message.error(err.msg || "服务器异常请联系管理员!");
         });
     },
@@ -803,12 +805,12 @@ export default {
       this.isSource = true;
     },
     handleDelSource() {
-      let ids = this.selectList.map((item) => {
+      let ids = this.selectList.map(item => {
         return item.fromServer.id;
       });
       dataSourceApi
         .delSoruce(ids)
-        .then((res) => {
+        .then(res => {
           if (res.code === 200) {
             this.formValidate = {};
             this.$Message.success("删除成功!");
@@ -818,7 +820,7 @@ export default {
             this.$Message.error("删除数据源失败!");
           }
         })
-        .catch((err) => {
+        .catch(err => {
           this.$Message.error("服务器异常请联系管理员!");
         });
     },
@@ -837,12 +839,12 @@ export default {
       console.log("删除映射");
     },
     handleDelMap() {
-      let ids = this.selectList.map((item) => {
+      let ids = this.selectList.map(item => {
         return item.id;
       });
       dataSourceApi
         .delMap(ids)
-        .then((res) => {
+        .then(res => {
           if (res.code === 200) {
             this.formValidate = {};
             this.$Message.success("删除成功!");
@@ -852,7 +854,7 @@ export default {
             this.$Message.error("删除数据源失败!");
           }
         })
-        .catch((err) => {
+        .catch(err => {
           this.$Message.error("服务器异常请联系管理员!");
         });
     },
@@ -860,25 +862,29 @@ export default {
     handleEnable(val) {
       this.enableVal = !val;
       let port = "";
-      if (this.enableVal) {
+      if (val) {
         port = "stopAll";
       } else {
         port = "startAll";
       }
       dataSourceApi[port]()
-        .then((res) => {
+        .then(res => {
           if (res.code === 200) {
             if (this.enableVal) {
               this.enableTitle = "停用所有映射";
             } else {
               this.enableTitle = "启用所有映射";
             }
-            this.$Message.success(this.enableVal ? "停用" : "启用" + "成功");
+            this.$Message.success(
+              this.enableVal ? "启用所有映射" : "停用所有映射" + "成功"
+            );
           } else {
-            this.$Message.error(this.enableVal ? "停用" : "启用" + "失败");
+            this.$Message.success(
+              this.enableVal ? "启用所有映射" : "停用所有映射" + "成功"
+            );
           }
         })
-        .catch((err) => {
+        .catch(err => {
           this.$Message.error(err.msg || "服务器异常，请联系管理员!");
         });
     },
@@ -902,22 +908,22 @@ export default {
     },
     // 列表数据刷新
     loadPageData(pageNo, pageSize, search) {
-      return new Promise(function (resolve, reject) {
+      return new Promise(function(resolve, reject) {
         dataSourceApi
           .getSoruceList({
             pageNo: pageNo,
-            pageSize: pageSize,
+            pageSize: pageSize
           })
-          .then((req) => {
+          .then(req => {
             let data = req.data;
-            data.list.map((item) => {
+            data.list.map(item => {
               item.isFold = false;
               return item;
             });
             // 处理数据，如果存在异常则提示
             resolve(data);
           })
-          .catch((err) => {
+          .catch(err => {
             // 异常处理,不用提示
             reject(err);
           });
@@ -944,7 +950,7 @@ export default {
         group: "",
         tag: "",
         topic: "",
-        defaultParam: "",
+        defaultParam: ""
       };
 
       this.formValidate = { ...this.formValidate, ...initForm };
@@ -952,7 +958,7 @@ export default {
     },
     // 提交
     handleSubmit(val) {
-      this.$refs["formValidate"].validate((valid) => {
+      this.$refs["formValidate"].validate(valid => {
         if (valid) {
           let isAdd = val;
           this.isLoad = true;
@@ -964,7 +970,7 @@ export default {
             port = "testSoruce";
           }
           dataSourceApi[port](this.formValidate)
-            .then((res) => {
+            .then(res => {
               this.isLoad = false;
               if (res.code === 200) {
                 let data = res.data;
@@ -993,12 +999,12 @@ export default {
                 }
               } else {
                 this.isLoad = false;
-                this.$Message.error("保存数据源失败!");
+                this.$Message.error(res.msg || "保存数据源失败!");
               }
             })
-            .catch((err) => {
+            .catch(err => {
               this.isLoad = false;
-              this.$Message.error("服务器异常，请联系管理员!");
+              this.$Message.error(err.msg ||"服务器异常，请联系管理员!");
             });
         }
       });
@@ -1011,8 +1017,8 @@ export default {
       this.isAdd = false;
       this.isLoad = false;
       this.isSuccess = false;
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="less" scoped>

@@ -51,17 +51,6 @@
       <FormItem label="映射给予方" prop="toServer.name">
         <Input v-model="formValidate.toServer.name" placeholder=""></Input>
       </FormItem>
-      <!-- <FormItem label="认证账号" prop="username">
-        <Input v-model="formValidate.toServer.username" placeholder=""></Input>
-      </FormItem>
-      <FormItem label="认证密码" prop="password">
-        <Input
-          v-model="formValidate.toServer.password"
-          type="password"
-          autocomplete="new-password"
-          placeholder=""
-        ></Input>
-      </FormItem> -->
       <FormItem label="过期时间">
         <FormItem prop="date">
           <Row>
@@ -318,7 +307,9 @@ export default {
     },
     // 选择协议
     handleProtocol(val) {
-
+      // console.log(this.formValidate,888)
+      // this.$refs["formValidate"].resetFields();
+      // console.log(this.formValidate,5555)
     },
     handleSubmit(val) {
       this.$refs["formValidate"].validate(valid => {
@@ -368,12 +359,15 @@ export default {
                 }
               } else {
                 this.isLoad = false;
-                this.$Message.error("保存数据源失败!");
+                this.isTitleShow = false;
+                this.$Message.warning(res.msg || "保存数据源失败!");
               }
             })
             .catch(err => {
+              console.log(err);
+              this.isTitleShow = false;
               this.isLoad = false;
-              this.$Message.error("服务器异常，请联系管理员!");
+              this.$Message.error(err.msg || "服务器异常，请联系管理员!");
             });
         }
       });

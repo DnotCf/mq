@@ -162,7 +162,7 @@
         height: ~"calc(100% - 50px)";
         width: 100%;
         padding: 40px 30px 30px;
-// 分页
+        // 分页
         .tables-pager {
           display: flex;
           justify-content: flex-end;
@@ -210,8 +210,12 @@
   /deep/ .ivu-table:after {
     display: none;
   }
+  /deep/.ivu-table-tbody {
+    overflow: auto !important;
+    height: 200px !important;
+  }
   /deep/.ivu-table {
-    .ivu-table-tbody {
+    /deep/.ivu-table-tbody {
       .ivu-table-cell {
         padding: 5px 18px 15px !important;
         color: #4567a3 !important;
@@ -293,10 +297,10 @@
   color: rgb(16, 217, 17);
 }
 .home-poptip {
-  /deep/.ivu-poptip-rel{
+  /deep/.ivu-poptip-rel {
     width: 100%;
   }
-  .poptip-item:hover{
+  .poptip-item:hover {
     background: #d7e5fc;
     color: #4567a3;
   }
@@ -313,7 +317,6 @@
     padding-left: 12px;
     cursor: pointer;
     width: 100%;
-   
   }
 }
 .active {
@@ -322,7 +325,7 @@
 }
 .del-poptip {
   width: 100%;
-  .gray{
+  .gray {
     color: #a6b4cf;
   }
   .poptip-item {
@@ -330,7 +333,6 @@
     line-height: 36px;
     padding-left: 12px;
     cursor: pointer;
- 
   }
   /deep/.ivu-poptip-arrow {
     display: block;

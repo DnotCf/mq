@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- AMQP start -->
-    <div v-show="value.type === 'AMQP'">
+    <div v-if="value.type === 'AMQP'">
       <FormItem label="用户名" :prop="propName + 'username'">
         <Input v-model="value.username" placeholder=""></Input>
       </FormItem>
@@ -17,7 +17,7 @@
     <!-- AMQP end -->
 
     <!-- Aliyun_RocketMQ start -->
-    <div v-show="value.type === 'Aliyun_RocketMQ'">
+    <div v-if="value.type === 'Aliyun_RocketMQ'">
       <FormItem label="secretKey" :prop="propName + 'secretKey'">
         <Input v-model="value.secretKey" type="text" placeholder=""></Input>
       </FormItem>
@@ -28,7 +28,7 @@
     <!-- Aliyun_RocketMQ end -->
 
     <!-- EMQX start -->
-    <div v-show="value.type === 'MQTT'">
+    <div v-if="value.type === 'MQTT'">
       <FormItem label="用户名">
         <Input v-model="value.username" placeholder=""></Input>
       </FormItem>
@@ -44,7 +44,7 @@
     <!-- EMQX end -->
 
     <!-- RocketMQ start-->
-    <div v-show="value.type === 'RocketMQ'">
+    <div v-if="value.type === 'RocketMQ'">
       <FormItem label="重试次数">
         <Input
           v-model="value.retry"
@@ -56,7 +56,7 @@
 
     <!-- HTTP RocketMQ 阿里云RocketMQ-->
     <div
-      v-show="
+      v-if="
         value.type === 'HTTP' ||
         value.type === 'RocketMQ' ||
         value.type === 'Aliyun_RocketMQ'
@@ -68,7 +68,7 @@
     </div>
 
     <!-- MQTT AMQP-->
-    <div v-show="value.type === 'MQTT' || value.type === 'AMQP'">
+    <div v-if="value.type === 'MQTT' || value.type === 'AMQP'">
       <FormItem
         :label="value.type === 'AMQP' ? 'VirtualHost' : 'Client ID'"
         :prop="propName + 'clientName'"
@@ -107,7 +107,7 @@
     </div>
 
     <!-- 阿里云RocketMQ rocketMQ  -->
-    <div v-show="value.type === 'Aliyun_RocketMQ' || value.type === 'RocketMQ'">
+    <div v-if="value.type === 'Aliyun_RocketMQ' || value.type === 'RocketMQ'">
       <FormItem label="所属组" :prop="propName + 'group'">
         <Input
           v-model="value.group"
@@ -127,7 +127,7 @@
     </div>
 
     <!-- MQTT  AMQP 阿里云RocketMQ  RocketMQ-->
-    <div v-show="value.type !== 'HTTP'">
+    <div v-if="value.type !== 'HTTP'">
       <FormItem label="topic" :prop="propName + 'topic'">
         <Input v-model="value.topic" placeholder=""></Input>
       </FormItem>
