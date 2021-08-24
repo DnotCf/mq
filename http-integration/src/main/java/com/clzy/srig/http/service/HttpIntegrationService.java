@@ -8,8 +8,10 @@ import com.clzy.srig.mq.integration.enums.MQIntegration;
 import com.clzy.srig.mq.integration.service.ForwardRouterService;
 import com.clzy.srig.mq.integration.service.ForwardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -17,6 +19,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,7 +42,8 @@ public class HttpIntegrationService {
     private ForwardService forwardService;
 
     //正在运行的任务
-    public static ConcurrentHashMap<String, ScheduledFuture> runTasks = new ConcurrentHashMap<>(10);
+    public static ConcurrentHashMap<String, ScheduledFuture> runTasks = new ConcurrentHashMap<>(16);
+
 
     //线程池任务调度
     private ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
@@ -45,7 +53,7 @@ public class HttpIntegrationService {
      */
     @Autowired
     public HttpIntegrationService(){
-        this.threadPoolTaskScheduler.setPoolSize(10);
+        this.threadPoolTaskScheduler.setPoolSize(16);
         this.threadPoolTaskScheduler.setThreadNamePrefix("http-consumer-thread-");
         this.threadPoolTaskScheduler.setWaitForTasksToCompleteOnShutdown(true);
         this.threadPoolTaskScheduler.initialize();
@@ -94,15 +102,43 @@ public class HttpIntegrationService {
     }
 
     public void postConsumer(MQServer server, String url, JSONObject param) {
-        MultiValueMap map = new LinkedMultiValueMap();
-        ResponseEntity<String> post = restTemplate.postForEntity(url, map, String.class);
-        if (post.getStatusCode().equals(HttpStatus.OK)) {
-            forwardService.publish(server, post.getBody().getBytes(StandardCharsets.UTF_8));
+        if (server.getNetworkType().equals("0") && StringUtils.isNotBlank(server.getVpnAccount())) {
+            RestTemplate restTemplate1 = new RestTemplate();
+            SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+            // 请注意，我这里是在241机器上，借助tinyproxy搭建了一个http的代理，并设置端口为18888，所以可以正常演示代理访问
+            // 拉源码运行的小伙，需要注意使用自己的代理来替换
+            requestFactory.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(server.getIp(), server.getPort())));
+            restTemplate1.setRequestFactory(requestFactory);
+            MultiValueMap map = new LinkedMultiValueMap();
+            ResponseEntity<String> post = restTemplate1.postForEntity(url, map, String.class);
+            if (post.getStatusCode().equals(HttpStatus.OK)) {
+                forwardService.publish(server, post.getBody().getBytes(StandardCharsets.UTF_8));
+            }
+        }else {
+
+            MultiValueMap map = new LinkedMultiValueMap();
+            ResponseEntity<String> post = restTemplate.postForEntity(url, map, String.class);
+            if (post.getStatusCode().equals(HttpStatus.OK)) {
+                forwardService.publish(server, post.getBody().getBytes(StandardCharsets.UTF_8));
+            }
         }
     }
 
     public void getConsumer(MQServer server, String url, JSONObject param) {
-        String object = restTemplate.getForObject(url, String.class);
+        String object = null;
+        if (server.getNetworkType().equals("0") && StringUtils.isNotBlank(server.getVpnAccount())) {
+            RestTemplate restTemplate1 = new RestTemplate();
+            SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+
+            requestFactory.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(server.getIp(), server.getPort())));
+
+            restTemplate1.setRequestFactory(requestFactory);
+            HttpEntity<String> ans =
+                    restTemplate1.getForEntity(url, String.class);
+            object = ans.getBody();
+        }else {
+            restTemplate.getForObject(url, String.class);
+        }
         if (StringUtils.isNotBlank(object)) {
             forwardService.publish(server, object.getBytes(StandardCharsets.UTF_8));
         }
@@ -142,5 +178,36 @@ public class HttpIntegrationService {
             object.put("method", "POST");
         }
         return object;
+    }
+
+    /**
+     * Java发送请求---HttpURLConnection方式
+     */
+    public  void readContentFromGet(MQServer server) throws Exception{
+        StringBuffer buffer = new StringBuffer();
+        try {
+            URL url = new URL(server.getCluster());
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(server.getIp(), server.getPort()));
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection(proxy);
+            //设置是否向connection输出，因为这个是post请求，参数要放在http正文内，因此需要设为true
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.connect();
+
+            // 将返回的输入流转换成字符串
+            InputStream inputStream = httpURLConnection.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String str = null;
+            while ((str = bufferedReader.readLine()) != null) {
+                buffer.append(str);
+            }
+            bufferedReader.close();
+            inputStreamReader.close();
+            httpURLConnection.disconnect();
+            //todo
+            forwardService.publish(server, buffer.toString().getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

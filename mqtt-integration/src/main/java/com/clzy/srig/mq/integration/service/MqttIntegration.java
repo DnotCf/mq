@@ -50,6 +50,7 @@ public class MqttIntegration implements IMqIntegration {
                     router.setStatus(MQStuats.online.getCode());
                 } catch (Exception e1) {
                     router.setStatus(MQStuats.client_offline.getCode());
+                    log.error("=====MQTT producer重试连接失败=====");
                 }
             }
         }

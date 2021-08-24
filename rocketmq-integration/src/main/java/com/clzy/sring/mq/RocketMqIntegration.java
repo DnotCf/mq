@@ -6,6 +6,7 @@ import com.clzy.srig.mq.integration.enums.MQIntegration;
 import com.clzy.srig.mq.integration.enums.MQStuats;
 import com.clzy.srig.mq.integration.service.IMqIntegration;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
@@ -41,7 +42,12 @@ public class RocketMqIntegration implements IMqIntegration {
                 return;
             }
             DefaultMQProducer producer = rocketMqService.createProducer(server);
-            Message msg = new Message(router.getToTopic(), message);
+            Message msg = null;
+            if (StringUtils.isBlank(server.getTag())) {
+                 msg=new Message(router.getToTopic(), message);
+            }else {
+                msg = new Message(router.getToTopic(), server.getTag(), message);
+            }
             producer.send(msg);
             router.setStatus(MQStuats.online.getCode());
         } catch (Exception e) {
@@ -59,6 +65,7 @@ public class RocketMqIntegration implements IMqIntegration {
                     router.setStatus(MQStuats.online.getCode());
                 } catch (Exception e1) {
                     router.setStatus(MQStuats.client_offline.getCode());
+                    log.error("=====RocketMq producer重试连接失败=====");
                 }
 
             }

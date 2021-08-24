@@ -22,7 +22,8 @@
         a.ACCESS_KEY AS "accessKey",
         a.NETWORK_TYPE AS "networkType",
         a.VPN_ACCONT  AS "vpnAccount",
-        a.VPN_PASSWORD AS "vpnPassword"
+        a.VPN_PASSWORD AS "vpnPassword",
+        a.VPN_ADDRESS AS "vpnAddress"
     </sql>
 
     <sql id="mServersJoins">
@@ -108,7 +109,8 @@
                                    SOURCE_TYPE,
                                    NETWORK_TYPE,
                                    VPN_ACCONT,
-                                   VPN_PASSWORD
+                                   VPN_PASSWORD,
+                                   VPN_ADDRESS
                                     )
         VALUES (#{id},
                 #{name},
@@ -133,7 +135,8 @@
                 #{sourceType},
                 #{networkType},
                 #{vpnAccount},
-                #{vpnPassword}
+                #{vpnPassword},
+                #{vpnAddress}
                        )
     </insert>
 
@@ -160,7 +163,8 @@
             SOURCE_TYPE=#{sourceType},
             NETWORK_TYPE=#{networkType},
             VPN_ACCONT=#{vpnAccount},
-            VPN_PASSWORD=#{vpnPassword}
+            VPN_PASSWORD=#{vpnPassword},
+            VPN_ADDRESS=#{vpnAddress}
         WHERE ID = #{id}
     </update>
 
