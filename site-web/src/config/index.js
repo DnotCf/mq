@@ -19,7 +19,7 @@ export default {
   baseUrl: {
     // dev: 'http://localhost:8085/api',
     dev: "http://192.168.40.136:8085/api",
-    pro: "https://produce.com"
+    pro: ''
   },
   /**
    * @description 默认打开的首页的路由name值，默认为home
