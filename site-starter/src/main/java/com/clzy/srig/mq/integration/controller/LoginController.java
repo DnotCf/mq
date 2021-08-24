@@ -1,5 +1,6 @@
 package com.clzy.srig.mq.integration.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.clzy.geo.core.common.dto.common.JsonResponse;
 import com.clzy.geo.core.utils.StringUtils;
@@ -28,12 +29,13 @@ public class LoginController {
         }
         if (password.equals("123456ABc")) {
             request.getSession().setAttribute("user", "success");
-            return JsonResponse.success(true);
+            return JsonResponse.success(request.getSession().getId());
         }
+
         return JsonResponse.success(false);
     }
     @GetMapping("get_info")
     public JsonResponse getInfo() {
-        return JsonResponse.success(true);
+        return JsonResponse.success("success");
     }
 }

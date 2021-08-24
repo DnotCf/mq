@@ -1,8 +1,10 @@
 package com.clzy.srig.mq.integration.interceptor;
 
+import com.clzy.geo.core.utils.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -16,9 +18,8 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         try {
-            HttpSession session = request.getSession();
-            Object user = session.getAttribute("user");
-            if (user != null) {
+            String header = request.getHeader("Authorization");
+            if (StringUtils.isNotBlank(header)) {
                 return true;
             }
         }catch (Exception e){
