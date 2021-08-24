@@ -45,6 +45,16 @@ public class HttpIntegration implements IMqIntegration {
 
     @Override
     public boolean testConnect(ForwardRouter router) {
-        return service.testConnect(router.getFromServer());
+        try {
+            if (router.getFromServer() == null) {
+                service.testConnect(router.getToServer());
+            }else {
+                service.testConnect(router.getFromServer());
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

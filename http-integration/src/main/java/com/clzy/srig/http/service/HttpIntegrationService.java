@@ -175,7 +175,7 @@ public class HttpIntegrationService {
 
         }
         if (StringUtils.isBlank(object.getString("method"))) {
-            object.put("method", "POST");
+            object.put("method", "GET");
         }
         return object;
     }
