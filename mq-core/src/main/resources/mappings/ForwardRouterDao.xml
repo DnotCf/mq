@@ -32,7 +32,8 @@
         f.STATUS      AS "fromServer.stauts",
         f.NETWORK_TYPE AS "fromServer.networkType",
         f.VPN_ACCONT  AS "fromServer.vpnAccount",
-        f.VPN_PASSWORD AS "fromServer.vpnPassword"
+        f.VPN_PASSWORD AS "fromServer.vpnPassword",
+        f.VPN_ADDRESS AS "fromServer.vpnAddress"
     </sql>
 
     <sql id="toServerColumns">
@@ -53,7 +54,8 @@
         t.STATUS      AS "toServer.stauts",
         t.NETWORK_TYPE AS "toServer.networkType",
         t.VPN_ACCONT  AS "toServer.vpnAccount",
-        t.VPN_PASSWORD AS "toServer.vpnPassword"
+        t.VPN_PASSWORD AS "toServer.vpnPassword",
+        t.VPN_ADDRESS AS "toServer.vpnAddress"
     </sql>
 
     <sql id="rsuJoins">
@@ -78,6 +80,7 @@
             </when>
             <otherwise>
                 a.ID AS "id",
+                a.UPDATE_TIME AS "updateDate",
                 f.ID AS "fromServer.id",
                 t.ID AS "toServer.id",
                 a.FROM_TOPIC AS "fromTopic",
@@ -127,7 +130,7 @@
                 ORDER BY ${page.orderBy}
             </when>
             <otherwise>
-                ORDER BY a.EXPIRE_TIME DESC
+                ORDER BY a.UPDATE_TIME DESC
             </otherwise>
         </choose>
     </select>
@@ -182,6 +185,9 @@
         SET
                 <if test="expireTime !=null" >
                     EXPIRE_TIME= #{expireTime},
+                </if>
+                <if test="updateDate !=null" >
+                    UPDATE_TIME= #{updateDate},
                 </if>
                 <if test="status !=null">
                     STATUS =#{status}

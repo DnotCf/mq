@@ -52,6 +52,7 @@ public class ForwardService {
                     if (p.type().equals(router.getToServer().getType())) {
                         service.execute(() -> {
                             p.onPublich(router, message);
+                            router.setUpdateDate(new Date());
                         });
                     }
                 });
@@ -230,8 +231,8 @@ public class ForwardService {
         Integer toatl = 0;
         for (List<ForwardRouter> list : values) {
             for (ForwardRouter router : list) {
-                if (StringUtils.isBlank(router.getStatus())) {
-                    router.setStatus(MQStuats.online.getCode());
+                if (router.getUpdateDate() == null || (System.currentTimeMillis() - router.getUpdateDate().getTime()) > 1000d * 3600 * 24) {
+                    router.setStatus(MQStuats.offline.getCode());
                 }
                 if (router.getExpireTime() != null && router.getExpireTime().compareTo(new Date()) < 0) {
                     deleteRouterTable(router);

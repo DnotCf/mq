@@ -17,6 +17,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
@@ -142,5 +147,36 @@ public class HttpIntegrationService {
             object.put("method", "POST");
         }
         return object;
+    }
+
+    /**
+     * Java发送请求---HttpURLConnection方式
+     */
+    public  void readContentFromGet(MQServer server) throws Exception{
+        StringBuffer buffer = new StringBuffer();
+        try {
+            URL url = new URL(server.getCluster());
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(server.getIp(), server.getPort()));
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection(proxy);
+            //设置是否向connection输出，因为这个是post请求，参数要放在http正文内，因此需要设为true
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.connect();
+
+            // 将返回的输入流转换成字符串
+            InputStream inputStream = httpURLConnection.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String str = null;
+            while ((str = bufferedReader.readLine()) != null) {
+                buffer.append(str);
+            }
+            bufferedReader.close();
+            inputStreamReader.close();
+            httpURLConnection.disconnect();
+            //todo
+            forwardService.publish(server, buffer.toString().getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -105,6 +105,10 @@ public class MQServer extends DataEntity<MQServer> {
      * vpn密码
      */
     private String vpnPassword;
+    /**
+     * 代理服务地址
+     */
+    private String vpnAddress;
 
     private String topic;
 
