@@ -999,12 +999,13 @@ export default {
                 }
               } else {
                 this.isLoad = false;
+                this.isShow = false;
                 this.$Message.error(res.msg || "保存数据源失败!");
               }
             })
             .catch(err => {
               this.isLoad = false;
-              this.$Message.error(err.msg ||"服务器异常，请联系管理员!");
+              this.$Message.error(err.msg || "服务器异常，请联系管理员!");
             });
         }
       });
