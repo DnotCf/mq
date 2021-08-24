@@ -35,14 +35,8 @@
           >
         </Select>
       </FormItem>
-      <FormItem label="IP映射地址" prop="toServer.ip">
-        <Input v-model="formValidate.toServer.ip" placeholder=""></Input>
-      </FormItem>
-      <FormItem label="端口" prop="toServer.port">
-        <Input v-model="formValidate.toServer.port" placeholder="" number></Input>
-      </FormItem>
       <FormItem label="映射数据源协议" prop="toServer.type">
-        <Select v-model="formValidate.toServer.type" placeholder="">
+        <Select v-model="formValidate.toServer.type" placeholder="" @on-change="handleProtocol">
           <Option
             :value="item.value"
             v-for="(item, index) in typeProtocol"
@@ -51,13 +45,13 @@
           >
         </Select>
       </FormItem>
-      <FormItem label="topic" prop="toServer.topic">
-        <Input v-model="formValidate.toServer.topic" placeholder=""></Input>
-      </FormItem>
+      <div class="border-layout" v-if="formValidate.toServer.type">
+     <form-protocol :value="formValidate.toServer" propName="toServer."></form-protocol>
+      </div>
       <FormItem label="映射给予方" prop="toServer.name">
         <Input v-model="formValidate.toServer.name" placeholder=""></Input>
       </FormItem>
-      <FormItem label="认证账号" prop="username">
+      <!-- <FormItem label="认证账号" prop="username">
         <Input v-model="formValidate.toServer.username" placeholder=""></Input>
       </FormItem>
       <FormItem label="认证密码" prop="password">
@@ -67,7 +61,7 @@
           autocomplete="new-password"
           placeholder=""
         ></Input>
-      </FormItem>
+      </FormItem> -->
       <FormItem label="过期时间">
         <FormItem prop="date">
           <Row>
@@ -119,10 +113,14 @@
 </template>
 <script>
 import dataSourceApi from "@/api/dataSourceApi";
+import FormProtocol from "./form-protocol";
 
 export default {
   name: "MapModal",
   props: {},
+  components: {
+    FormProtocol
+  },
   data() {
     return {
       isShow: false,
@@ -130,24 +128,126 @@ export default {
       btnTitle: "添加",
       formValidate: {
         fromServer: {},
-        toServer: {}
+        toServer: {
+          // clientName: "",
+          // username: "",
+          // password: "",
+          // secretKey: "",
+          // accessKey: "",
+          // total: "",
+          // retry: "",
+          // cluster: "",
+          // protocol: "",
+          // ip: "",
+          // port: "",
+          // group: "",
+          // tag: "",
+          // topic: "",
+          // defaultParam: "",
+          type: ""
+        }
       },
       ruleValidate: {
-        "toServer.name": [
-          { required: true, message: "请输入", trigger: "blur" }
+        "fromServer.id": [
+          { required: true, message: "请选择", trigger: "change" }
         ],
+        // "toServer.name": [
+        //   { required: true, message: "请输入", trigger: "blur" }
+        // ],
         "toServer.ip": [{ required: true, message: "请输入", trigger: "blur" }],
         "toServer.topic": [
           { required: true, message: "请输入", trigger: "blur" }
         ],
         "toServer.port": [
-          { required: true, message: "请输入", trigger: "blur", type: "number" }
+          {
+            required: true,
+            message: "请输入",
+            trigger: "blur",
+            type: "number"
+          }
         ],
-        "fromServer.id": [
-          { required: true, message: "请选择", trigger: "change" }
-        ],
+
         "toServer.type": [
           { required: true, message: "请选择", trigger: "change" }
+        ],
+        "toServer.cluster": [
+          {
+            required: true,
+            message: "请输入",
+            trigger: "blur"
+          }
+        ],
+        "toServer.protocol": [
+          {
+            required: true,
+            message: "请选择",
+            trigger: "change"
+          }
+        ],
+        "toServer.port": [
+          {
+            required: true,
+            message: "请输入",
+            trigger: "blur",
+            type: "number"
+          }
+        ],
+        "toServer.group": [
+          {
+            required: true,
+            message: "请输入",
+            trigger: "blur"
+          }
+        ],
+        "toServer.tag": [
+          {
+            required: true,
+            message: "请输入",
+            trigger: "blur"
+          }
+        ],
+        "toServer.topic": [
+          {
+            required: true,
+            message: "请输入",
+            trigger: "blur"
+          }
+        ],
+        "toServer.username": [
+          {
+            required: true,
+            message: "请输入",
+            trigger: "blur"
+          }
+        ],
+        "toServer.password": [
+          {
+            required: true,
+            message: "请输入",
+            // validator: this.validatepasswd,
+            trigger: "blur"
+          }
+        ],
+        "toServer.clientName": [
+          {
+            required: true,
+            message: "请输入",
+            trigger: "blur"
+          }
+        ],
+        "toServer.secretKey": [
+          {
+            required: true,
+            message: "请输入",
+            trigger: "blur"
+          }
+        ],
+        "toServer.accessKey": [
+          {
+            required: true,
+            message: "请输入",
+            trigger: "blur"
+          }
         ],
         date: [
           {
@@ -193,6 +293,7 @@ export default {
   mounted() {},
   methods: {
     show(val, row) {
+      console.log(row, "显示");
       this.handleReset();
       this.getSourceData();
       if (val) {
@@ -215,9 +316,14 @@ export default {
       let rowData = this.sourceList.find(item => item.value === val);
       this.formValidate.fromServer = rowData.fromServer;
     },
+    // 选择协议
+    handleProtocol(val) {
+
+    },
     handleSubmit(val) {
       this.$refs["formValidate"].validate(valid => {
         if (valid) {
+          console.log(this.formValidate, "this.formValidate");
           this.isLoad = true;
           let isAdd = val;
           this.isTitleShow = true;
@@ -248,7 +354,8 @@ export default {
                     this.$Message.success(this.btnTitle + "成功!");
                     this.btnTitle = "添加";
 
-                    this.$parent.$refs.dataTables.refreshPageData();
+                    // this.$parent.$refs.dataTables.refreshPageData();
+                    this.$parent.getListData();
                   } else {
                     this.checkoutTitle = "消息转发检验成功！";
                     this.isAdd = true;
@@ -312,7 +419,6 @@ export default {
     .ivu-modal {
       .ivu-modal-content {
         border-radius: 14px;
-
         .ivu-modal-header {
           padding: 0 !important;
         }
@@ -324,6 +430,8 @@ export default {
         }
         .ivu-modal-body {
           padding: 32px 30px;
+          overflow: auto;
+          height: 500px;
         }
       }
     }

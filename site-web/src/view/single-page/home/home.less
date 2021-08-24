@@ -161,7 +161,42 @@
       .page-list-box {
         height: ~"calc(100% - 50px)";
         width: 100%;
-        padding: 56px 30px 30px;
+        padding: 40px 30px 30px;
+// 分页
+        .tables-pager {
+          display: flex;
+          justify-content: flex-end;
+          padding: 3px 0px;
+          margin-top: 8px;
+          color: #acc0d3;
+          /deep/.ivu-page {
+            .ivu-page-next,
+            .ivu-page-prev {
+              background: #d7e5fc;
+              border-radius: 2px;
+              color: #606266;
+            }
+            .ivu-page-item-active {
+              background: #397cf5 !important;
+              border-radius: 2px;
+            }
+            .ivu-page-item-active a,
+            .ivu-page-item-active:hover a {
+              color: #fff;
+            }
+            .ivu-page-item {
+              background: #d3d7e6;
+              border-radius: 2px;
+
+              a {
+                color: #fff;
+              }
+            }
+            .ivu-page-options-elevator input {
+              color: #397cf5;
+            }
+          }
+        }
       }
     }
   }
@@ -171,6 +206,10 @@
 }
 .table-box {
   border: unset !important;
+  margin-bottom: 30px;
+  /deep/ .ivu-table:after {
+    display: none;
+  }
   /deep/.ivu-table {
     .ivu-table-tbody {
       .ivu-table-cell {
@@ -254,6 +293,13 @@
   color: rgb(16, 217, 17);
 }
 .home-poptip {
+  /deep/.ivu-poptip-rel{
+    width: 100%;
+  }
+  .poptip-item:hover{
+    background: #d7e5fc;
+    color: #4567a3;
+  }
   /deep/.ivu-poptip-title,
   /deep/.ivu-poptip-arrow {
     display: none;
@@ -267,8 +313,8 @@
     padding-left: 12px;
     cursor: pointer;
     width: 100%;
+   
   }
-
 }
 .active {
   background: #d7e5fc;
@@ -276,11 +322,15 @@
 }
 .del-poptip {
   width: 100%;
+  .gray{
+    color: #a6b4cf;
+  }
   .poptip-item {
     height: 36px;
     line-height: 36px;
     padding-left: 12px;
     cursor: pointer;
+ 
   }
   /deep/.ivu-poptip-arrow {
     display: block;

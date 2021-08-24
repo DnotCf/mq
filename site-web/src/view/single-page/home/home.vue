@@ -12,84 +12,78 @@
             <span class="title-name">表格管理</span>
           </div>
           <div class="btn-layout">
-            <div name="toolbar">
-              <Poptip class="home-poptip" placement="bottom" trigger="hover">
-                <Button type="primary" class="btn-box">
-                  修改
-                  <Icon type="ios-arrow-down"></Icon>
-                </Button>
-                <div slot="title"></div>
-                <div slot="content">
-                  <div
-                    class="poptip-item"
-                    :class="isSourceModify ? 'active' : ''"
-                    @click="handleModifySource()"
-                  >
-                    数据源
-                  </div>
-                  <div
-                    class="poptip-item"
-                    :class="isMapModify ? 'active' : ''"
-                    @click="handleModifyMap"
-                  >
-                    映射
-                  </div>
-                </div>
-              </Poptip>
-              <Poptip class="home-poptip" placement="bottom">
-                <Button type="primary" class="btn-box">
-                  删除
-                  <Icon type="ios-arrow-down"></Icon>
-                </Button>
-                <div slot="title"></div>
-                <div slot="content">
-                  <div @click.stop="handleDelectSource">
-                    <Poptip
-                      v-model="isSource"
-                      placement="bottom"
-                      class="del-poptip cs"
-                      confirm
-                      :disabled="!isSource"
-                      @on-ok="handleDelSource"
-                      :class="isSourceDel ? 'active' : ''"
-                    >
-                      <div class="poptip-item">数据源</div>
-                      <div slot="title">
-                        <svg-icon name="icon-warn"></svg-icon>
-                        你确定要删除吗？
-                      </div>
-                    </Poptip>
-                  </div>
-                  <div @click="handleDelectMap">
-                    <Poptip
-                      v-model="isMap"
-                      placement="bottom"
-                      class="del-poptip"
-                      :disabled="!isSource"
-                      @on-ok="handleDelMap"
-                      confirm
-                      :class="isMapDel ? 'active' : ''"
-                    >
-                      <div class="poptip-item">映射</div>
-                      <div slot="title">你确定要删除吗？</div>
-                    </Poptip>
-                  </div>
-                </div>
-              </Poptip>
-              <Button type="primary" class="btn-box" @click="handleAddMap">
-                添加映射
+            <Button
+              type="primary"
+              class="btn-box"
+              @click="handleEnable(enableVal)"
+            >
+              {{ enableTitle }}
+            </Button>
+            <Poptip class="home-poptip" placement="bottom">
+              <Button type="primary" class="btn-box">
+                修改
+                <Icon type="ios-arrow-down"></Icon>
               </Button>
-            </div>
+              <div slot="title"></div>
+              <div slot="content">
+                <div class="poptip-item" @click="handleModifySource">
+                  数据源
+                </div>
+                <div class="poptip-item" @click="handleModifyMap">映射</div>
+              </div>
+            </Poptip>
+            <Poptip class="home-poptip" placement="bottom">
+              <Button type="primary" class="btn-box">
+                删除
+                <Icon type="ios-arrow-down"></Icon>
+              </Button>
+              <div slot="content">
+                <div @click.stop="handleDelectSource">
+                  <Poptip
+                    v-model="isSource"
+                    placement="bottom"
+                    class="del-poptip cs"
+                    confirm
+                    :disabled="!isSource"
+                    @on-ok="handleDelSource"
+                  >
+                    <div class="poptip-item">数据源</div>
+                    <div slot="title" style="width: 150px; padding-top: 10px">
+                      <svg-icon name="icon-warn"></svg-icon>
+                      <span class="gray"> 你确定要删除吗？</span>
+                    </div>
+                  </Poptip>
+                </div>
+                <div @click="handleDelectMap">
+                  <Poptip
+                    v-model="isMap"
+                    placement="bottom"
+                    class="del-poptip"
+                    :disabled="!isSource"
+                    @on-ok="handleDelMap"
+                    confirm
+                  >
+                    <div class="poptip-item">映射</div>
+                    <div slot="title" style="width: 150px; padding-top: 10px">
+                      <svg-icon name="icon-warn"></svg-icon>
+                      <span class="gray"> 你确定要删除吗？</span>
+                    </div>
+                  </Poptip>
+                </div>
+              </div>
+            </Poptip>
+            <Button type="primary" class="btn-box" @click="handleAddMap">
+              添加映射
+            </Button>
           </div>
         </div>
         <div class="page-list-box">
-          <list-tables
-            ref="dataTables"
+          <Table
             :height="550"
-            :hidePage="false"
-            :loadPageData="loadPageData"
+            :data="list"
             :columns="columns"
             class="table-box"
+            @on-selection-change="onSelectionChange"
           >
             <template slot-scope="{ row, index }" slot="name">{{
               row.fromServer.name
@@ -145,12 +139,6 @@
 
                 <!-- RocketMQ -->
                 <template v-if="row.fromServer.type === 'Aliyun_RocketMQ'">
-                  <!-- <div class="list-content">
-                    <span class="list-nature">单次最大消费条数：</span>
-                    <span class="value-ellipsis">{{
-                      row.fromServer.total
-                    }}</span>
-                  </div> -->
                   <div class="list-content">
                     <span class="list-nature">重试次数：</span>
                     <span class="value-ellipsis">{{
@@ -256,12 +244,6 @@
                   >{{ row.fromServer.vpnAccount }}
                 </div>
               </div>
-              <!-- <div v-else>
-                <div class="list-content">
-                  <span class="list-nature">地址：</span
-                  >{{ row.fromServer.retry }}
-                </div>
-              </div> -->
             </template>
             <template slot-scope="{ row, index }" slot="map">
               <div class="fold-box" v-if="row.toServer">
@@ -273,46 +255,31 @@
                   }"
                 >
                   <div class="list-content">
-                    <span class="list-nature">选择数据源：</span
-                    >{{ row.fromServer.name }}
+                    <span class="list-nature">数据源：</span>
+                    <span class="value-ellipsis">{{
+                      row.fromServer.name
+                    }}</span>
                   </div>
                   <div class="list-content">
-                    <span class="list-nature">IP地址：</span
-                    >{{ row.toServer.ip }}
+                    <span class="list-nature">IP地址：</span>
+                    <span class="value-ellipsis">{{ row.toServer.ip }}</span>
                   </div>
                   <div class="list-content">
-                    <span class="list-nature"> 端口：</span>
-                    {{ row.toServer.port }}
+                    <span class="list-nature">端口：</span>
+                    <span class="value-ellipsis">{{ row.toServer.port }}</span>
                   </div>
                   <div class="list-content">
-                    <span class="list-nature"> topic：</span>
-                    {{ row.toServer.topic }}
+                    <span class="list-nature">topic：</span>
+                    <span class="value-ellipsis">{{ row.toServer.topic }}</span>
                   </div>
                   <div class="list-content">
-                    <span class="list-nature"> 映射给予方：</span>
-                    {{ row.toServer.name }}
+                    <span class="list-nature">映射给予方：</span>
+                    <span class="value-ellipsis">{{ row.toServer.name }}</span>
                   </div>
                   <div class="list-content">
-                    <span class="list-nature"> 映射数据源协议：</span>
-                    {{ row.toServer.type }}
+                    <span class="list-nature">映射数据源协议：</span>
+                    <span class="value-ellipsis">{{ row.toServer.type }}</span>
                   </div>
-                  <!-- <div
-                    v-for="(item, index) in ceList"
-                    :key="index"
-                    class="list-content-box"
-                  >
-                    <div class="list-content">
-                      <span class="list-nature">选择数据源：</span
-                      >{{ item.name1 }}
-                    </div>
-                    <div class="list-content">
-                      <span class="list-nature">IP地址：</span>{{ item.name2 }}
-                    </div>
-                    <div class="list-content">
-                      <span class="list-nature"> 端口：</span>
-                      {{ item.name3 }}
-                    </div>
-                  </div> -->
                 </div>
                 <div class="source-status">
                   <div
@@ -345,7 +312,17 @@
               </div>
               <span v-else>暂无映射</span>
             </template>
-          </list-tables>
+          </Table>
+          <div class="tables-pager">
+            <page
+              :total="pageTotal"
+              :page-size="pageSize"
+              @on-change="onPageNoChange"
+              @on-page-size-change="onPageSizeChange"
+              show-total
+              show-elevator
+            />
+          </div>
         </div>
       </div>
       <div class="page-modal-data-source-box page-content-common-box">
@@ -381,175 +358,8 @@
               </Select>
             </FormItem>
             <div class="border-layout" v-show="formValidate.type">
-              <!-- AMQP start -->
-              <div v-if="formValidate.type === 'AMQP'">
-                <FormItem label="用户名" prop="username">
-                  <Input v-model="formValidate.username" placeholder=""></Input>
-                </FormItem>
-                <FormItem label="密码" prop="password">
-                  <Input
-                    v-model="formValidate.password"
-                    placeholder=""
-                    type="password"
-                    autocomplete="new-password"
-                  ></Input>
-                </FormItem>
-              </div>
-              <!-- AMQP end -->
-
-              <!-- Aliyun_RocketMQ start -->
-              <div v-if="formValidate.type === 'Aliyun_RocketMQ'">
-                <FormItem label="secretKey" prop="secretKey">
-                  <Input
-                    v-model="formValidate.secretKey"
-                    type="text"
-                    placeholder=""
-                  ></Input>
-                </FormItem>
-                <FormItem label="accessKey" prop="accessKey">
-                  <Input
-                    v-model="formValidate.accessKey"
-                    placeholder=""
-                  ></Input>
-                </FormItem>
-              </div>
-              <!-- Aliyun_RocketMQ end -->
-
-              <!-- EMQX start -->
-              <div v-if="formValidate.type === 'MQTT'">
-                <FormItem label="用户名">
-                  <Input v-model="formValidate.username" placeholder=""></Input>
-                </FormItem>
-                <FormItem label="密码">
-                  <Input
-                    v-model="formValidate.password"
-                    placeholder=""
-                    type="password"
-                    autocomplete="new-password"
-                  ></Input>
-                </FormItem>
-              </div>
-              <!-- EMQX end -->
-
-              <!-- RocketMQ start-->
-              <div v-if="formValidate.type === 'RocketMQ'">
-                <!-- <FormItem label="单次最大消费条数">
-                  <Input v-model="formValidate.total" placeholder=""></Input>
-                </FormItem> -->
-                <FormItem label="重试次数">
-                  <Input
-                    v-model="formValidate.retry"
-                    placeholder=""
-                    type="password"
-                    autocomplete="new-password"
-                  ></Input>
-                </FormItem>
-              </div>
-              <!-- RocketMQ end -->
-
-              <!-- HTTP RocketMQ 阿里云RocketMQ-->
-              <div
-                v-if="
-                  formValidate.type === 'HTTP' ||
-                  formValidate.type === 'RocketMQ' ||
-                  formValidate.type === 'Aliyun_RocketMQ'
-                "
-              >
-                <FormItem label="协议地址" prop="cluster">
-                  <Input
-                    v-model="formValidate.cluster"
-                    placeholder=""
-                    type="text"
-                  ></Input>
-                </FormItem>
-              </div>
-
-              <!-- MQTT AMQP-->
-              <div
-                v-if="
-                  formValidate.type === 'MQTT' || formValidate.type === 'AMQP'
-                "
-              >
-                <FormItem
-                  :label="
-                    formValidate.type === 'AMQP' ? 'VirtualHost' : 'Client ID'
-                  "
-                  prop="clientName"
-                >
-                  <Input
-                    v-model="formValidate.clientName"
-                    placeholder=""
-                    autocomplete="new_password"
-                  ></Input>
-                </FormItem>
-                <FormItem label="协议" prop="protocol">
-                  <Select v-model="formValidate.protocol" placeholder="">
-                    <Option
-                      :value="item.value"
-                      v-for="(item, index) in protocolList"
-                      :key="index"
-                      >{{ item.label }}</Option
-                    >
-                  </Select>
-                </FormItem>
-                <FormItem label="ip" prop="ip">
-                  <Input
-                    v-model="formValidate.ip"
-                    placeholder=""
-                    autocomplete="new_password"
-                  ></Input>
-                </FormItem>
-                <FormItem label="端口" prop="port">
-                  <Input
-                    v-model="formValidate.port"
-                    placeholder=""
-                    autocomplete="on"
-                    number
-                  ></Input>
-                </FormItem>
-              </div>
-
-              <!-- 阿里云RocketMQ rocketMQ  -->
-              <div
-                v-if="
-                  formValidate.type === 'Aliyun_RocketMQ' ||
-                  formValidate.type === 'RocketMQ'
-                "
-              >
-                <FormItem label="所属组" prop="group">
-                  <Input
-                    v-model="formValidate.group"
-                    placeholder=""
-                    type="text"
-                    autocomplete="new-password"
-                  ></Input>
-                </FormItem>
-                <FormItem label="tag" prop="tag">
-                  <Input
-                    v-model="formValidate.tag"
-                    placeholder=""
-                    type="text"
-                    autocomplete="new-password"
-                  ></Input>
-                </FormItem>
-              </div>
-
-              <!-- MQTT  AMQP 阿里云RocketMQ  RocketMQ-->
-              <div v-if="formValidate.type !== 'HTTP'">
-                <FormItem label="topic" prop="topic">
-                  <Input v-model="formValidate.topic" placeholder=""></Input>
-                </FormItem>
-                <FormItem label="其他参数" prop="defaultParam">
-                  <Input
-                    v-model="formValidate.defaultParam"
-                    type="textarea"
-                    :autosize="{ minRows: 2, maxRows: 5 }"
-                    placeholder=""
-                  ></Input>
-                </FormItem>
-              </div>
+              <form-protocol :value="formValidate"></form-protocol>
             </div>
-
             <FormItem
               label="选择网络"
               prop="networkType"
@@ -631,24 +441,25 @@
 import SvgIcon from "@/components/svg-icon/svg-icon";
 import ListTables from "@/components/tables/tables";
 import MapModal from "./components/map-modal";
+import FormProtocol from "./components/form-protocol";
 
 import dataSourceApi from "@/api/dataSourceApi";
 export default {
   name: "",
-  components: { ListTables, SvgIcon, MapModal },
+  components: { ListTables, SvgIcon, MapModal, FormProtocol },
   data() {
     return {
       columns: [
         {
           type: "selection",
           width: 60,
-          align: "center"
+          align: "center",
         },
         {
           title: "数据源名称",
           slot: "name",
           align: "center",
-          width: 100
+          width: 100,
         },
         {
           title: "选择数据源协议",
@@ -658,28 +469,28 @@ export default {
           filters: [
             {
               label: "RabbitMQ",
-              value: "AMQP"
+              value: "AMQP",
             },
             {
               label: "阿里云RocketMQ",
-              value: "Aliyun_RocketMQ"
+              value: "Aliyun_RocketMQ",
             },
             {
               label: "RocketMQ",
-              value: "RocketMQ"
+              value: "RocketMQ",
             },
             {
               label: "EMQX",
-              value: "MQTT"
+              value: "MQTT",
             },
             {
               label: "HTTP",
-              value: "HTTP"
-            }
+              value: "HTTP",
+            },
           ],
           filterMethod(value, row) {
             return row.fromServer.type == value;
-          }
+          },
         },
         {
           title: "选择网络",
@@ -690,29 +501,29 @@ export default {
           filters: [
             {
               label: "内网",
-              value: "0"
+              value: "0",
             },
             {
               label: "外网",
-              value: "1"
-            }
+              value: "1",
+            },
           ],
           filterMethod(value, row) {
             return row.fromServer.networkType.indexOf(value) > -1;
-          }
+          },
         },
         {
           title: "映射",
           slot: "map",
           align: "center",
-               width: 250,
+          width: 250,
         },
         {
           title: "最新同步时间",
           align: "center",
           key: "updateDate",
-               width: 200,
-        }
+          width: 200,
+        },
       ],
       isFold: true,
       formValidate: {},
@@ -721,168 +532,167 @@ export default {
           {
             required: true,
             message: "请输入",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         type: [
           {
             required: true,
             message: "请选择",
-            trigger: "change"
-          }
+            trigger: "change",
+          },
         ],
         cluster: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         protocol: [
           {
             required: true,
             message: "请选择",
-            trigger: "change"
-          }
+            trigger: "change",
+          },
         ],
         ip: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         port: [
           {
             required: true,
             message: "请输入",
             trigger: "blur",
-            type: "number"
-          }
+            type: "number",
+          },
         ],
         group: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         tag: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         topic: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         networkType: [
           {
             required: true,
             message: "请选择",
-            trigger: "change"
-          }
+            trigger: "change",
+          },
         ],
         username: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         password: [
           {
             required: true,
             message: "请输入",
             // validator: this.validatepasswd,
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         clientName: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         secretKey: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         accessKey: [
           {
             required: true,
             message: "请输入",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         vpnPassword: [
           {
             required: false,
             message: "请输入",
             // validator: this.validatepasswd,
-            trigger: "blur"
-          }
-        ]
+            trigger: "blur",
+          },
+        ],
       },
       isAdd: false,
       modalTitle: "添加数据源",
       protocolList: [
         {
           label: "tcp协议",
-          value: "tcp"
+          value: "tcp",
         },
         {
           label: "websocket协议",
-          value: "ws"
+          value: "ws",
         },
         {
           label: "http协议",
-          value: "http"
-        }
+          value: "http",
+        },
       ],
       typeProtocol: [
         {
           label: "RabbitMQ",
-          value: "AMQP"
+          value: "AMQP",
         },
         {
           label: "阿里云RocketMQ",
-          value: "Aliyun_RocketMQ"
+          value: "Aliyun_RocketMQ",
         },
         {
           label: "RocketMQ",
-          value: "RocketMQ"
+          value: "RocketMQ",
         },
         {
           label: "EMQX",
-          value: "MQTT"
+          value: "MQTT",
         },
         {
           label: "HTTP",
-          value: "HTTP"
-        }
+          value: "HTTP",
+        },
       ],
 
       networkList: [
         {
           label: "内网",
-          value: "0"
+          value: "0",
         },
         {
           label: "外网",
-          value: "1"
-        }
+          value: "1",
+        },
       ],
-      selectList: [],
       isLoad: false,
       isShow: false,
       isSuccess: false,
@@ -890,31 +700,73 @@ export default {
       checkoutTitle: "消息转发正在检验中，请稍后…",
       isType: true,
       isSource: false,
-      isSourceDel: false,
-      isMapModify: false,
-      isSourceModify: false,
       isMap: false,
-      isMapDel: false
+      selectList: [],
+      list: [],
+      pageNo: 1,
+      pageSize: 10,
+      pageTotal: 0,
+      enableTitle: "停用所有映射",
+      enableVal: 1,
     };
   },
   created() {},
-  mounted() {},
+  mounted() {
+    this.getListData();
+  },
   computed: {},
   methods: {
+    getListData() {
+      dataSourceApi
+        .getSoruceList({
+          pageNo: this.pageNo,
+          pageSize: this.pageSize,
+        })
+        .then((req) => {
+          if (req.code === 200) {
+            let data = req.data;
+            this.list = data.list.map((item) => {
+              item.isFold = false;
+              return item;
+            });
+            this.pageTotal = data.count;
+          } else {
+            this.$Message.error(err.msg || "数据源列表获取失败!");
+          }
+        })
+        .catch((err) => {
+          this.$Message.error(err.msg || "服务器异常请联系管理员!");
+        });
+    },
+    // 分页回调
+    onPageNoChange(pageNo) {
+      this.pageNo = pageNo;
+      this.getListData();
+    },
+    onPageSizeChange(pageSize) {
+      this.pageSize = pageSize;
+      this.getListData();
+    },
+    onSelectionChange(selection) {
+      this.selectList = selection;
+    },
     // 获取列表勾选数据
     getList() {
-      this.selectList = this.$refs.dataTables.currentSelectRows;
       if (!this.selectList.length) {
         this.isSource = false;
         this.isMap = false;
-        return this.$Message.warning("请选择数据");
+        this.$Message.warning("请选择数据");
+        return false;
+      } else {
+        return true;
       }
     },
     // 修改数据源
     handleModifySource() {
-      this.isSourceModify = true;
-      // 获取列表勾选数据
-      this.getList();
+      if (!this.getList()) {
+        return;
+      }
+
       if (this.selectList.length > 1) {
         return this.$Message.warning("只能选择一条数据");
       }
@@ -922,78 +774,115 @@ export default {
       this.btnTitle = "修改";
       this.handleReset();
       this.formValidate = this.selectList[0].fromServer;
+      console.log(this.formValidate, this.isSourceModify);
     },
     // 修改映射
     handleModifyMap() {
       // 获取列表勾选数据
-      this.getList();
-      if (this.selectList.length > 1) {
-        return this.$Message.warning("只能选择一条数据");
+      if (!this.getList()) {
+        return;
       }
-
-      if (!this.selectList[0].toServer)
-        return this.$Message.warning("暂无映射数据");
+      if (this.selectList.length > 1) {
+        this.$Message.warning("只能选择一条数据");
+        return;
+      }
+      if (!this.selectList[0].toServer) {
+        this.$Message.warning("暂无映射");
+        return;
+      }
       this.$refs.mapNode.show(1, this.selectList[0]);
-      this.isMapModify = true;
     },
 
     // 删除数据源
     handleDelectSource() {
-      this.isSourceDel = true;
       // 获取列表勾选数据
-      this.getList();
-      if (!this.selectList[0].toServer)
-        return this.$Message.warning("暂无映射数据");
+      if (!this.getList()) {
+        return;
+      }
+
       this.isSource = true;
     },
     handleDelSource() {
-      let ids = this.selectList.map(item => {
+      let ids = this.selectList.map((item) => {
         return item.fromServer.id;
       });
       dataSourceApi
         .delSoruce(ids)
-        .then(res => {
+        .then((res) => {
           if (res.code === 200) {
             this.formValidate = {};
-            this.isSourceDel = false;
             this.$Message.success("删除成功!");
-            this.$refs.dataTables.refreshPageData();
+            // this.$refs.dataTables.refreshPageData();
+            this.getListData();
           } else {
             this.$Message.error("删除数据源失败!");
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.$Message.error("服务器异常请联系管理员!");
         });
     },
     // 删除映射
     handleDelectMap() {
-      this.isMapDel = true;
       // 获取列表勾选数据
-      this.getList();
+      if (!this.getList()) {
+        return;
+      }
+
+      if (!this.selectList[0].toServer) {
+        this.$Message.warning("暂无映射");
+        return;
+      }
       this.isMap = true;
       console.log("删除映射");
     },
     handleDelMap() {
-      let ids = this.selectList.map(item => {
+      let ids = this.selectList.map((item) => {
         return item.id;
       });
       dataSourceApi
         .delMap(ids)
-        .then(res => {
+        .then((res) => {
           if (res.code === 200) {
             this.formValidate = {};
-            this.isSourceDel = false;
             this.$Message.success("删除成功!");
-            this.$refs.dataTables.refreshPageData();
+            // this.$refs.dataTables.refreshPageData();
+            this.getListData();
           } else {
             this.$Message.error("删除数据源失败!");
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.$Message.error("服务器异常请联系管理员!");
         });
     },
+    // 启用停用映射
+    handleEnable(val) {
+      this.enableVal = !val;
+      let port = "";
+      if (this.enableVal) {
+        port = "stopAll";
+      } else {
+        port = "startAll";
+      }
+      dataSourceApi[port]()
+        .then((res) => {
+          if (res.code === 200) {
+            if (this.enableVal) {
+              this.enableTitle = "停用所有映射";
+            } else {
+              this.enableTitle = "启用所有映射";
+            }
+            this.$Message.success(this.enableVal ? "停用" : "启用" + "成功");
+          } else {
+            this.$Message.error(this.enableVal ? "停用" : "启用" + "失败");
+          }
+        })
+        .catch((err) => {
+          this.$Message.error(err.msg || "服务器异常，请联系管理员!");
+        });
+    },
+
     // 添加映射
     handleAddMap() {
       this.$nextTick(() => {
@@ -1013,22 +902,22 @@ export default {
     },
     // 列表数据刷新
     loadPageData(pageNo, pageSize, search) {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         dataSourceApi
           .getSoruceList({
             pageNo: pageNo,
-            pageSize: pageSize
+            pageSize: pageSize,
           })
-          .then(req => {
+          .then((req) => {
             let data = req.data;
-            data.list.map(item => {
+            data.list.map((item) => {
               item.isFold = false;
               return item;
             });
             // 处理数据，如果存在异常则提示
             resolve(data);
           })
-          .catch(err => {
+          .catch((err) => {
             // 异常处理,不用提示
             reject(err);
           });
@@ -1055,15 +944,15 @@ export default {
         group: "",
         tag: "",
         topic: "",
-        defaultParam: ""
+        defaultParam: "",
       };
-      this.isType = false;
-      this.isType = true;
+
       this.formValidate = { ...this.formValidate, ...initForm };
+      this.$refs["formValidate"].resetFields();
     },
     // 提交
     handleSubmit(val) {
-      this.$refs["formValidate"].validate(valid => {
+      this.$refs["formValidate"].validate((valid) => {
         if (valid) {
           let isAdd = val;
           this.isLoad = true;
@@ -1075,7 +964,7 @@ export default {
             port = "testSoruce";
           }
           dataSourceApi[port](this.formValidate)
-            .then(res => {
+            .then((res) => {
               this.isLoad = false;
               if (res.code === 200) {
                 let data = res.data;
@@ -1090,7 +979,8 @@ export default {
                     this.modalTitle = "添加数据源";
                     this.btnTitle = "添加";
 
-                    this.$refs.dataTables.refreshPageData();
+                    // this.$refs.dataTables.refreshPageData();
+                    this.getListData();
                   } else {
                     this.checkoutTitle = "消息转发检验成功！";
                     this.isAdd = true;
@@ -1106,12 +996,10 @@ export default {
                 this.$Message.error("保存数据源失败!");
               }
             })
-            .catch(err => {
+            .catch((err) => {
               this.isLoad = false;
               this.$Message.error("服务器异常，请联系管理员!");
             });
-        } else {
-          this.$Message.error("Fail!");
         }
       });
     },
@@ -1123,12 +1011,8 @@ export default {
       this.isAdd = false;
       this.isLoad = false;
       this.isSuccess = false;
-      this.isSourceDel = false;
-      this.isMapModify = false;
-      this.isSourceModify = false;
-      this.isMapDel = false;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

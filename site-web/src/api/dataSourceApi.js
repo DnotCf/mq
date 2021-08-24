@@ -67,10 +67,29 @@ dataSourceApi.testMap = data => {
 /**
  * 删除映射
  */
- dataSourceApi.delMap = ids => {
+dataSourceApi.delMap = ids => {
   ids = ids || [];
   return axios.request({
     url: "/router/delete?ids=" + ids.join(","),
     method: "post"
+  });
+};
+
+/**
+ * 启动所有映射
+ */
+dataSourceApi.startAll = () => {
+  return axios.request({
+    url: "/router/startAll",
+    method: 'get'
+  });
+};
+/**
+ * 停用
+ */
+dataSourceApi.stopAll = () => {
+  return axios.request({
+    url: "/router/stopAll",
+    method: "get"
   });
 };
