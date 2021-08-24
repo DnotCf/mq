@@ -52,6 +52,7 @@ public class AmqpIntegration implements IMqIntegration {
                     router.setStatus(MQStuats.online.getCode());
                 }catch (Exception e1){
                     router.setStatus(MQStuats.client_offline.getCode());
+                    log.info("=====AMQP(RabbitMQ) producer重试连接失败=====");
                 }
             }
         }

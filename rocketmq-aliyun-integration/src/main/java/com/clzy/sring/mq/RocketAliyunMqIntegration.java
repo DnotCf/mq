@@ -44,7 +44,8 @@ public class RocketAliyunMqIntegration implements IMqIntegration {
             producer.send(msg);
             router.setStatus(MQStuats.online.getCode());
         } catch (Exception e) {
-            log.error("RocketMq消息推送失败");
+            log.error("AliYunRocketMq消息推送失败");
+            aliyunMqService.disProducerConnect(server);
             router.setStatus(MQStuats.client_offline.getCode());
             e.printStackTrace();
         }

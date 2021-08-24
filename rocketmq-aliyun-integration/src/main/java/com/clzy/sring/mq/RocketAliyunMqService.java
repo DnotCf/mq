@@ -257,4 +257,13 @@ public class RocketAliyunMqService {
         }
     }
 
+    public synchronized void disProducerConnect(MQServer server) {
+        String url = getConectionUrl(server);
+        ProducerBean producerBean = producerMap.get(url);
+        if (producerBean != null) {
+            producerBean.shutdown();
+            consumerMap.remove(url);
+        }
+    }
+
 }
