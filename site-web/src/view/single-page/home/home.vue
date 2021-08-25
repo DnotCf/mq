@@ -690,10 +690,13 @@ export default {
         this.$Message.warning("暂无映射");
         return;
       }
-      let row = {};
-      row = { ...this.selectList[0] };
-      console.log(row, 88888);
-      this.$refs.mapNode.show(1, row);
+      this.$refs.mapNode.show();
+      this.$refs.mapNode.formData.toServer = { ...this.selectList[0].toServer };
+      this.$refs.mapNode.id = this.selectList[0].fromServer.id;
+      this.$refs.mapNode.formData.fromServer = {
+        ...this.selectList[0].fromServer
+      };
+      this.$refs.mapNode.formData.date = this.selectList[0].expireTime;
     },
 
     // 删除数据源
