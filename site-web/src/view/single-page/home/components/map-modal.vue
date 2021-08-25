@@ -298,13 +298,9 @@ export default {
       this.isShow = true;
       this.handleReset();
       this.getSourceData();
-      console.log(row, "显示");
       if (val) {
         this.modalTitle = "修改映射";
-        this.formData = row;
-        this.formData.date = row.expireTime;
         this.btnTitle = "修改";
-        // console.log(this.formData, "显示");
       } else {
         this.modalTitle = "添加映射";
       }
@@ -314,27 +310,24 @@ export default {
     },
     // 选择类型
     handleType(val) {
+      this.id = val;
+      console.log(val)
       if (!val) return;
-      console.log("选择类型");
-
-      // this.id = val;
-      // this.rowData = this.sourceList.find(item => item.value === val);
-      // this.formData.fromServer = this.rowData;
-      // console.log(this.rowData.fromServer, val, this.rowData);
+      this.rowData = this.sourceList.find(item => item.value === val);
+      this.formData.fromServer = this.rowData;
     },
     // 选择协议
     handleProtocol(val) {
       if (!val) return;
-      console.log("选择协议");
-      // let init = {
-      //   toServer: {
-      //     type: val,
-      //     name: this.formData.toServer.name
-      //   }
-      // };
-      // this.formData = { ...this.formData, ...init };
-      // this.$refs["formData"].resetFields();
-      // this.formData.fromServer.id = this.id;
+      let init = {
+        toServer: {
+          type: val,
+          name: this.formData.toServer.name
+        }
+      };
+      this.formData = { ...this.formData, ...init };
+      this.$refs["formData"].resetFields();
+      this.formData.fromServer.id = this.id;
     },
     handleSubmit(val) {
       this.$refs["formData"].validate(valid => {
@@ -395,7 +388,6 @@ export default {
       });
     },
     handleReset() {
-      console.log("重置");
       this.formData = {
         fromServer: {},
         toServer: {}
