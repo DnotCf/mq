@@ -7,6 +7,7 @@ import com.clzy.geo.core.common.persistence.Page;
 import com.clzy.geo.core.utils.StringUtils;
 import com.clzy.srig.mq.integration.entity.ForwardRouter;
 import com.clzy.srig.mq.integration.entity.MQServer;
+import com.clzy.srig.mq.integration.service.ForwardRouterService;
 import com.clzy.srig.mq.integration.service.ForwardService;
 import com.clzy.srig.mq.integration.service.MQServerService;
 import io.swagger.annotations.Api;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * <p>
@@ -35,6 +37,8 @@ public class SrigMqServerController extends BaseController {
     private MQServerService service;
     @Autowired
     private ForwardService forwardService;
+    @Autowired
+    private ForwardRouterService routerService;
 
     @ApiOperation(value = "自定义分页条件排序获取信息", notes = "自定义分页条件排序获取信息")
     @PostMapping("page")
@@ -55,6 +59,21 @@ public class SrigMqServerController extends BaseController {
             entiy.setSourceType(0);
         }
         service.save(entiy);
+        if (StringUtils.isNotBlank(entiy.getTopic())) {
+            try {
+                ForwardRouter query = new ForwardRouter();
+                query.setFromTopic(entiy.getTopic());
+                List<ForwardRouter> list = routerService.findList(query);
+                for (ForwardRouter router : list) {
+                    router.setFromTopic(entiy.getTopic());
+                    routerService.save(router);
+                    forwardService.updateRouterTable(router);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         return JsonResponse.success(true);
     }
 
