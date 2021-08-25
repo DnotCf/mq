@@ -17,7 +17,7 @@
               class="btn-box"
               @click="handleEnable(enableVal)"
             >
-              {{ enableTitle }}
+       {{enableVal==1?'停用所有映射':"启用所有映射"}}
             </Button>
             <Poptip class="home-poptip" placement="bottom">
               <Button type="primary" class="btn-box">
@@ -606,7 +606,6 @@ export default {
       pageNo: 1,
       pageSize: 10,
       pageTotal: 0,
-      enableTitle: "停用所有映射",
       enableVal: 1
     };
   },
@@ -630,6 +629,7 @@ export default {
               return item;
             });
             this.pageTotal = data.count;
+            this.enableVal = Number(this.list[0].status);
           } else {
             this.$Message.error(err.msg || "数据源列表获取失败!");
           }
@@ -774,11 +774,6 @@ export default {
       dataSourceApi[port]()
         .then(res => {
           if (res.code === 200) {
-            if (this.enableVal) {
-              this.enableTitle = "停用所有映射";
-            } else {
-              this.enableTitle = "启用所有映射";
-            }
             this.$Message.success(
               this.enableVal ? "启用所有映射" : "停用所有映射" + "成功"
             );
