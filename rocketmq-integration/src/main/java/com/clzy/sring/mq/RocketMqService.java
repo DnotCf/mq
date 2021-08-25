@@ -17,10 +17,12 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageExt;
+import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -135,7 +137,7 @@ public class RocketMqService {
     public DefaultMQProducer buildProducer(MQServer server) throws MQClientException {
         String url = getConectionUrl(server);
         log.info("====={}===activeMQ生产服务连接创建开始=====", url);
-//        JSONObject param = getDefaultParam(server.getDefaultParam());
+        JSONObject param = getDefaultParam(server.getDefaultParam());
         String group = server.getGroup();
         if (StringUtils.isBlank(group)) {
             group = MQIntegration.defaultGroupName;
@@ -144,7 +146,7 @@ public class RocketMqService {
         producer.setNamesrvAddr(url);
         producer.setVipChannelEnabled(false);
 //        producer.setMaxMessageSize(maxMessageSize);
-//        producer.setSendMsgTimeout(sendMsgTimeOut);
+        producer.setSendMsgTimeout(param.getInteger("sendMsgTimeOut"));
         if (server.getRetry() != null) {
             producer.setRetryTimesWhenSendAsyncFailed(server.getRetry());
         }
@@ -171,7 +173,9 @@ public class RocketMqService {
         if (StringUtils.isBlank(object.getString("consumeMessageBatchMaxSize"))) {
             object.put("consumeMessageBatchMaxSize", consumeMessageBatchMaxSize);
         }
-
+        if (object.getInteger("sendMsgTimeOut") == null) {
+            object.put("sendMsgTimeOut", 150000);
+        }
         return object;
     }
 

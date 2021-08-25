@@ -48,7 +48,7 @@ public class AmqpService {
         factory.setPassword(server.getPassword());
         factory.setVirtualHost(server.getClientName());
         Connection connection = factory.newConnection();
-        Channel client =  connection.createChannel();
+        Channel client = connection.createChannel();
         log.info("=={}===AMQP服务=RabbitMq连接完成=====",connectUrl);
 //                amqpClientMap.put(connectUrl, client);
         return client;
