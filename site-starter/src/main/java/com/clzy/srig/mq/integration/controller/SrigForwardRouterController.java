@@ -151,7 +151,7 @@ public class SrigForwardRouterController extends BaseController {
     public JsonResponse startConnection(String id) {
         ForwardRouter router = service.get(id);
         if (router.getExpireTime() != null && router.getExpireTime().compareTo(new Date()) < 0) {
-            return JsonResponse.error(-1, "请延长过期时间再试", "请延长过期时间");
+            return JsonResponse.error(-1, "映射已经过期", "映射已经过期");
         }
         forwardService.addRouterTable(router);
         router.setExpireTime(null);
