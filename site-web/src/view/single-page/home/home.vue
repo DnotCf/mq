@@ -345,7 +345,7 @@
             <FormItem label="数据源名称" prop="name">
               <Input v-model="formValidate.name" placeholder=""></Input>
             </FormItem>
-            <FormItem label="选择数据源协议" prop="type" v-if="isType">
+            <FormItem label="选择数据源协议" prop="type" >
               <Select
                 v-model="formValidate.type"
                 placeholder=""
@@ -700,7 +700,6 @@ export default {
       isSuccess: false,
       btnTitle: "添加",
       checkoutTitle: "消息转发正在检验中，请稍后…",
-      isType: true,
       isSource: false,
       isMap: false,
       selectList: [],
@@ -720,7 +719,7 @@ export default {
   methods: {
     getListData() {
       dataSourceApi
-        .getSoruceList({
+        .getMapList({
           pageNo: this.pageNo,
           pageSize: this.pageSize
         })
@@ -910,7 +909,7 @@ export default {
     loadPageData(pageNo, pageSize, search) {
       return new Promise(function(resolve, reject) {
         dataSourceApi
-          .getSoruceList({
+          .getMapList({
             pageNo: pageNo,
             pageSize: pageSize
           })
@@ -955,6 +954,7 @@ export default {
 
       this.formValidate = { ...this.formValidate, ...initForm };
       this.$refs["formValidate"].resetFields();
+      console.log(this.formValidate);
     },
     // 提交
     handleSubmit(val) {
@@ -1001,9 +1001,12 @@ export default {
                 this.isLoad = false;
                 this.isShow = false;
                 this.$Message.error(res.msg || "保存数据源失败!");
+                console.log(res);
               }
             })
             .catch(err => {
+              console.log(err);
+              this.isShow = false;
               this.isLoad = false;
               this.$Message.error(err.msg || "服务器异常，请联系管理员!");
             });

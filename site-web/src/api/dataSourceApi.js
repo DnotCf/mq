@@ -1,19 +1,28 @@
 import axios from "@/libs/api.request";
 let dataSourceApi = {};
 export default dataSourceApi;
-
 /**
- * 分页获取列表
+ * 分页获取映射列表  
  */
 
-dataSourceApi.getSoruceList = ({ pageNo, pageSize }) => {
+dataSourceApi.getMapList = ({ pageNo, pageSize }) => {
   return axios.request({
     url: "/router/page?pageNo=" + pageNo + "&pageSize=" + pageSize,
     method: "post",
     data: {}
   });
 };
+/**
+ * 分页获取数据源列表  
+ */
 
+ dataSourceApi.getSoruceList = ({ pageNo, pageSize }) => {
+  return axios.request({
+    url: "/server/page?pageNo=" + pageNo + "&pageSize=" + pageSize,
+    method: "post",
+    data: {}
+  });
+};
 /**
  * 新增/修改数据源
  */

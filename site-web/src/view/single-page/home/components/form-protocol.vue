@@ -19,40 +19,14 @@
     <!-- Aliyun_RocketMQ start -->
     <div v-if="value.type === 'Aliyun_RocketMQ'">
       <FormItem label="secretKey" :prop="propName + 'secretKey'">
-        <Input v-model="value.secretKey" type="text" placeholder=""></Input>
+        <Input v-model="value.secretKey"  placeholder="" ></Input>
       </FormItem>
       <FormItem label="accessKey" :prop="propName + 'accessKey'">
-        <Input v-model="value.accessKey" placeholder=""></Input>
+        <Input v-model="value.accessKey"  placeholder="" ></Input>
       </FormItem>
     </div>
     <!-- Aliyun_RocketMQ end -->
 
-    <!-- EMQX start -->
-    <div v-if="value.type === 'MQTT'">
-      <FormItem label="用户名">
-        <Input v-model="value.username" placeholder=""></Input>
-      </FormItem>
-      <FormItem label="密码">
-        <Input
-          v-model="value.password"
-          placeholder=""
-          type="password"
-          autocomplete="new-password"
-        ></Input>
-      </FormItem>
-    </div>
-    <!-- EMQX end -->
-
-    <!-- RocketMQ start-->
-    <div v-if="value.type === 'RocketMQ'">
-      <FormItem label="重试次数">
-        <Input
-          v-model="value.retry"
-          placeholder=""
-        ></Input>
-      </FormItem>
-    </div>
-    <!-- RocketMQ end -->
 
     <!-- HTTP RocketMQ 阿里云RocketMQ-->
     <div
@@ -76,10 +50,9 @@
         <Input
           v-model="value.clientName"
           placeholder=""
-          autocomplete="new_password"
         ></Input>
       </FormItem>
-      <FormItem label="协议" :prop="propName + 'protocol'">
+      <FormItem label="传输协议" :prop="propName + 'protocol'">
         <Select v-model="value.protocol" placeholder="">
           <Option
             :value="item.value"
@@ -93,35 +66,33 @@
         <Input
           v-model="value.ip"
           placeholder=""
-          autocomplete="new_password"
         ></Input>
       </FormItem>
       <FormItem label="端口" :prop="propName + 'port'">
         <Input
           v-model="value.port"
           placeholder=""
-          autocomplete="on"
           number
         ></Input>
       </FormItem>
     </div>
 
     <!-- 阿里云RocketMQ rocketMQ  -->
-    <div v-if="value.type === 'Aliyun_RocketMQ' || value.type === 'RocketMQ'">
+    <div v-if="value.type === 'RocketMQ'|| value.type === 'Aliyun_RocketMQ' ">
       <FormItem label="所属组" :prop="propName + 'group'">
         <Input
           v-model="value.group"
           placeholder=""
           type="text"
-          autocomplete="new-password"
+         autocomplete="off"
         ></Input>
       </FormItem>
       <FormItem label="tag" :prop='propName + "tag"'>
         <Input
           v-model="value.tag"
           placeholder=""
-          type="text"
-          autocomplete="new-password"
+            type="text"
+         autocomplete="new-password"
         ></Input>
       </FormItem>
     </div>
@@ -131,7 +102,10 @@
       <FormItem label="topic" :prop="propName + 'topic'">
         <Input v-model="value.topic" placeholder=""></Input>
       </FormItem>
-      <FormItem label="其他参数" :prop="propName + 'defaultParam'">
+   
+    </div>
+    <template v-if="value.type !== 'HTTP'">
+       <FormItem label="其他参数" :prop="propName + 'defaultParam'">
         <Input
           v-model="value.defaultParam"
           type="textarea"
@@ -139,7 +113,33 @@
           placeholder=""
         ></Input>
       </FormItem>
-    </div>
+    </template>
+    <!-- EMQX start -->
+    <template v-if="value.type === 'MQTT'">
+      <FormItem label="用户名">
+        <Input v-model="value.username" placeholder=""></Input>
+      </FormItem>
+      <FormItem label="密码">
+        <Input
+          v-model="value.password"
+          placeholder=""
+          type="password"
+          autocomplete="new-password"
+        ></Input>
+      </FormItem>
+    </template>
+    <!-- EMQX end -->
+
+    <!-- RocketMQ start-->
+    <template v-if="value.type === 'RocketMQ'">
+      <FormItem label="重试次数">
+        <Input
+          v-model="value.retry"
+          placeholder=""
+        ></Input>
+      </FormItem>
+    </template>
+    <!-- RocketMQ end -->
   </div>
 </template>
 <script>

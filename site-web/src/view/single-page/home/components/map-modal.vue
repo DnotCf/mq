@@ -116,23 +116,30 @@ export default {
       isLoad: false,
       btnTitle: "添加",
       formValidate: {
-        fromServer: {},
+        expireTime: "",
+        fromTopic: "",
+        toTopic: "",
+        date: "",
+        fromServer: {
+          id: "",
+          type: ""
+        },
         toServer: {
-          // clientName: "",
-          // username: "",
-          // password: "",
-          // secretKey: "",
-          // accessKey: "",
-          // total: "",
-          // retry: "",
-          // cluster: "",
-          // protocol: "",
-          // ip: "",
-          // port: "",
-          // group: "",
-          // tag: "",
-          // topic: "",
-          // defaultParam: "",
+          clientName: "",
+          username: "",
+          password: "",
+          secretKey: "",
+          accessKey: "",
+          total: "",
+          retry: "",
+          cluster: "",
+          protocol: "",
+          ip: "",
+          port: "",
+          group: "",
+          tag: "",
+          topic: "",
+          defaultParam: "",
           type: ""
         }
       },
@@ -276,7 +283,9 @@ export default {
           label: "HTTP",
           value: "HTTP"
         }
-      ]
+      ],
+      rowData: {},
+      id: ""
     };
   },
   mounted() {},
@@ -301,20 +310,35 @@ export default {
     },
     // 选择类型
     handleType(val) {
+      this.id = val;
       if (!val) return;
-      let rowData = this.sourceList.find(item => item.value === val);
-      this.formValidate.fromServer = rowData.fromServer;
+      this.rowData = this.sourceList.find(item => item.value === val);
+      this.formValidate.fromServer = this.rowData;
+      console.log(this.rowData.fromServer,val, this.rowData);
     },
     // 选择协议
     handleProtocol(val) {
-      // console.log(this.formValidate,888)
-      // this.$refs["formValidate"].resetFields();
-      // console.log(this.formValidate,5555)
+      this.$nextTick(() => {
+        let init = {
+          toServer: {
+            type: val,
+            name: this.formValidate.toServer.name
+          }
+        };
+
+        this.formValidate = { ...this.formValidate, ...init };
+        this.$refs["formValidate"].resetFields();
+
+        this.formValidate.fromServer.id = this.id;
+
+        console.log(this.formValidate, 888, this.rowData.fromServe);
+      });
     },
     handleSubmit(val) {
+      console.log(this.formValidate, "this.formValidate");
+
       this.$refs["formValidate"].validate(valid => {
         if (valid) {
-          console.log(this.formValidate, "this.formValidate");
           this.isLoad = true;
           let isAdd = val;
           this.isTitleShow = true;
@@ -392,16 +416,17 @@ export default {
           if (req.code === 200) {
             let data = req.data;
             this.sourceList = data.list.map(item => {
-              item.label = item.fromServer.name;
-              item.value = item.fromServer.id;
+              item.label = item.name;
+              item.value = item.id;
               return item;
             });
           } else {
-            this.$Message.error("获取数据源失败!");
+            this.$Message.error(req.msg || "获取数据源失败!");
           }
         })
         .catch(err => {
-          this.$Message.error("服务器异常请联系管理员!");
+          console.log(err);
+          this.$Message.error(err.msg || "服务器异常请联系管理员!");
         });
     }
   }
