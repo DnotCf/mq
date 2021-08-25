@@ -631,7 +631,7 @@ export default {
             this.pageTotal = data.count;
             this.enableVal = Number(this.list[0].status);
           } else {
-            this.$Message.error(err.msg || "数据源列表获取失败!");
+            this.$Message.warning(req.msg || "数据源列表获取失败!");
           }
         })
         .catch(err => {
@@ -775,13 +775,11 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.$Message.success(
-              this.enableVal ? "启用所有映射" : "停用所有映射" + "成功"
+              val ? "停用所有映射成功" : "启用所有映射成功"
             );
             this.getListData();
           } else {
-            this.$Message.success(
-              this.enableVal ? "启用所有映射" : "停用所有映射" + "失败"
-            );
+            this.$Message.warning(res.msg || "操作失败");
           }
         })
         .catch(err => {
@@ -799,10 +797,10 @@ export default {
       dataSourceApi[port](id)
         .then(res => {
           if (res.code === 200) {
-            this.$Message.success(this.enableVal ? "启用" : "停用" + "成功");
+            this.$Message.success(Number(val) ? "停用成功" : "启用成功");
             this.getListData();
           } else {
-            this.$Message.success(this.enableVal ? "启用" : "停用" + "失败");
+            this.$Message.warning(res.msg || "操作失败");
           }
         })
         .catch(err => {
