@@ -17,6 +17,7 @@
         <module>rocketmq-integration</module>
         <module>rocketmq-aliyun-integration</module>
         <module>http-integration</module>
+        <module>kafka-integration</module>
     </modules>
 
     <properties>

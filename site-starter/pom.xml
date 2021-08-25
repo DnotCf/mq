@@ -45,6 +45,11 @@
             <artifactId>http-integration</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.clzy.srig</groupId>
+            <artifactId>kafka-integration</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>

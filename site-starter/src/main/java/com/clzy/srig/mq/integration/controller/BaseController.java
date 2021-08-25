@@ -87,8 +87,18 @@ public class BaseController {
             }
         }else if (MQIntegration.ServerType.HTTP.equals(entity.getType())){
 
-        }else {
-            return "没有匹配的数据源类型：MQTT, AMQP, Aliyun_RocketMQ, RocketMQ, HTTP";
+        }else if (MQIntegration.ServerType.Kafka.equals(entity.getType())){
+            if (StringUtils.isBlank(entity.getCluster()) && (StringUtils.isBlank(entity.getIp()) || null == entity.getPort())) {
+                return "服务地址或ip+端口不为空";
+            }
+            if (StringUtils.isBlank(entity.getTopic())) {
+                return "topic不为空";
+            }
+            if (StringUtils.isBlank(entity.getGroup())) {
+                return "groupId组不为空";
+            }
+        } else {
+            return "没有匹配的数据源类型：MQTT, AMQP, Aliyun_RocketMQ, RocketMQ, HTTP,KAFKA";
         }
         return msg;
     }

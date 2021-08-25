@@ -7,6 +7,7 @@ import com.clzy.geo.core.common.persistence.Page;
 import com.clzy.geo.core.utils.StringUtils;
 import com.clzy.srig.mq.integration.entity.ForwardRouter;
 import com.clzy.srig.mq.integration.entity.MQServer;
+import com.clzy.srig.mq.integration.enums.MQIntegration;
 import com.clzy.srig.mq.integration.enums.MQStuats;
 import com.clzy.srig.mq.integration.service.ForwardRouterService;
 
@@ -62,8 +63,12 @@ public class SrigForwardRouterController extends BaseController {
             from = "源数据：" + from;
             return JsonResponse.error(-1, from, from);
         }
-        if (StringUtils.isBlank(entiy.getFromTopic()) || StringUtils.isBlank(entiy.getToTopic())) {
-            return JsonResponse.error(-1,"源fromTopic或目标toTopic不为空","源fromTopic或目标toTopic不为空");
+        if (MQIntegration.ServerType.HTTP.equals(entiy.getToServer().getType())) {
+
+        }else {
+            if (StringUtils.isBlank(entiy.getFromTopic()) || StringUtils.isBlank(entiy.getToTopic())) {
+                return JsonResponse.error(-1,"源fromTopic或目标toTopic不为空","源fromTopic或目标toTopic不为空");
+            }
         }
         if (entiy.getExpireTime() == null) {
             return JsonResponse.error(-1, "过期时间不为空", "过期时间不为空");
