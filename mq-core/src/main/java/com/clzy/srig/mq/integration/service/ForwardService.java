@@ -144,7 +144,23 @@ public class ForwardService {
         }
         if (CollectionUtils.isEmpty(routers)) {
             stopConsumer(router);
+            routerTable.remove(fromId);
         }
+    }
+
+    public void clearRouterTable() {
+        Collection<List<ForwardRouter>> values = routerTable.values();
+        if (CollectionUtils.isEmpty(values)) {
+            log.info("====映射路由表为空不用清理=====");
+            return;
+        }
+        for (List<ForwardRouter> list : values) {
+            for (ForwardRouter router : list) {
+                stopConsumer(router);
+                continue;
+            }
+        }
+        routerTable.clear();
     }
 
     public void stopConsumer(ForwardRouter router) {
@@ -201,6 +217,7 @@ public class ForwardService {
             routerTable.put(fromId, routers);
         }
         routers.add(router);
+        stopConsumer(router);
         startConsumer(router);
     }
 

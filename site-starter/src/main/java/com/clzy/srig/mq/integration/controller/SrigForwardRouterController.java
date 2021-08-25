@@ -63,9 +63,7 @@ public class SrigForwardRouterController extends BaseController {
             from = "源数据：" + from;
             return JsonResponse.error(-1, from, from);
         }
-        if (MQIntegration.ServerType.HTTP.equals(entiy.getToServer().getType())) {
-
-        }else {
+        if (!MQIntegration.ServerType.HTTP.equals(entiy.getToServer().getType())) {
             if (StringUtils.isBlank(entiy.getFromTopic()) || StringUtils.isBlank(entiy.getToTopic())) {
                 return JsonResponse.error(-1,"源fromTopic或目标toTopic不为空","源fromTopic或目标toTopic不为空");
             }
@@ -110,6 +108,14 @@ public class SrigForwardRouterController extends BaseController {
         List<ForwardRouter> list = service.findList(null);
         for (ForwardRouter router : list) {
             forwardService.deleteRouterTable(router);
+        }
+        forwardService.clearRouterTable();
+        for (ForwardRouter router : list) {
+            if (!MQStuats.offline.getCode().equals(router.getStatus())) {
+                router.setExpireTime(null);
+                router.setStatus(MQStuats.offline.getCode());
+                service.updateStatus(router);
+            }
         }
         return JsonResponse.success(list.size());
     }
