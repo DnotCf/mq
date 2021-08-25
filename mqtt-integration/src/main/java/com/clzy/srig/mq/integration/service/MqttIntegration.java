@@ -33,6 +33,7 @@ public class MqttIntegration implements IMqIntegration {
             if (server.getRetry() != null && server.getRetry() < 0) {
                 return;
             }
+            log.info("===={} send msg：{}===", type(), new String(message));
             MqttClient client = mqttService.getClient(server);
             client.publish(router.getToTopic(), message, 1, false);
             router.setStatus(MQStuats.online.getCode());

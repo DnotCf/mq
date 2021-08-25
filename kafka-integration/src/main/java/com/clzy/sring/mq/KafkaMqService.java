@@ -2,6 +2,7 @@ package com.clzy.sring.mq;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.clzy.geo.core.utils.Collections3;
 import com.clzy.geo.core.utils.StringUtils;
 import com.clzy.srig.mq.integration.entity.ForwardRouter;
 import com.clzy.srig.mq.integration.entity.MQServer;
@@ -37,6 +38,7 @@ public class KafkaMqService {
     private Integer consumeMessageBatchMaxSize = 100;
 
     private Map<String, Thread> consumerThread = new HashMap<>();
+    private Map<String, Boolean> consumerFlag = new HashMap<>();
     private ConcurrentHashMap<String, KafkaConsumer> consumerMap = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, KafkaProducer> producerMap = new ConcurrentHashMap<>();
 
@@ -49,8 +51,9 @@ public class KafkaMqService {
         }
         KafkaConsumer consumer = build(router);
         consumerMap.put(namesrvAddr, consumer);
+        consumerFlag.put(namesrvAddr, true);
         Thread thread = new Thread(() -> {
-            while (true) {
+            while (consumerFlag.get(namesrvAddr) != null) {
                 ConsumerRecords<String, String> records = consumer.poll(500);
                 if (!records.isEmpty()) {
                     Iterator<ConsumerRecord<String, String>> iterator = records.iterator();
@@ -58,9 +61,16 @@ public class KafkaMqService {
                         forwardService.publish(server, iterator.next().value().getBytes(StandardCharsets.UTF_8));
                     }
                 }
-                if (Thread.currentThread().isInterrupted()) {
-                    return;
-                }
+            }
+            try {
+                consumer.unsubscribe();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                consumer.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
         thread.start();
@@ -99,7 +109,7 @@ public class KafkaMqService {
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 //        props.put("auto.offset.reset", "latest");
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-        consumer.subscribe(Collections.singletonList(server.getTopic()));
+        consumer.subscribe(Arrays.asList(server.getTopic().split(",")));
 //        consumerMap.put(namesrvAddr, consumer);
         log.info("====={}===kafka消费连接服务创建成功=====", namesrvAddr);
         return consumer;
@@ -186,15 +196,9 @@ public class KafkaMqService {
         }
         KafkaConsumer consumer = consumerMap.get(namesrvAddr);
         if (consumer != null) {
+            consumerFlag.remove(namesrvAddr);
+            consumerThread.remove(namesrvAddr);
             consumerMap.remove(namesrvAddr);
-            Thread thread = consumerThread.get(namesrvAddr);
-            if (thread != null) {
-                thread.interrupt();
-                consumerThread.remove(namesrvAddr);
-                thread.stop();
-            }
-            consumer.unsubscribe();
-            consumer.close();
         }
     }
 
