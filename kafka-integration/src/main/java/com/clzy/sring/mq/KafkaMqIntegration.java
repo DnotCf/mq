@@ -39,6 +39,7 @@ public class KafkaMqIntegration implements IMqIntegration {
             if (server.getRetry() != null && server.getRetry() < 0) {
                 return;
             }
+            log.info("===={} send msg：{}===", type(), new String(message));
             KafkaProducer producer = kafkaMqService.createProducer(server);
             ProducerRecord<String, String> record =
                     new ProducerRecord<>(server.getTopic(), new String(message));
@@ -86,8 +87,12 @@ public class KafkaMqIntegration implements IMqIntegration {
 
     @Override
     public void disConnect(ForwardRouter router) {
-        kafkaMqService.disConnect(router.getFromServer());
-        router.setStatus(MQStuats.offline.getCode());
+        try {
+            kafkaMqService.disConnect(router.getFromServer());
+            router.setStatus(MQStuats.offline.getCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

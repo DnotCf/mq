@@ -151,7 +151,11 @@ public class ForwardService {
         log.info("=={}=名称{}=映射id:{}=topic:{}=停止消费=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
         messagePublishes.forEach(p -> {
             if (p.type().equals(router.getFromServer().getType())) {
-                p.disConnect(router);
+                try {
+                    p.disConnect(router);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         if (StringUtils.isNotBlank(router.getId())) {
@@ -168,7 +172,11 @@ public class ForwardService {
         log.info("=={}=名称{}=映射id:{}=topic:{}=启动消费=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
         messagePublishes.forEach(p -> {
             if (p.type().equals(router.getFromServer().getType())) {
-                p.connect(router);
+                try {
+                    p.connect(router);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

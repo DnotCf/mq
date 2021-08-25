@@ -33,6 +33,7 @@ public class AmqpIntegration implements IMqIntegration {
             if (server.getRetry() != null && server.getRetry() < 0) {
                 return;
             }
+            log.info("====amqp send msg：{}===", new String(message));
             Channel client = amqpService.getConnect(server);
             client.queueDeclare(router.getToTopic(), false, false, false, null);
             client.basicPublish("", router.getToTopic(), null, message);

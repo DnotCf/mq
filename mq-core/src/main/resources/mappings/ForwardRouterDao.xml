@@ -8,6 +8,7 @@
         a.FROM_TOPIC AS "fromTopic",
         a.TO_TOPIC AS "toTopic",
         a.EXPIRE_TIME AS "expireTime",
+        a.UPDATE_TIME AS "updateDate",
         a.STATUS AS "status",
         <include refid="fromServerColumns"/>
         ,

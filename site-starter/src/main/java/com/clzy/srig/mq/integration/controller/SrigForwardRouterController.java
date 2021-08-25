@@ -141,7 +141,11 @@ public class SrigForwardRouterController extends BaseController {
     @ApiOperation(value = "启动映射消费", notes = "启动映射消费")
     @GetMapping("start")
     public JsonResponse startConnection(String id) {
-        forwardService.addRouterTable(service.get(id));
+        ForwardRouter router = service.get(id);
+        forwardService.addRouterTable(router);
+        router.setExpireTime(null);
+        router.setStatus(MQStuats.online.getCode());
+        service.updateStatus(router);
         return JsonResponse.success(true);
     }
 

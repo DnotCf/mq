@@ -41,6 +41,7 @@ public class RocketMqIntegration implements IMqIntegration {
             if (server.getRetry() != null && server.getRetry() < 0) {
                 return;
             }
+            log.info("===={} send msg：{}===", type(), new String(message));
             DefaultMQProducer producer = rocketMqService.createProducer(server);
             Message msg = null;
             if (StringUtils.isBlank(server.getTag())) {
