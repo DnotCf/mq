@@ -148,31 +148,31 @@ export default {
       protocolList: [
         {
           label: "tcp协议",
-          value: "tcp",
+          value: "tcp"
         },
         {
           label: "websocket协议",
-          value: "ws",
+          value: "ws"
         },
         {
           label: "http协议",
-          value: "http",
-        },
-      ],
+          value: "http"
+        }
+      ]
     };
   },
   props: {
     value: {
-      default: null,
+      default: null
     },
     propName: {
-      default: "",
-    },
+      default: ""
+    }
   },
   created() {},
   mounted() {},
   computed: {},
-  methods: {},
+  methods: {}
 };
 </script>
 <style lang="less" scoped>

@@ -147,9 +147,9 @@ export default {
         "fromServer.id": [
           { required: true, message: "请选择", trigger: "change" }
         ],
-        // "toServer.name": [
-        //   { required: true, message: "请输入", trigger: "blur" }
-        // ],
+        "toServer.name": [
+          { required: true, message: "请输入", trigger: "blur" }
+        ],
         "toServer.ip": [{ required: true, message: "请输入", trigger: "blur" }],
         "toServer.topic": [
           { required: true, message: "请输入", trigger: "blur" }
