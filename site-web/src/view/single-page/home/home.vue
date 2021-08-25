@@ -79,7 +79,7 @@
         </div>
         <div class="page-list-box">
           <Table
-            :height="550"
+            :height="565"
             :data="list"
             :columns="columns"
             class="table-box"
@@ -93,7 +93,7 @@
                 :style="{
                   overflow: row.isFold ? '' : 'hidden',
                   height:
-                    row.isFold || row.fromServer.type === 'HTTP' ? '' : '90px',
+                    row.isFold || row.fromServer.type === 'HTTP' ? '' : '95px',
                 }"
                 class="fold-box"
               >
@@ -121,110 +121,7 @@
                   <span class="list-nature">数据源协议：</span>
                   <span class="value-ellipsis">{{ row.fromServer.type }}</span>
                 </div>
-                <!-- Aliyun_RocketMQ -->
-                <template v-if="row.fromServer.type === 'Aliyun_RocketMQ'">
-                  <div class="list-content">
-                    <span class="list-nature">secretKey：</span>
-                    <span class="value-ellipsis">{{
-                      row.fromServer.secretKey
-                    }}</span>
-                  </div>
-                  <div class="list-content">
-                    <span class="list-nature">accessKey：</span>
-                    <span class="value-ellipsis">{{
-                      row.fromServer.accessKey
-                    }}</span>
-                  </div>
-                </template>
-
-                <!-- RocketMQ -->
-                <template v-if="row.fromServer.type === 'Aliyun_RocketMQ'">
-                  <div class="list-content">
-                    <span class="list-nature">重试次数：</span>
-                    <span class="value-ellipsis">{{
-                      row.fromServer.retry
-                    }}</span>
-                  </div>
-                </template>
-
-                <!-- HTTP RocketMQ 阿里云RocketMQ -->
-                <template
-                  v-if="
-                    row.fromServer.type === 'HTTP' ||
-                    row.fromServer.type === 'RocketMQ' ||
-                    row.fromServer.type === 'Aliyun_RocketMQ'
-                  "
-                >
-                  <div class="list-content">
-                    <span class="list-nature">服务地址：</span>
-                    <span class="value-ellipsis">{{
-                      row.fromServer.cluster
-                    }}</span>
-                  </div>
-                </template>
-                <!-- MQTT AMQP-->
-                <div
-                  v-if="
-                    row.fromServer.type == 'MQTT' ||
-                    row.fromServer.type == 'AMQP'
-                  "
-                >
-                  <div class="list-content">
-                    <span class="list-nature">用户名：</span>
-                    <span class="value-ellipsis">{{
-                      row.fromServer.username
-                    }}</span>
-                  </div>
-                  <div class="list-content">
-                    <span class="list-nature">密码：</span>
-                    <span class="value-ellipsis">{{
-                      row.fromServer.password
-                    }}</span>
-                  </div>
-                  <div class="list-content">
-                    <span class="list-nature">协议：</span>
-                    <span class="value-ellipsis">{{
-                      row.fromServer.protocol
-                    }}</span>
-                  </div>
-                  <div class="list-content">
-                    <span class="list-nature">ip：</span>
-                    <span class="value-ellipsis">{{ row.fromServer.ip }}</span>
-                  </div>
-                  <div class="list-content">
-                    <span class="list-nature">端口：</span>
-                    <span class="value-ellipsis">{{
-                      row.fromServer.port
-                    }}</span>
-                  </div>
-                </div>
-                <!-- 阿里云RocketMQ rocketMQ  -->
-                <template
-                  v-if="
-                    row.fromServer.type === 'Aliyun_RocketMQ' ||
-                    row.fromServer.type === 'RocketMQ'
-                  "
-                >
-                  <div class="list-content">
-                    <span class="list-nature">所属组：</span>
-                    <span class="value-ellipsis">{{
-                      row.fromServer.group
-                    }}</span>
-                  </div>
-                  <div class="list-content">
-                    <span class="list-nature">tag：</span>
-                    <span class="value-ellipsis">{{ row.fromServer.tag }}</span>
-                  </div>
-                </template>
-                <!-- MQTT  AMQP 阿里云RocketMQ  RocketMQ -->
-                <template v-if="row.fromServer.type !== 'HTTP'">
-                  <div class="list-content">
-                    <span class="list-nature">topic：</span>
-                    <span class="value-ellipsis">{{
-                      row.fromServer.topic
-                    }}</span>
-                  </div>
-                </template>
+                <table-item-common :value="row.fromServer"></table-item-common>
               </div>
             </template>
             <template slot-scope="{ row, index }" slot="network">
@@ -245,43 +142,23 @@
                   class="map-box"
                   :style="{
                     overflow: row.isFold ? '' : 'hidden',
-                    height: row.isFold ? '' : '90px',
+                    height: row.isFold ? '' : '95px',
                   }"
                 >
-                
-                  <div class="list-content">
-                    <span class="list-nature">数据源：</span>
-                    <span class="value-ellipsis">{{
-                      row.fromServer.name
-                    }}</span>
-                  </div>
-                  <div class="list-content">
-                    <span class="list-nature">IP地址：</span>
-                    <span class="value-ellipsis">{{ row.toServer.ip }}</span>
-                  </div>
-                  <div class="list-content">
-                    <span class="list-nature">端口：</span>
-                    <span class="value-ellipsis">{{ row.toServer.port }}</span>
-                  </div>
-                  <div class="list-content">
-                    <span class="list-nature">topic：</span>
-                    <span class="value-ellipsis">{{ row.toServer.topic }}</span>
-                  </div>
-                  <div class="list-content">
-                    <span class="list-nature">映射给予方：</span>
-                    <span class="value-ellipsis">{{ row.toServer.name }}</span>
-                  </div>
-                  <div class="list-content">
-                    <span class="list-nature">映射数据源协议：</span>
-                    <span class="value-ellipsis">{{ row.toServer.type }}</span>
-                  </div>
-                  
-                  <div class="list-content">
-                    <span class="list-nature">过期时间：</span>
-                    <span class="value-ellipsis">{{
-                      row.expireTime
-                    }}</span>
-                  </div>
+                  <table-item
+                    label="映射给予方："
+                    :value="row.toServer.name"
+                  ></table-item>
+                   <table-item
+                    label="映射数据源协议："
+                    :value="row.toServer.type"
+                  ></table-item>
+                  <table-item
+                    label="过期时间："
+                    :value="row.expireTime"
+                  ></table-item>
+                  <table-item-common :value="row.toServer"></table-item-common>
+                 
                 </div>
                 <div class="source-status">
                   <div
@@ -312,7 +189,7 @@
                   />
                 </div>
               </div>
-              <span v-else>暂无映射</span>
+              <span v-else class="no-map">暂无映射</span>
             </template>
           </Table>
           <div class="tables-pager">
@@ -345,7 +222,7 @@
             <FormItem label="数据源名称" prop="name">
               <Input v-model="formValidate.name" placeholder=""></Input>
             </FormItem>
-            <FormItem label="选择数据源协议" prop="type" >
+            <FormItem label="选择数据源协议" prop="type">
               <Select
                 v-model="formValidate.type"
                 placeholder=""
@@ -444,11 +321,20 @@ import SvgIcon from "@/components/svg-icon/svg-icon";
 import ListTables from "@/components/tables/tables";
 import MapModal from "./components/map-modal";
 import FormProtocol from "./components/form-protocol";
+import TableItemCommon from "./components/table-item-common";
+import TableItem from "./components/table-item";
 
 import dataSourceApi from "@/api/dataSourceApi";
 export default {
   name: "",
-  components: { ListTables, SvgIcon, MapModal, FormProtocol },
+  components: {
+    ListTables,
+    SvgIcon,
+    MapModal,
+    FormProtocol,
+    TableItemCommon,
+    TableItem
+  },
   data() {
     return {
       columns: [
@@ -467,7 +353,7 @@ export default {
           title: "选择数据源协议",
           slot: "sourceProtocol",
           filterMultiple: false,
-          width: 300,
+          width: 350,
           filters: [
             {
               label: "RabbitMQ",
@@ -517,8 +403,7 @@ export default {
         {
           title: "映射",
           slot: "map",
-          align: "center",
-          width: 250
+          width: 350
         },
         {
           title: "最新同步时间",
@@ -881,9 +766,10 @@ export default {
             this.$Message.success(
               this.enableVal ? "启用所有映射" : "停用所有映射" + "成功"
             );
+            this.getListData();
           } else {
             this.$Message.success(
-              this.enableVal ? "启用所有映射" : "停用所有映射" + "成功"
+              this.enableVal ? "启用所有映射" : "停用所有映射" + "失败"
             );
           }
         })

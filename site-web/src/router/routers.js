@@ -42,7 +42,7 @@ export default [
         path: "/home",
         name: "data_forwarding",
         meta: {
-          title: "数据转发服务",
+          title: "首页",
           notCache: true,
           icon: "_jingqingtongji"
         },
