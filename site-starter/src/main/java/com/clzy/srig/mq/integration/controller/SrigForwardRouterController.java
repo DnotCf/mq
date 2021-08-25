@@ -78,6 +78,8 @@ public class SrigForwardRouterController extends BaseController {
         } else {
             forwardService.updateRouterTable(entiy);
         }
+        entiy.setStatus(MQStuats.online.getCode());
+        service.updateStatus(entiy);
         return JsonResponse.success(true);
     }
 
