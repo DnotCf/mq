@@ -41,15 +41,18 @@ public class RocketMqIntegration implements IMqIntegration {
             if (server.getRetry() != null && server.getRetry() < 0) {
                 return;
             }
-            log.info("===={} send msg：{}===", type(), new String(message));
+            log.debug("===={} send msg：{}===", type(), new String(message));
             DefaultMQProducer producer = rocketMqService.createProducer(server);
-            Message msg = null;
-            if (StringUtils.isBlank(server.getTag())) {
-                 msg=new Message(router.getToTopic(), message);
-            }else {
-                msg = new Message(router.getToTopic(), server.getTag(), message);
+            String[] topics = server.getTopic().split(",");
+            for (String topic : topics) {
+                Message msg = null;
+                if (StringUtils.isBlank(server.getTag())) {
+                    msg=new Message(router.getToTopic(), message);
+                }else {
+                    msg = new Message(topic, server.getTag(), message);
+                }
+                producer.send(msg);
             }
-            producer.send(msg);
             router.setStatus(MQStuats.online.getCode());
         } catch (Exception e) {
             log.error("RocketMq消息推送失败");
@@ -61,8 +64,16 @@ public class RocketMqIntegration implements IMqIntegration {
                 try {
                     log.info("=====RocketMq producer重试连接=====");
                     DefaultMQProducer producer = rocketMqService.createProducer(server);
-                    Message msg = new Message(router.getToTopic(), message);
-                    producer.send(msg);
+                    String[] topics = server.getTopic().split(",");
+                    for (String topic : topics) {
+                        Message msg = null;
+                        if (StringUtils.isBlank(server.getTag())) {
+                            msg=new Message(router.getToTopic(), message);
+                        }else {
+                            msg = new Message(topic, server.getTag(), message);
+                        }
+                        producer.send(msg);
+                    }
                     router.setStatus(MQStuats.online.getCode());
                 } catch (Exception e1) {
                     router.setStatus(MQStuats.client_offline.getCode());

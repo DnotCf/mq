@@ -39,11 +39,14 @@ public class KafkaMqIntegration implements IMqIntegration {
             if (server.getRetry() != null && server.getRetry() < 0) {
                 return;
             }
-            log.info("===={} send msg：{}===", type(), new String(message));
+            log.debug("===={} send msg：{}===", type(), new String(message));
             KafkaProducer producer = kafkaMqService.createProducer(server);
-            ProducerRecord<String, String> record =
-                    new ProducerRecord<>(server.getTopic(), new String(message));
-            producer.send(record);
+            String[] topic = server.getTopic().split(",");
+            for (String tp : topic) {
+                ProducerRecord<String, String> record =
+                        new ProducerRecord<>(tp, new String(message));
+                producer.send(record);
+            }
             router.setStatus(MQStuats.online.getCode());
         } catch (Exception e) {
             log.error("RocketMq消息推送失败");
