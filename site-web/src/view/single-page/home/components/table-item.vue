@@ -32,6 +32,7 @@ export default {
   display: flex;
   margin-top: 10px;
   padding-right: 20px;
+  color: #4567A3;
   .list-nature {
     color: #a6b4cf;
     max-width: auto;

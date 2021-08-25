@@ -15,15 +15,15 @@
       </div>
     </div>
     <Form
-      ref="formValidate"
-      :model="formValidate"
+      ref="formData"
+      :model="formData"
       :rules="ruleValidate"
       :label-width="140"
       label-position="left"
     >
       <FormItem label="选择数据源" prop="fromServer.id">
         <Select
-          v-model="formValidate.fromServer.id"
+          v-model="formData.fromServer.id"
           placeholder=""
           @on-change="handleType"
         >
@@ -36,7 +36,7 @@
         </Select>
       </FormItem>
       <FormItem label="映射数据源协议" prop="toServer.type">
-        <Select v-model="formValidate.toServer.type" placeholder="" @on-change="handleProtocol">
+        <Select v-model="formData.toServer.type" placeholder="" @on-change="handleProtocol">
           <Option
             :value="item.value"
             v-for="(item, index) in typeProtocol"
@@ -45,11 +45,11 @@
           >
         </Select>
       </FormItem>
-      <div class="border-layout" v-if="formValidate.toServer.type">
-     <form-protocol :value="formValidate.toServer" propName="toServer."></form-protocol>
+      <div class="border-layout" v-if="formData.toServer.type">
+     <form-protocol :value="formData.toServer" propName="toServer."></form-protocol>
       </div>
       <FormItem label="映射给予方" prop="toServer.name">
-        <Input v-model="formValidate.toServer.name" placeholder=""></Input>
+        <Input v-model="formData.toServer.name" placeholder=""></Input>
       </FormItem>
       <FormItem label="过期时间">
         <FormItem prop="date">
@@ -59,7 +59,7 @@
                 type="date"
                 style="width: 100%"
                 placeholder=""
-                v-model="formValidate.date"
+                v-model="formData.date"
               ></DatePicker> </Col
           ></Row>
         </FormItem>
@@ -115,7 +115,7 @@ export default {
       isShow: false,
       isLoad: false,
       btnTitle: "添加",
-      formValidate: {
+      formData: {
         expireTime: "",
         fromTopic: "",
         toTopic: "",
@@ -295,53 +295,49 @@ export default {
   mounted() {},
   methods: {
     show(val, row) {
-      console.log(row, "显示");
+      this.isShow = true;
       this.handleReset();
       this.getSourceData();
+      console.log(row, "显示");
       if (val) {
         this.modalTitle = "修改映射";
-        this.formValidate = row;
-        this.formValidate.date = row.expireTime;
+        this.formData = row;
+        this.formData.date = row.expireTime;
         this.btnTitle = "修改";
+        // console.log(this.formData, "显示");
       } else {
         this.modalTitle = "添加映射";
       }
-      this.isShow = true;
     },
     hide() {
       this.isShow = false;
-      this.handleReset();
     },
     // 选择类型
     handleType(val) {
-      this.id = val;
       if (!val) return;
-      this.rowData = this.sourceList.find(item => item.value === val);
-      this.formValidate.fromServer = this.rowData;
-      console.log(this.rowData.fromServer, val, this.rowData);
+      console.log("选择类型");
+
+      // this.id = val;
+      // this.rowData = this.sourceList.find(item => item.value === val);
+      // this.formData.fromServer = this.rowData;
+      // console.log(this.rowData.fromServer, val, this.rowData);
     },
     // 选择协议
     handleProtocol(val) {
-      this.$nextTick(() => {
-        let init = {
-          toServer: {
-            type: val,
-            name: this.formValidate.toServer.name
-          }
-        };
-
-        this.formValidate = { ...this.formValidate, ...init };
-        this.$refs["formValidate"].resetFields();
-
-        this.formValidate.fromServer.id = this.id;
-
-        console.log(this.formValidate, 888, this.rowData.fromServe);
-      });
+      if (!val) return;
+      console.log("选择协议");
+      // let init = {
+      //   toServer: {
+      //     type: val,
+      //     name: this.formData.toServer.name
+      //   }
+      // };
+      // this.formData = { ...this.formData, ...init };
+      // this.$refs["formData"].resetFields();
+      // this.formData.fromServer.id = this.id;
     },
     handleSubmit(val) {
-      console.log(this.formValidate, "this.formValidate");
-
-      this.$refs["formValidate"].validate(valid => {
+      this.$refs["formData"].validate(valid => {
         if (valid) {
           this.isLoad = true;
           let isAdd = val;
@@ -350,13 +346,13 @@ export default {
           let port = "";
           if (isAdd) {
             port = "saveMap";
-            param = this.formValidate;
-            param.expireTime = new Date(this.formValidate.date).getTime(); //过期时间
-            param.fromTopic = this.formValidate.fromServer.topic; //数据源topic
-            param.toTopic = this.formValidate.toServer.topic;
+            param = this.formData;
+            param.expireTime = new Date(this.formData.date).getTime(); //过期时间
+            param.fromTopic = this.formData.fromServer.topic; //数据源topic
+            param.toTopic = this.formData.toServer.topic;
           } else {
             port = "testMap";
-            param = this.formValidate.toServer;
+            param = this.formData.toServer;
           }
           dataSourceApi[port](param)
             .then(res => {
@@ -372,8 +368,6 @@ export default {
                     this.isAdd = false;
                     this.$Message.success(this.btnTitle + "成功!");
                     this.btnTitle = "添加";
-
-                    // this.$parent.$refs.dataTables.refreshPageData();
                     this.$parent.getListData();
                   } else {
                     this.checkoutTitle = "消息转发检验成功！";
@@ -401,14 +395,15 @@ export default {
       });
     },
     handleReset() {
-      this.formValidate = {
+      console.log("重置");
+      this.formData = {
         fromServer: {},
         toServer: {}
       };
+      this.$refs["formData"].resetFields();
       this.isTitleShow = false;
       this.isAdd = false;
       this.isLoad = false;
-      this.$refs["formValidate"].resetFields();
     },
     getSourceData() {
       dataSourceApi

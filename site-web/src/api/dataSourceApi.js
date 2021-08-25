@@ -2,7 +2,7 @@ import axios from "@/libs/api.request";
 let dataSourceApi = {};
 export default dataSourceApi;
 /**
- * 分页获取映射列表  
+ * 分页获取映射列表
  */
 
 dataSourceApi.getMapList = ({ pageNo, pageSize }) => {
@@ -13,10 +13,10 @@ dataSourceApi.getMapList = ({ pageNo, pageSize }) => {
   });
 };
 /**
- * 分页获取数据源列表  
+ * 分页获取数据源列表
  */
 
- dataSourceApi.getSoruceList = ({ pageNo, pageSize }) => {
+dataSourceApi.getSoruceList = ({ pageNo, pageSize }) => {
   return axios.request({
     url: "/server/page?pageNo=" + pageNo + "&pageSize=" + pageSize,
     method: "post",
@@ -90,7 +90,7 @@ dataSourceApi.delMap = ids => {
 dataSourceApi.startAll = () => {
   return axios.request({
     url: "/router/startAll",
-    method: 'get'
+    method: "get"
   });
 };
 /**
@@ -99,6 +99,24 @@ dataSourceApi.startAll = () => {
 dataSourceApi.stopAll = () => {
   return axios.request({
     url: "/router/stopAll",
+    method: "get"
+  });
+};
+/**
+ * 启动单项映射
+ */
+dataSourceApi.startItem = id => {
+  return axios.request({
+    url: "/router/start?id=" + id,
+    method: "get"
+  });
+};
+/**
+ * 停用
+ */
+dataSourceApi.stopItem = id => {
+  return axios.request({
+    url: "/router/stop?id=" + id,
     method: "get"
   });
 };

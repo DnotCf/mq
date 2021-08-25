@@ -117,10 +117,10 @@
                     title="收起"
                   />
                 </div>
-                <div class="list-content">
-                  <span class="list-nature">数据源协议：</span>
-                  <span class="value-ellipsis">{{ row.fromServer.type }}</span>
-                </div>
+                  <table-item
+                    label="数据源协议："
+                    :value="row.fromServer.name"
+                  ></table-item>
                 <table-item-common :value="row.fromServer"></table-item-common>
               </div>
             </template>
@@ -190,6 +190,10 @@
                 </div>
               </div>
               <span v-else class="no-map">暂无映射</span>
+            </template> 
+            <template slot-scope="{ row, index }" slot="action">
+              
+              <Button @click="handleItemEnable(row.status,row.id)">{{row.status==1?'停用':'启用'}}</Button>
             </template>
           </Table>
           <div class="tables-pager">
@@ -410,6 +414,12 @@ export default {
           align: "center",
           key: "updateDate",
           width: 200
+        },
+        {
+          title: "操作",
+          align: "center",
+          width: 100,
+          slot: "action"
         }
       ],
       isFold: true,
@@ -663,8 +673,8 @@ export default {
       this.modalTitle = "修改数据源";
       this.btnTitle = "修改";
       this.handleReset();
-      this.formValidate = this.selectList[0].fromServer;
-      console.log(this.formValidate, this.isSourceModify);
+
+      this.formValidate = { ...this.selectList[0].fromServer };
     },
     // 修改映射
     handleModifyMap() {
@@ -680,7 +690,10 @@ export default {
         this.$Message.warning("暂无映射");
         return;
       }
-      this.$refs.mapNode.show(1, this.selectList[0]);
+      let row = {};
+      row = { ...this.selectList[0] };
+      console.log(row, 88888);
+      this.$refs.mapNode.show(1, row);
     },
 
     // 删除数据源
@@ -746,7 +759,7 @@ export default {
           this.$Message.error("服务器异常请联系管理员!");
         });
     },
-    // 启用停用映射
+    // 启用停用所有映射
     handleEnable(val) {
       this.enableVal = !val;
       let port = "";
@@ -777,7 +790,27 @@ export default {
           this.$Message.error(err.msg || "服务器异常，请联系管理员!");
         });
     },
-
+    //启用停用单项
+    handleItemEnable(val, id) {
+      let port = "";
+      if (Number(val)) {
+        port = "stopItem";
+      } else {
+        port = "startItem";
+      }
+      dataSourceApi[port](id)
+        .then(res => {
+          if (res.code === 200) {
+            this.$Message.success(this.enableVal ? "启用" : "停用" + "成功");
+            this.getListData();
+          } else {
+            this.$Message.success(this.enableVal ? "启用" : "停用" + "失败");
+          }
+        })
+        .catch(err => {
+          this.$Message.error(err.msg || "服务器异常，请联系管理员!");
+        });
+    },
     // 添加映射
     handleAddMap() {
       this.$nextTick(() => {
@@ -823,7 +856,8 @@ export default {
       val.isFold = !val.isFold;
     },
     // 选择数据源协议改变
-    handleType() {
+    handleType(val) {
+      if (!val) return;
       let initForm = {
         clientName: "",
         username: "",
@@ -844,7 +878,7 @@ export default {
 
       this.formValidate = { ...this.formValidate, ...initForm };
       this.$refs["formValidate"].resetFields();
-      console.log(this.formValidate);
+      console.log(this.formValidate, val);
     },
     // 提交
     handleSubmit(val) {
