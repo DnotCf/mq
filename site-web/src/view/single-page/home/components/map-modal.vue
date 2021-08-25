@@ -282,6 +282,10 @@ export default {
         {
           label: "HTTP",
           value: "HTTP"
+        },
+        {
+          label: "Kafka",
+          value: "Kafka"
         }
       ],
       rowData: {},
@@ -314,7 +318,7 @@ export default {
       if (!val) return;
       this.rowData = this.sourceList.find(item => item.value === val);
       this.formValidate.fromServer = this.rowData;
-      console.log(this.rowData.fromServer,val, this.rowData);
+      console.log(this.rowData.fromServer, val, this.rowData);
     },
     // 选择协议
     handleProtocol(val) {

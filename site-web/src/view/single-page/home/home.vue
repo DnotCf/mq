@@ -682,6 +682,10 @@ export default {
         {
           label: "HTTP",
           value: "HTTP"
+        },
+        {
+          label: "Kafka",
+          value: "Kafka"
         }
       ],
 
