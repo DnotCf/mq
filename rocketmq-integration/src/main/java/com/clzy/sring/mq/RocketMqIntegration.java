@@ -41,7 +41,7 @@ public class RocketMqIntegration implements IMqIntegration {
             if (server.getRetry() != null && server.getRetry() < 0) {
                 return;
             }
-            log.info("===={} send msg：{}===", type(), new String(message));
+            log.debug("===={} send msg：{}===", type(), new String(message));
             DefaultMQProducer producer = rocketMqService.createProducer(server);
             String[] topics = server.getTopic().split(",");
             for (String topic : topics) {
