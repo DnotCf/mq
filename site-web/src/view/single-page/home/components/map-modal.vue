@@ -251,6 +251,7 @@ export default {
             type: "date",
             message: "请选择",
             trigger: "change"
+            // validator: this.validateDate
           }
         ]
       },
@@ -294,6 +295,17 @@ export default {
   },
   mounted() {},
   methods: {
+    // 校验日期
+    validateDate(rule, value, callback) {
+      console.log(val);
+      if (!value) {
+        callback(new Error("请选择"));
+      }
+      if (!regExp.test(value)) {
+        callback(new Error("请输入6-12包含数字、大小写的密码"));
+      }
+      callback();
+    },
     show(val, row) {
       this.isShow = true;
       this.handleReset();
@@ -301,6 +313,7 @@ export default {
       if (val) {
         this.modalTitle = "修改映射";
         this.btnTitle = "修改";
+        console.log(row, 222);
       } else {
         this.modalTitle = "添加映射";
       }
@@ -311,7 +324,7 @@ export default {
     // 选择类型
     handleType(val) {
       this.id = val;
-      console.log(val)
+      console.log(val);
       if (!val) return;
       this.rowData = this.sourceList.find(item => item.value === val);
       this.formData.fromServer = this.rowData;
@@ -347,6 +360,7 @@ export default {
             port = "testMap";
             param = this.formData.toServer;
           }
+          if (val) this.isTitleShow = false;
           dataSourceApi[port](param)
             .then(res => {
               this.isLoad = false;
@@ -355,9 +369,9 @@ export default {
                 if (data) {
                   this.selectList = [];
                   if (val) {
+                    this.hide();
                     this.checkoutTitle = "消息转发正在检验中，请稍后…";
                     this.isTitleShow = false;
-                    this.hide();
                     this.isAdd = false;
                     this.$Message.success(this.btnTitle + "成功!");
                     this.btnTitle = "添加";

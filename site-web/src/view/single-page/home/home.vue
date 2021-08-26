@@ -690,13 +690,14 @@ export default {
         this.$Message.warning("暂无映射");
         return;
       }
-      this.$refs.mapNode.show();
+      this.$refs.mapNode.show(1);
+      this.$refs.mapNode.formData.date = this.selectList[0].expireTime;
       this.$refs.mapNode.formData.toServer = { ...this.selectList[0].toServer };
+      this.$refs.mapNode.formData.id = this.selectList[0].id;
       this.$refs.mapNode.id = this.selectList[0].fromServer.id;
       this.$refs.mapNode.formData.fromServer = {
         ...this.selectList[0].fromServer
       };
-      this.$refs.mapNode.formData.date = this.selectList[0].expireTime;
     },
 
     // 删除数据源
@@ -889,6 +890,8 @@ export default {
           } else {
             port = "testSoruce";
           }
+          if (val) this.isShow = false;
+
           dataSourceApi[port](this.formValidate)
             .then(res => {
               this.isLoad = false;
@@ -897,14 +900,13 @@ export default {
                 if (data) {
                   this.selectList = [];
                   if (val) {
+                    this.handleReset();
                     this.checkoutTitle = "消息转发正在检验中，请稍后…";
                     this.isShow = false;
-                    this.handleReset();
                     this.isAdd = false;
                     this.$Message.success(this.btnTitle + "成功!");
                     this.modalTitle = "添加数据源";
                     this.btnTitle = "添加";
-
                     // this.$refs.dataTables.refreshPageData();
                     this.getListData();
                   } else {
