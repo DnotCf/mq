@@ -34,9 +34,9 @@ public class AmqpIntegration implements IMqIntegration {
                 return;
             }
             log.debug("====amqp send msg：{}===", new String(message));
-            Channel client = amqpService.getConnect(server);
-            client.queueDeclare(router.getToTopic(), false, false, false, null);
-            client.basicPublish("", router.getToTopic(), null, message);
+            Channel client = amqpService.getProducer(server);
+//            client.queueDeclare(router.getToTopic(), false, false, false, null);
+            client.basicPublish(server.getExchange(), router.getToTopic(), null, message);
             router.setStatus(MQStuats.online.getCode());
         } catch (Exception e) {
             log.error("AMQP消息推送失败");
@@ -44,12 +44,12 @@ public class AmqpIntegration implements IMqIntegration {
             router.setStatus(MQStuats.client_offline.getCode());
             if (server.getRetry() == null || server.getRetry() > 0) {
                 server.setRetry(-1);
-                amqpService.disConnect(server);
+                amqpService.disProducer(server);
                 try {
                     log.info("=====AMQP(RabbitMQ) producer重试连接=====");
-                    Channel client = amqpService.getConnect(server);
-                    client.queueDeclare(router.getToTopic(), false, false, false, null);
-                    client.basicPublish("", router.getToTopic(), null, message);
+                    Channel client = amqpService.getProducer(server);
+//                    client.queueDeclare(router.getToTopic(), false, false, false, null);
+                    client.basicPublish(server.getExchange(), router.getToTopic(), null, message);
                     router.setStatus(MQStuats.online.getCode());
                 }catch (Exception e1){
                     router.setStatus(MQStuats.client_offline.getCode());
@@ -69,7 +69,7 @@ public class AmqpIntegration implements IMqIntegration {
     public void consumer(ForwardRouter router) {
         try {
             Channel client = amqpService.getConnect(router.getFromServer());
-            client.queueDeclare(router.getFromTopic(), false, false, false, null);
+//            client.queueDeclare(router.getFromTopic(), false, false, false, null);
             client.basicConsume(router.getFromTopic(), (consumerTag, message) -> {
                 forwardService.publish(router.getFromServer(), message.getBody());
             }, consumerTag -> {

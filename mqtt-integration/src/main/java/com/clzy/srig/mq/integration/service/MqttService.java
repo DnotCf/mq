@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MqttService {
 
     private ConcurrentHashMap<String, MqttClient> mqttClientMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, MqttClient> mqttProducerMap = new ConcurrentHashMap<>();
 
     public synchronized MqttClient getClient(MQServer server) throws MqttException {
         String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
@@ -26,6 +27,15 @@ public class MqttService {
         if (client == null) {
             client = build(server);
             mqttClientMap.put(connectUrl, client);
+        }
+        return client;
+    }
+    public synchronized MqttClient getProducer(MQServer server) throws MqttException {
+        String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
+        MqttClient client = mqttProducerMap.get(connectUrl);
+        if (client == null) {
+            client = build(server);
+            mqttProducerMap.put(connectUrl, client);
         }
         return client;
     }
@@ -99,6 +109,19 @@ public class MqttService {
                 e.printStackTrace();
             }
             mqttClientMap.remove(connectUrl);
+        }
+    }
+    public void disProducer(MQServer server) {
+        String connectUrl = String.format("%s://%s:%d", server.getProtocol(), server.getIp(), server.getPort());
+        MqttClient client = mqttProducerMap.get(connectUrl);
+        if (client != null) {
+            try {
+                client.disconnect();
+                client.close(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            mqttProducerMap.remove(connectUrl);
         }
     }
 
