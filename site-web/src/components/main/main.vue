@@ -19,12 +19,11 @@
       >
         <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
         <div class="logo-con-name" v-show="!collapsed">
-          <img  :src="minLogo" key="max-logo" />
+          <img :src="minLogo" key="max-logo" />
           <span>数据转发服务系统</span>
         </div>
-
         <div class="logo-con" v-show="collapsed">
-          <img  :src="minLogo" key="min-logo" />
+          <img :src="minLogo" key="min-logo" />
         </div>
       </side-menu>
     </Sider>

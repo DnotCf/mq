@@ -37,7 +37,7 @@
       "
     >
       <FormItem label="服务地址" :prop="propName + 'cluster'">
-        <Input v-model="value.cluster" placeholder="" type="text"></Input>
+        <Input v-model.trim="value.cluster" placeholder="" type="text"></Input>
       </FormItem>
     </div>
 
@@ -60,7 +60,7 @@
         </Select>
       </FormItem>
       <FormItem label="ip" :prop="propName + 'ip'">
-        <Input v-model="value.ip" placeholder=""></Input>
+        <Input v-model.trim="value.ip" placeholder=""></Input>
       </FormItem>
       <FormItem label="端口" :prop="propName + 'port'">
         <Input v-model="value.port" placeholder="" number></Input>
@@ -99,7 +99,13 @@
     <!-- MQTT  AMQP 阿里云RocketMQ  RocketMQ Kafka-->
     <div v-if="value.type !== 'HTTP'">
       <FormItem
-        :label="value.type === 'AMQP' ? 'routingKey' : 'topic'"
+        :label="
+          isSource === 1 && value.type == 'AMQP'
+            ? 'queueName'
+            : isSource === 2 && value.type == 'AMQP'
+            ? 'routingKey'
+            : 'topic'
+        "
         :prop="propName + 'topic'"
       >
         <Input v-model="value.topic" placeholder=""></Input>
@@ -170,6 +176,9 @@ export default {
     },
     propName: {
       default: ""
+    },
+    isSource: {
+      default: 1
     }
   },
   created() {},
