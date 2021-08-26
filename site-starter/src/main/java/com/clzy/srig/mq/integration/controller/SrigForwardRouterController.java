@@ -150,6 +150,9 @@ public class SrigForwardRouterController extends BaseController {
     @GetMapping("start")
     public JsonResponse startConnection(String id) {
         ForwardRouter router = service.get(id);
+        if (router == null) {
+            return JsonResponse.error(-1, "请先绑定映射", "请先绑定映射");
+        }
         if (router.getExpireTime() != null && router.getExpireTime().compareTo(new Date()) < 0) {
             return JsonResponse.error(-1, "映射已经过期", "映射已经过期");
         }
