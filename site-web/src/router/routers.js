@@ -50,7 +50,7 @@ export default [
   // {
   //   path: '/warn/history',
   //   name: 'warn_history',
-  //   component: Main,
+  //   component: Main, 
   //   meta: {
   //     icon: '_lishijingqing',
   //     title: '历史警情',
@@ -60,7 +60,7 @@ export default [
   //     path: '',
   //     name: 'warn_history',
   //     meta: {
-  //       icon: '_lishijingqing',
+  //       icon: 'icon-home',
   //       title: '历史警情'
   //     },
   //     component: () => import('@/view/empty-back')

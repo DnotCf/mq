@@ -7,7 +7,7 @@
           <side-menu-item v-if="showChildren(item)" :key="`menu-${item.name}`" :parent-item="item"></side-menu-item>
           <menu-item v-else :name="getNameOrHref(item, true)" :key="`menu-${item.children[0].name}`">
             <!-- <common-icon :type="item.children[0].icon || ''"/> -->
-              <svg-icon :name="item.children[0].icon || ''" size="24"></svg-icon>
+            <svg-icon :name="item.children[0].icon || ''" size="24"></svg-icon>
             <span>{{ showTitle(item.children[0]) }}</span>
           </menu-item>
         </template>
@@ -25,7 +25,10 @@
       <template v-for="item in menuList">
         <collapsed-menu v-if="item.children && item.children.length > 1" @on-click="handleSelect" hide-title :root-icon-size="rootIconSize" :icon-size="iconSize" :theme="theme" :parent-item="item" :key="`drop-menu-${item.name}`"></collapsed-menu>
         <Tooltip transfer v-else :content="showTitle(item.children && item.children[0] ? item.children[0] : item)" placement="right" :key="`drop-menu-${item.name}`">
-          <a @click="handleSelect(getNameOrHref(item, true))" class="drop-menu-a" :style="{textAlign: 'center'}"><common-icon :size="rootIconSize" :color="textColor" :type="item.icon || (item.children && item.children[0].icon)"/></a>
+          <a @click="handleSelect(getNameOrHref(item, true))" class="drop-menu-a" :style="{textAlign: 'center'}">
+          <svg-icon :name="item.icon || (item.children && item.children[0].icon)" :size="rootIconSize" :color="textColor" ></svg-icon>
+            <!-- <common-icon :size="rootIconSize" :color="textColor" :type="item.icon || (item.children && item.children[0].icon)"/> -->
+            </a>
         </Tooltip>
       </template>
     </div>
