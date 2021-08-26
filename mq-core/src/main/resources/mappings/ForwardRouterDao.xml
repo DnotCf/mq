@@ -35,7 +35,8 @@
         f.NETWORK_TYPE AS "fromServer.networkType",
         f.VPN_ACCONT  AS "fromServer.vpnAccount",
         f.VPN_PASSWORD AS "fromServer.vpnPassword",
-        f.VPN_ADDRESS AS "fromServer.vpnAddress"
+        f.VPN_ADDRESS AS "fromServer.vpnAddress",
+        f.DEFAULT_PARAM AS "fromServer.defaultParam"
     </sql>
 
     <sql id="toServerColumns">
@@ -58,7 +59,8 @@
         t.NETWORK_TYPE AS "toServer.networkType",
         t.VPN_ACCONT  AS "toServer.vpnAccount",
         t.VPN_PASSWORD AS "toServer.vpnPassword",
-        t.VPN_ADDRESS AS "toServer.vpnAddress"
+        t.VPN_ADDRESS AS "toServer.vpnAddress",
+        t.DEFAULT_PARAM AS "toServer.defaultParam"
     </sql>
 
     <sql id="rsuJoins">
