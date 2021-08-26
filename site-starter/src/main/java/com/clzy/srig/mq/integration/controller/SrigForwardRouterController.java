@@ -53,6 +53,9 @@ public class SrigForwardRouterController extends BaseController {
     @ApiOperation(value = "上传信息", notes = "上传信息")
     @PostMapping("save")
     public JsonResponse save(@RequestBody ForwardRouter entiy) {
+        if (MQIntegration.ServerType.HTTP.equals(entiy.getToServer().getType())) {
+            return JsonResponse.error(-1, "暂不支持HTTP方式推送", "暂不支持HTTP方式推送");
+        }
         String check = check(entiy.getToServer());
         if (StringUtils.isNotBlank(check)) {
             check = "映射目标：" + check;
@@ -63,10 +66,8 @@ public class SrigForwardRouterController extends BaseController {
             from = "源数据：" + from;
             return JsonResponse.error(-1, from, from);
         }
-        if (!MQIntegration.ServerType.HTTP.equals(entiy.getToServer().getType())) {
-            if (StringUtils.isBlank(entiy.getFromTopic()) || StringUtils.isBlank(entiy.getToTopic())) {
-                return JsonResponse.error(-1,"源fromTopic或目标toTopic不为空","源fromTopic或目标toTopic不为空");
-            }
+        if (StringUtils.isBlank(entiy.getFromTopic()) || StringUtils.isBlank(entiy.getToTopic())) {
+            return JsonResponse.error(-1,"源fromTopic或目标toTopic不为空","源fromTopic或目标toTopic不为空");
         }
         if (entiy.getExpireTime() == null) {
             return JsonResponse.error(-1, "过期时间不为空", "过期时间不为空");

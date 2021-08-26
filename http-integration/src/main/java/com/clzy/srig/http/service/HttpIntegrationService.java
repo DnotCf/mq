@@ -5,8 +5,10 @@ import com.clzy.geo.core.utils.StringUtils;
 import com.clzy.srig.mq.integration.entity.ForwardRouter;
 import com.clzy.srig.mq.integration.entity.MQServer;
 import com.clzy.srig.mq.integration.enums.MQIntegration;
+import com.clzy.srig.mq.integration.enums.MQStuats;
 import com.clzy.srig.mq.integration.service.ForwardRouterService;
 import com.clzy.srig.mq.integration.service.ForwardService;
+import com.clzy.srig.mq.integration.service.IMqIntegration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -59,13 +61,21 @@ public class HttpIntegrationService {
         this.threadPoolTaskScheduler.initialize();
     }
 
-    public void createConnect(MQServer server) {
+    public void createConnect(ForwardRouter router) {
+        MQServer server = router.getFromServer();
         String url = getConectionUrl(server);
         if (runTasks.get(url) != null) {
             return;
         }
         JSONObject param = getDefaultParam(server.getDefaultParam());
-        runTasks.put(url, threadPoolTaskScheduler.schedule(() -> consumer(server), Instant.parse(param.getString("cron"))));
+        runTasks.put(url, threadPoolTaskScheduler.schedule(() -> {
+            try {
+                consumer(server);
+            } catch (Exception e) {
+                e.printStackTrace();
+                router.setStatus(MQStuats.server_offline.getCode());
+            }
+        }, Instant.parse(param.getString("cron"))));
     }
 
     public void disConnect(MQServer server) {
