@@ -34,7 +34,7 @@ public class MqttIntegration implements IMqIntegration {
                 return;
             }
             log.debug("===={} send msg：{}===", type(), new String(message));
-            MqttClient client = mqttService.getClient(server);
+            MqttClient client = mqttService.getProducer(server);
             String[] topics = router.getToTopic().split(",");
             for (String topic : topics) {
                 client.publish(topic, message, 1, false);
@@ -46,10 +46,10 @@ public class MqttIntegration implements IMqIntegration {
             router.setStatus(MQStuats.client_offline.getCode());
             if (server.getRetry() == null || server.getRetry() > 0) {
                 server.setRetry(-1);
-                mqttService.disConnect(server);
+                mqttService.disProducer(server);
                 try {
                     log.info("=====MQTT producer重试连接=====");
-                    MqttClient client = mqttService.getClient(server);
+                    MqttClient client = mqttService.getProducer(server);
                     client.publish(router.getToTopic(), message, 1, false);
                     router.setStatus(MQStuats.online.getCode());
                 } catch (Exception e1) {
