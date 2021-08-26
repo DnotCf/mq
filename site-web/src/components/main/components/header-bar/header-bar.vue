@@ -1,8 +1,8 @@
 <template>
   <div class="header-bar">
-    <!--<sider-trigger :collapsed="collapsed" icon="md-menu" @on-change="handleCollpasedChange"></sider-trigger>-->
-    <h1 style="display: inline-block;">{{$config.title}}</h1>
-    <custom-bread-crumb show-icon style="margin-left: 30px;" :list="breadCrumbList"></custom-bread-crumb>
+    <sider-trigger :collapsed="collapsed" icon="md-menu" @on-change="handleCollpasedChange"></sider-trigger>
+   <!-- 面包屑 -->
+    <!-- <custom-bread-crumb show-icon style="margin-left: 30px;" :list="breadCrumbList"></custom-bread-crumb> -->
     <div class="custom-content-con">
       <slot></slot>
     </div>

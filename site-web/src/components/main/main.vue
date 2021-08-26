@@ -1,29 +1,30 @@
 <template>
   <Layout style="height: 100%" class="main">
-    <Header class="header-con" id="geoHeaderRef">
-      <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
-        <user :message-unread-count="unreadCount" :user-avator="userAvator"/>
-        <language v-if="$config.useI18n" @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>
-        <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
-      </header-bar>
-    </Header>
+    <Sider hide-trigger collapsible :width="256" :collapsed-width="64" v-model="collapsed" class="left-sider" :style="{overflow: 'hidden'}">
+      <side-menu accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed" @on-select="turnToPage" :menu-list="menuList">
+        <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
+        <div class="logo-con">
+          <img v-show="!collapsed" :src="maxLogo" key="max-logo" />
+          <img v-show="collapsed" :src="minLogo" key="min-logo" />
+        </div>
+      </side-menu>
+    </Sider>
     <Layout>
-      <Sider hide-trigger collapsible :width="256" :collapsed-width="64" v-model="collapsed" class="left-sider"
-             :style="{overflow: 'hidden'}">
-        <side-menu accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed" @on-select="turnToPage"
-                   :menu-list="menuList">
-          <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
-          <!--<div class="logo-con">
-            <img v-show="!collapsed" :src="maxLogo" key="max-logo"/>
-            <img v-show="collapsed" :src="minLogo" key="min-logo"/>
-          </div>-->
-        </side-menu>
-      </Sider>
+      <Header class="header-con">
+        <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
+          <user :message-unread-count="unreadCount" :user-avatar="userAvatar"/>
+          <language v-if="$config.useI18n" @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>
+          <!-- 错误日志 -->
+          <!-- <error-store v-if="$config.plugin['error-store'] && $config.plugin['error-store'].showInHeader" :has-read="hasReadErrorPage" :count="errorCount"></error-store> -->
+          <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
+        </header-bar>
+      </Header>
       <Content class="main-content-con">
         <Layout class="main-layout-con">
-          <div class="tag-nav-wrapper" style="display: none">
+          <!-- tab 标签页 -->
+          <!-- <div class="tag-nav-wrapper">
             <tags-nav :value="$route" @input="handleClick" :list="tagNavList" @on-close="handleCloseTag"/>
-          </div>
+          </div> -->
           <Content class="content-wrapper">
             <keep-alive :include="cacheList">
               <router-view/>
@@ -44,13 +45,12 @@ import ABackTop from './components/a-back-top'
 import Fullscreen from './components/fullscreen'
 import Language from './components/language'
 import ErrorStore from './components/error-store'
-import {mapActions, mapGetters, mapMutations} from 'vuex'
-import {getNewTagList, routeEqual} from '@/libs/util'
+import { mapMutations, mapActions, mapGetters } from 'vuex'
+import { getNewTagList, routeEqual } from '@/libs/util'
 import routers from '@/router/routers'
 import minLogo from '@/assets/images/logo-min.jpg'
 import maxLogo from '@/assets/images/logo.jpg'
 import './main.less'
-
 export default {
   name: 'Main',
   components: {
@@ -63,7 +63,7 @@ export default {
     User,
     ABackTop
   },
-  data() {
+  data () {
     return {
       collapsed: false,
       minLogo,
@@ -75,29 +75,29 @@ export default {
     ...mapGetters([
       'errorCount'
     ]),
-    tagNavList() {
+    tagNavList () {
       return this.$store.state.app.tagNavList
     },
-    tagRouter() {
+    tagRouter () {
       return this.$store.state.app.tagRouter
     },
-    userAvator() {
-      return this.$store.state.user.avatorImgPath
+    userAvatar () {
+      return this.$store.state.user.avatarImgPath
     },
-    cacheList() {
+    cacheList () {
       const list = ['ParentView', ...this.tagNavList.length ? this.tagNavList.filter(item => !(item.meta && item.meta.notCache)).map(item => item.name) : []]
       return list
     },
-    menuList() {
+    menuList () {
       return this.$store.getters.menuList
     },
-    local() {
+    local () {
       return this.$store.state.app.local
     },
-    hasReadErrorPage() {
+    hasReadErrorPage () {
       return this.$store.state.app.hasReadErrorPage
     },
-    unreadCount() {
+    unreadCount () {
       return this.$store.state.user.unreadCount
     }
   },
@@ -111,10 +111,11 @@ export default {
       'closeTag'
     ]),
     ...mapActions([
-      'handleLogin'
+      'handleLogin',
+      'getUnreadMessageCount'
     ]),
-    turnToPage(route) {
-      let {name, params, query} = {}
+    turnToPage (route) {
+      let { name, params, query } = {}
       if (typeof route === 'string') name = route
       else {
         name = route.name
@@ -131,10 +132,10 @@ export default {
         query
       })
     },
-    handleCollapsedChange(state) {
+    handleCollapsedChange (state) {
       this.collapsed = state
     },
-    handleCloseTag(res, type, route) {
+    handleCloseTag (res, type, route) {
       if (type !== 'others') {
         if (type === 'all') {
           this.turnToPage(this.$config.homeName)
@@ -146,15 +147,15 @@ export default {
       }
       this.setTagNavList(res)
     },
-    handleClick(item) {
+    handleClick (item) {
       this.turnToPage(item)
     }
   },
   watch: {
-    '$route'(newRoute) {
-      const {name, query, params, meta} = newRoute
+    '$route' (newRoute) {
+      const { name, query, params, meta } = newRoute
       this.addTag({
-        route: {name, query, params, meta},
+        route: { name, query, params, meta },
         type: 'push'
       })
       this.setBreadCrumb(newRoute)
@@ -162,15 +163,15 @@ export default {
       this.$refs.sideMenu.updateOpenName(newRoute.name)
     }
   },
-  mounted() {
+  mounted () {
     /**
      * @description 初始化设置面包屑导航和标签导航
      */
     this.setTagNavList()
     this.setHomeRoute(routers)
-    const {name, params, query, meta} = this.$route
+    const { name, params, query, meta } = this.$route
     this.addTag({
-      route: {name, params, query, meta}
+      route: { name, params, query, meta }
     })
     this.setBreadCrumb(this.$route)
     // 设置初始语言
@@ -181,6 +182,8 @@ export default {
         name: this.$config.homeName
       })
     }
+    // 获取未读消息条数
+    this.getUnreadMessageCount()
   }
 }
 </script>
