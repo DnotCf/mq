@@ -16,8 +16,9 @@
               type="primary"
               class="btn-box"
               @click="handleEnable(enableVal)"
+              :loading="loadStatus"
             >
-       {{enableVal==1?'停用所有映射':"启用所有映射"}}
+              {{ enableVal == 1 ? "停用所有映射" : "启用所有映射" }}
             </Button>
             <Poptip class="home-poptip" placement="bottom">
               <Button type="primary" class="btn-box">
@@ -93,7 +94,7 @@
                 :style="{
                   overflow: row.isFold ? '' : 'hidden',
                   height:
-                    row.isFold || row.fromServer.type === 'HTTP' ? '' : '95px',
+                    row.isFold || row.fromServer.type === 'HTTP' ? '' : '95px'
                 }"
                 class="fold-box"
               >
@@ -117,10 +118,10 @@
                     title="收起"
                   />
                 </div>
-                  <table-item
-                    label="数据源协议："
-                    :value="row.fromServer.name"
-                  ></table-item>
+                <table-item
+                  label="数据源协议："
+                  :value="row.fromServer.name"
+                ></table-item>
                 <table-item-common :value="row.fromServer"></table-item-common>
               </div>
             </template>
@@ -142,14 +143,14 @@
                   class="map-box"
                   :style="{
                     overflow: row.isFold ? '' : 'hidden',
-                    height: row.isFold ? '' : '95px',
+                    height: row.isFold ? '' : '95px'
                   }"
                 >
                   <table-item
                     label="映射给予方："
                     :value="row.toServer.name"
                   ></table-item>
-                   <table-item
+                  <table-item
                     label="映射数据源协议："
                     :value="row.toServer.type"
                   ></table-item>
@@ -158,7 +159,6 @@
                     :value="row.expireTime"
                   ></table-item>
                   <table-item-common :value="row.toServer"></table-item-common>
-                 
                 </div>
                 <div class="source-status">
                   <div
@@ -190,10 +190,11 @@
                 </div>
               </div>
               <span v-else class="no-map">暂无映射</span>
-            </template> 
+            </template>
             <template slot-scope="{ row, index }" slot="action">
-              
-              <Button @click="handleItemEnable(row.status,row.id)">{{row.status==1?'停用':'启用'}}</Button>
+              <Button @click="handleItemEnable(row.status, row.id)">{{
+                row.status == 1 ? "停用" : "启用"
+              }}</Button>
             </template>
           </Table>
           <div class="tables-pager">
@@ -606,7 +607,8 @@ export default {
       pageNo: 1,
       pageSize: 10,
       pageTotal: 0,
-      enableVal: 1
+      enableVal: 1,
+      loadStatus: false
     };
   },
   created() {},
@@ -772,8 +774,10 @@ export default {
       } else {
         port = "startAll";
       }
+      this.loadStatus = true;
       dataSourceApi[port]()
         .then(res => {
+          this.loadStatus = false;
           if (res.code === 200) {
             this.$Message.success(
               val ? "停用所有映射成功" : "启用所有映射成功"
@@ -784,6 +788,7 @@ export default {
           }
         })
         .catch(err => {
+          this.loadStatus = false;
           this.$Message.error(err.msg || "服务器异常，请联系管理员!");
         });
     },

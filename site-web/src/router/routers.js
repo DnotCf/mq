@@ -22,7 +22,7 @@ export default [
     name: "login",
     meta: {
       title: "Login - 登录",
-      hideInMenu: true,
+      hideInMenu: true
     },
     component: () => import("@/view/login/login.vue")
   },
@@ -32,7 +32,7 @@ export default [
     redirect: "/home",
     component: Main,
     meta: {
-      notCache: true,
+      notCache: true
     },
     children: [
       {
@@ -41,7 +41,7 @@ export default [
         meta: {
           title: "首页",
           notCache: true,
-          icon: "_jingqingtongji"
+          icon: "icon-home"
         },
         component: () => import("@/view/single-page/home")
       }
@@ -50,7 +50,7 @@ export default [
   // {
   //   path: '/warn/history',
   //   name: 'warn_history',
-  //   component: Main,
+  //   component: Main, 
   //   meta: {
   //     icon: '_lishijingqing',
   //     title: '历史警情',
@@ -60,7 +60,7 @@ export default [
   //     path: '',
   //     name: 'warn_history',
   //     meta: {
-  //       icon: '_lishijingqing',
+  //       icon: 'icon-home',
   //       title: '历史警情'
   //     },
   //     component: () => import('@/view/empty-back')

@@ -5,11 +5,19 @@
       <template v-for="item in menuList">
         <template v-if="item.children && item.children.length === 1">
           <side-menu-item v-if="showChildren(item)" :key="`menu-${item.name}`" :parent-item="item"></side-menu-item>
-          <menu-item v-else :name="getNameOrHref(item, true)" :key="`menu-${item.children[0].name}`"><common-icon :type="item.children[0].icon || ''"/><span>{{ showTitle(item.children[0]) }}</span></menu-item>
+          <menu-item v-else :name="getNameOrHref(item, true)" :key="`menu-${item.children[0].name}`">
+            <!-- <common-icon :type="item.children[0].icon || ''"/> -->
+            <svg-icon :name="item.children[0].icon || ''" size="24"></svg-icon>
+            <span>{{ showTitle(item.children[0]) }}</span>
+          </menu-item>
         </template>
         <template v-else>
           <side-menu-item v-if="showChildren(item)" :key="`menu-${item.name}`" :parent-item="item"></side-menu-item>
-          <menu-item v-else :name="getNameOrHref(item)" :key="`menu-${item.name}`"><common-icon :type="item.icon || ''"/><span>{{ showTitle(item) }}</span></menu-item>
+          <menu-item v-else :name="getNameOrHref(item)" :key="`menu-${item.name}`">
+            <!-- <common-icon :type="item.icon || ''"/> -->
+            <svg-icon :name="item.icon || ''" size="24"></svg-icon>
+            <span>{{ showTitle(item) }}</span>
+          </menu-item>
         </template>
       </template>
     </Menu>
@@ -17,21 +25,24 @@
       <template v-for="item in menuList">
         <collapsed-menu v-if="item.children && item.children.length > 1" @on-click="handleSelect" hide-title :root-icon-size="rootIconSize" :icon-size="iconSize" :theme="theme" :parent-item="item" :key="`drop-menu-${item.name}`"></collapsed-menu>
         <Tooltip transfer v-else :content="showTitle(item.children && item.children[0] ? item.children[0] : item)" placement="right" :key="`drop-menu-${item.name}`">
-          <a @click="handleSelect(getNameOrHref(item, true))" class="drop-menu-a" :style="{textAlign: 'center'}"><common-icon :size="rootIconSize" :color="textColor" :type="item.icon || (item.children && item.children[0].icon)"/></a>
+          <a @click="handleSelect(getNameOrHref(item, true))" class="drop-menu-a" :style="{textAlign: 'center'}">
+          <svg-icon :name="item.icon || (item.children && item.children[0].icon)" :size="rootIconSize" :color="textColor" ></svg-icon>
+            <!-- <common-icon :size="rootIconSize" :color="textColor" :type="item.icon || (item.children && item.children[0].icon)"/> -->
+            </a>
         </Tooltip>
       </template>
     </div>
   </div>
 </template>
 <script>
-import SideMenuItem from './side-menu-item.vue'
-import CollapsedMenu from './collapsed-menu.vue'
-import { getUnion } from '@/libs/tools'
-import mixin from './mixin'
+import SideMenuItem from "./side-menu-item.vue";
+import CollapsedMenu from "./collapsed-menu.vue";
+import { getUnion } from "@/libs/tools";
+import mixin from "./mixin";
 
 export default {
-  name: 'SideMenu',
-  mixins: [ mixin ],
+  name: "SideMenu",
+  mixins: [mixin],
   components: {
     SideMenuItem,
     CollapsedMenu
@@ -39,8 +50,8 @@ export default {
   props: {
     menuList: {
       type: Array,
-      default () {
-        return []
+      default() {
+        return [];
       }
     },
     collapsed: {
@@ -48,7 +59,7 @@ export default {
     },
     theme: {
       type: String,
-      default: 'dark'
+      default: "light"
     },
     rootIconSize: {
       type: Number,
@@ -61,54 +72,81 @@ export default {
     accordion: Boolean,
     activeName: {
       type: String,
-      default: ''
+      default: ""
     },
     openNames: {
       type: Array,
       default: () => []
     }
   },
-  data () {
+  data() {
     return {
       openedNames: []
-    }
+    };
   },
   methods: {
-    handleSelect (name) {
-      this.$emit('on-select', name)
+    handleSelect(name) {
+      this.$emit("on-select", name);
     },
-    getOpenedNamesByActiveName (name) {
-      return this.$route.matched.map(item => item.name).filter(item => item !== name)
+    getOpenedNamesByActiveName(name) {
+      return this.$route.matched
+        .map(item => item.name)
+        .filter(item => item !== name);
     },
-    updateOpenName (name) {
-      if (name === this.$config.homeName) this.openedNames = []
-      else this.openedNames = this.getOpenedNamesByActiveName(name)
+    updateOpenName(name) {
+      if (name === this.$config.homeName) this.openedNames = [];
+      else this.openedNames = this.getOpenedNamesByActiveName(name);
     }
   },
   computed: {
-    textColor () {
-      return this.theme === 'dark' ? '#fff' : '#495060'
+    textColor() {
+      return this.theme === "dark" ? "#fff" : "#495060";
     }
   },
   watch: {
-    activeName (name) {
-      if (this.accordion) this.openedNames = this.getOpenedNamesByActiveName(name)
-      else this.openedNames = getUnion(this.openedNames, this.getOpenedNamesByActiveName(name))
+    activeName(name) {
+      if (this.accordion)
+        this.openedNames = this.getOpenedNamesByActiveName(name);
+      else
+        this.openedNames = getUnion(
+          this.openedNames,
+          this.getOpenedNamesByActiveName(name)
+        );
     },
-    openNames (newNames) {
-      this.openedNames = newNames
+    openNames(newNames) {
+      this.openedNames = newNames;
     },
-    openedNames () {
+    openedNames() {
       this.$nextTick(() => {
-        this.$refs.menu.updateOpened()
-      })
+        this.$refs.menu.updateOpened();
+      });
     }
   },
-  mounted () {
-    this.openedNames = getUnion(this.openedNames, this.getOpenedNamesByActiveName(name))
+  mounted() {
+    this.openedNames = getUnion(
+      this.openedNames,
+      this.getOpenedNamesByActiveName(name)
+    );
   }
-}
+};
 </script>
-<style lang="less">
-@import './side-menu.less';
+<style lang="less" scoped>
+@import "./side-menu.less";
+.ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu) {
+  background: #d7e5fc;
+  border-left: 4px solid#397CF5;
+  border-radius: 3px;
+  width: 100%;
+  font-size: 17px;
+  font-weight: 600;
+  color: #000000;
+}
+.ivu-menu-item {
+  height: 60px;
+  background: #ffffff;
+  color: #333 !important;
+  letter-spacing: 3px;
+  display: flex ;
+  align-items: center ;
+}
 </style>
