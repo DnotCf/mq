@@ -105,7 +105,7 @@ public class ForwardService {
         if (router == null) {
             return;
         }
-        log.info("=={}=名称{}==源topic:{},目标topic:{}=添加路由表=====", DateUtils.getDateTime(), router.getFromServer().getName(), router.getFromTopic(), router.getToTopic());
+        log.info("====={}=名称{}==源topic:{},目标topic:{}=添加路由表=====", DateUtils.getDateTime(), router.getFromServer().getName(), router.getFromTopic(), router.getToTopic());
         check(router);
         String fromId = router.getFromServer().getId();
         List<ForwardRouter> routers = routerTable.get(fromId);
@@ -122,7 +122,9 @@ public class ForwardService {
                 }
             });
         } else {
-            routers.add(router);
+            if (!routers.contains(router)) {
+                routers.add(router);
+            }
         }
     }
 
@@ -135,7 +137,7 @@ public class ForwardService {
         if (router == null) {
             return;
         }
-        log.info("=={}=名称{}=映射id:{}=topic:{}=删除路由表=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
+        log.info("====={}=名称{}=映射id:{}=topic:{}=删除路由表=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
         check(router);
         String fromId = router.getFromServer().getId();
         List<ForwardRouter> routers = routerTable.get(fromId);
@@ -151,7 +153,7 @@ public class ForwardService {
     public void clearRouterTable() {
         Collection<List<ForwardRouter>> values = routerTable.values();
         if (CollectionUtils.isEmpty(values)) {
-            log.info("====映射路由表为空不用清理=====");
+            log.info("=====映射路由表为空不用清理=====");
             return;
         }
         for (List<ForwardRouter> list : values) {
@@ -175,7 +177,7 @@ public class ForwardService {
     }
 
     public void stopConsumer(ForwardRouter router) {
-        log.info("=={}=名称{}=映射id:{}=topic:{}=停止消费=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
+        log.info("====={}=名称{}=映射id:{}=topic:{}=停止消费=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
         messagePublishes.forEach(p -> {
             if (p.type().equals(router.getFromServer().getType())) {
                 try {
@@ -196,7 +198,7 @@ public class ForwardService {
         if (router == null) {
             return;
         }
-        log.info("=={}=名称{}=映射id:{}=topic:{}=启动消费=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
+        log.info("====={}=名称{}=映射id:{}=topic:{}=启动消费=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
         messagePublishes.forEach(p -> {
             if (p.type().equals(router.getFromServer().getType())) {
                 try {
@@ -217,7 +219,7 @@ public class ForwardService {
         if (router == null) {
             return;
         }
-        log.info("=={}=名称{}=映射id:{}=topic:{}=更新路由表=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
+        log.info("====={}=名称{}=映射id:{}=topic:{}=更新路由表=====", DateUtils.getDateTime(), router.getFromServer().getName(),router.getId(), router.getFromTopic());
         check(router);
         String fromId = router.getFromServer().getId();
         List<ForwardRouter> routers = routerTable.get(fromId);
@@ -258,7 +260,7 @@ public class ForwardService {
 //        log.info("==={}==服务转发状态同步开始=====", DateUtils.getDateTime());
         Collection<List<ForwardRouter>> values = routerTable.values();
         if (CollectionUtils.isEmpty(values)) {
-            log.info("=====服务转发配置为空同步结束=====");
+            log.info("=====服务转发配置为空状态同步结束=====");
             return;
         }
         Integer online = 0;

@@ -44,15 +44,26 @@ public class RocketMqIntegration implements IMqIntegration {
             log.debug("===={} send msg：{}===", type(), new String(message));
             DefaultMQProducer producer = rocketMqService.createProducer(server);
             String[] topics = server.getTopic().split(",");
-            for (String topic : topics) {
+            String tag = StringUtils.isBlank(server.getTag()) ? "*" : server.getTag();
+            String[] tags = tag.split(",");
+            for (int i = 0; i < topics.length; i++) {
                 Message msg = null;
-                if (StringUtils.isBlank(server.getTag())) {
-                    msg=new Message(router.getToTopic(), message);
-                }else {
-                    msg = new Message(topic, server.getTag(), message);
+                if (i < tags.length) {
+                    msg = new Message(topics[i], tags[i], message);
+                } else {
+                    msg = new Message(topics[i], message);
                 }
                 producer.send(msg);
             }
+//            for (String topic : topics) {
+//                Message msg = null;
+//                if (StringUtils.isBlank(server.getTag())) {
+//                    msg=new Message(router.getToTopic(), message);
+//                }else {
+//                    msg = new Message(topic, server.getTag(), message);
+//                }
+//                producer.send(msg);
+//            }
             router.setStatus(MQStuats.online.getCode());
         } catch (Exception e) {
             log.error("RocketMq消息推送失败");
@@ -65,12 +76,14 @@ public class RocketMqIntegration implements IMqIntegration {
                     log.info("=====RocketMq producer重试连接=====");
                     DefaultMQProducer producer = rocketMqService.createProducer(server);
                     String[] topics = server.getTopic().split(",");
-                    for (String topic : topics) {
+                    String tag = StringUtils.isBlank(server.getTag()) ? "*" : server.getTag();
+                    String[] tags = tag.split(",");
+                    for (int i = 0; i < topics.length; i++) {
                         Message msg = null;
-                        if (StringUtils.isBlank(server.getTag())) {
-                            msg=new Message(router.getToTopic(), message);
-                        }else {
-                            msg = new Message(topic, server.getTag(), message);
+                        if (i < tags.length) {
+                            msg = new Message(topics[i], tags[i], message);
+                        } else {
+                            msg = new Message(topics[i], message);
                         }
                         producer.send(msg);
                     }
