@@ -157,10 +157,21 @@ public class ForwardService {
         for (List<ForwardRouter> list : values) {
             for (ForwardRouter router : list) {
                 stopConsumer(router);
-                continue;
             }
         }
         routerTable.clear();
+    }
+
+    public void clearRouterTable(String fromServerId) {
+        List<ForwardRouter> list = routerTable.get(fromServerId);
+        if (CollectionUtils.isEmpty(list)) {
+            routerTable.remove(fromServerId);
+            return;
+        }
+        for (ForwardRouter router : list) {
+            stopConsumer(router);
+        }
+        routerTable.remove(fromServerId);
     }
 
     public void stopConsumer(ForwardRouter router) {

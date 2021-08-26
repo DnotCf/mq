@@ -27,4 +27,9 @@ public class ForwardRouterService extends CrudService<ForwardRouterDao, ForwardR
     public Integer updateStatus(ForwardRouter entity) {
         return dao.updateStatus(entity);
     }
+
+    @Transactional(readOnly = false)
+    public Integer deleteFromServerId(String id) {
+        return dao.deleteByFromId(id);
+    }
 }

@@ -89,6 +89,8 @@ public class SrigMqServerController extends BaseController {
         String[] idsAry = ids.split(",");
         for (String id : idsAry) {
             service.delete(new MQServer(id));
+            forwardService.clearRouterTable(id);
+            routerService.deleteFromServerId(id);
         }
         return JsonResponse.success(true);
     }

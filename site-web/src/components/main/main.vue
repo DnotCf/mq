@@ -112,7 +112,7 @@ export default {
     ]),
     ...mapActions([
       'handleLogin',
-      'getUnreadMessageCount'
+      // 'getUnreadMessageCount'
     ]),
     turnToPage (route) {
       let { name, params, query } = {}
