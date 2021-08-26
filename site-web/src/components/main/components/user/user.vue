@@ -1,14 +1,14 @@
 <template>
-  <div class="user-avator-dropdown">
+  <div class="user-avatar-dropdown">
     <Dropdown @on-click="handleClick">
       <Badge :dot="!!messageUnreadCount">
-        <Avatar :src="userAvator"/>
+        <Avatar :src="userAvatar"/>
       </Badge>
       <Icon :size="18" type="md-arrow-dropdown"></Icon>
       <DropdownMenu slot="list">
-        <DropdownItem name="message">
+        <!-- <DropdownItem name="message">
           消息中心<Badge style="margin-left: 10px" :count="messageUnreadCount"></Badge>
-        </DropdownItem>
+        </DropdownItem> -->
         <DropdownItem name="logout">退出登录</DropdownItem>
       </DropdownMenu>
     </Dropdown>
@@ -21,7 +21,7 @@ import { mapActions } from 'vuex'
 export default {
   name: 'User',
   props: {
-    userAvator: {
+    userAvatar: {
       type: String,
       default: ''
     },

@@ -23,7 +23,6 @@ export default [
     meta: {
       title: "Login - 登录",
       hideInMenu: true,
-      icon: ""
     },
     component: () => import("@/view/login/login.vue")
   },
@@ -34,13 +33,11 @@ export default [
     component: Main,
     meta: {
       notCache: true,
-      title: "",
-      icon: ""
     },
     children: [
       {
         path: "/home",
-        name: "data_forwarding",
+        name: "home",
         meta: {
           title: "首页",
           notCache: true,
@@ -56,7 +53,8 @@ export default [
   //   component: Main,
   //   meta: {
   //     icon: '_lishijingqing',
-  //     title: '历史警情'
+  //     title: '历史警情',
+  //     hideInBread: true
   //   },
   //   children: [{
   //     path: '',
