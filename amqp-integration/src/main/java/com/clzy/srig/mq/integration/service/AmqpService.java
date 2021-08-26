@@ -56,9 +56,9 @@ public class AmqpService {
                 queueName = server.getTopic();
             }
             client.queueDeclare(queueName, false, false, false, null);
-            if (StringUtils.isNotBlank(exchange)) {
-                client.exchangeBind(queueName, exchange, server.getTopic());
-            }
+//            if (StringUtils.isNotBlank(exchange)) {
+//                client.exchangeBind(queueName, exchange, server.getTopic());
+//            }
             producertMap.put(connectUrl, client);
         }
         return client;
@@ -117,9 +117,9 @@ public class AmqpService {
                 queueName = server.getTopic();
             }
             client.queueDeclare(queueName, false, false, false, null);
-            if (StringUtils.isNotBlank(exchange)) {
-                client.exchangeBind(queueName, exchange, server.getTopic());
-            }
+//            if (StringUtils.isNotBlank(exchange)) {
+//                client.exchangeBind(exchange, queueName, server.getTopic());
+//            }
             client.close();
             return;
         }
