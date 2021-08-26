@@ -47,26 +47,26 @@ export default [
       }
     ]
   },
-  {
-    path: '/warn/history',
-    name: 'warn_history',
-    component: Main,
-    meta: {
-      icon: '_lishijingqing',
-      title: '历史警情',
-      hideInBread: true
-    },
-    children: [{
-      path: '',
-      name: 'warn_history',
-      meta: {
-        icon: '_lishijingqing',
-        title: '历史警情'
-      },
-      component: () => import('@/view/empty-back')
-    }]
+  // {
+  //   path: '/warn/history',
+  //   name: 'warn_history',
+  //   component: Main,
+  //   meta: {
+  //     icon: '_lishijingqing',
+  //     title: '历史警情',
+  //     hideInBread: true
+  //   },
+  //   children: [{
+  //     path: '',
+  //     name: 'warn_history',
+  //     meta: {
+  //       icon: '_lishijingqing',
+  //       title: '历史警情'
+  //     },
+  //     component: () => import('@/view/empty-back')
+  //   }]
 
-  },
+  // },
   // {
   //   path: '/warn/model',
   //   name: 'warn_model',
