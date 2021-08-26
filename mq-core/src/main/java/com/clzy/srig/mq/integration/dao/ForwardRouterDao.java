@@ -8,4 +8,6 @@ import org.apache.ibatis.annotations.Param;
 @MyBatisDao
 public interface ForwardRouterDao extends CrudDao<ForwardRouter> {
     int updateStatus(ForwardRouter entity);
+
+    int deleteByFromId(@Param("fromId") String fromId);
 }

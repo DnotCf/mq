@@ -204,4 +204,10 @@
         FROM SRIG_FORWARD_ROUTER
         WHERE ID = #{id}
     </update>
+
+    <delete id="deleteByFromId">
+        DELETE
+        FROM SRIG_FORWARD_ROUTER
+        WHERE FROM_SERVER_ID = #{fromId}
+    </delete>
 </mapper>
