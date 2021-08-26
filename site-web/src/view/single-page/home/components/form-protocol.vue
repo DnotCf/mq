@@ -31,9 +31,9 @@
     <div
       v-if="
         value.type === 'HTTP' ||
-        value.type === 'RocketMQ' ||
-        value.type === 'Aliyun_RocketMQ' ||
-        value.type === 'Kafka'
+          value.type === 'RocketMQ' ||
+          value.type === 'Aliyun_RocketMQ' ||
+          value.type === 'Kafka'
       "
     >
       <FormItem label="服务地址" :prop="propName + 'cluster'">
@@ -71,8 +71,8 @@
     <div
       v-if="
         value.type === 'RocketMQ' ||
-        value.type === 'Aliyun_RocketMQ' ||
-        value.type === 'Kafka'
+          value.type === 'Aliyun_RocketMQ' ||
+          value.type === 'Kafka'
       "
     >
       <FormItem label="所属组" :prop="propName + 'group'">
@@ -98,7 +98,10 @@
 
     <!-- MQTT  AMQP 阿里云RocketMQ  RocketMQ Kafka-->
     <div v-if="value.type !== 'HTTP'">
-      <FormItem label="topic" :prop="propName + 'topic'">
+      <FormItem
+        :label="value.type === 'AMQP' ? 'routingKey' : 'topic'"
+        :prop="propName + 'topic'"
+      >
         <Input v-model="value.topic" placeholder=""></Input>
       </FormItem>
     </div>
@@ -175,5 +178,4 @@ export default {
   methods: {}
 };
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>
