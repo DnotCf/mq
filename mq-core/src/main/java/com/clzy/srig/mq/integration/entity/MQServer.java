@@ -114,6 +114,8 @@ public class MQServer extends DataEntity<MQServer> {
 
     private Integer sourceType;
 
+    private String exchange = "";
+
     @Override
     public void doPreInsert() {
 

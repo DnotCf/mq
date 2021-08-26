@@ -144,10 +144,13 @@ public class RocketMqService {
         }
         DefaultMQProducer producer = new DefaultMQProducer(group);
         producer.setNamesrvAddr(url);
-        producer.setVipChannelEnabled(false);
+        
+        producer.setVipChannelEnabled(param.getBoolean("VipChannelEnabled"));
+//        producer.
 //        producer.setMaxMessageSize(maxMessageSize);
         producer.setSendMsgTimeout(param.getInteger("sendMsgTimeOut"));
         if (server.getRetry() != null) {
+            producer.setRetryTimesWhenSendFailed(server.getRetry());
             producer.setRetryTimesWhenSendAsyncFailed(server.getRetry());
         }
         producer.start();
@@ -175,6 +178,9 @@ public class RocketMqService {
         }
         if (object.getInteger("sendMsgTimeOut") == null) {
             object.put("sendMsgTimeOut", 150000);
+        }
+        if (object.getBoolean("VipChannelEnabled") == null) {
+            object.put("VipChannelEnabled", false);
         }
         return object;
     }
