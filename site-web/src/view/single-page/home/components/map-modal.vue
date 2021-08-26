@@ -245,15 +245,7 @@ export default {
             trigger: "blur"
           }
         ],
-        date: [
-          {
-            required: true,
-            type: "date",
-            message: "请选择",
-            trigger: "change"
-            // validator: this.validateDate
-          }
-        ]
+        date: [{ validator: this.validateDate, trigger: "change" }]
       },
       sourceList: [],
       isTitleShow: false,
@@ -297,12 +289,8 @@ export default {
   methods: {
     // 校验日期
     validateDate(rule, value, callback) {
-      console.log(val);
       if (!value) {
         callback(new Error("请选择"));
-      }
-      if (!regExp.test(value)) {
-        callback(new Error("请输入6-12包含数字、大小写的密码"));
       }
       callback();
     },
@@ -313,7 +301,6 @@ export default {
       if (val) {
         this.modalTitle = "修改映射";
         this.btnTitle = "修改";
-        console.log(row, 222);
       } else {
         this.modalTitle = "添加映射";
       }
@@ -324,7 +311,6 @@ export default {
     // 选择类型
     handleType(val) {
       this.id = val;
-      console.log(val);
       if (!val) return;
       this.rowData = this.sourceList.find(item => item.value === val);
       this.formData.fromServer = this.rowData;

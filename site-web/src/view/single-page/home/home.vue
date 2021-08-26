@@ -691,6 +691,7 @@ export default {
         return;
       }
       this.$refs.mapNode.show(1);
+      // 修改映射赋值
       this.$refs.mapNode.formData.date = this.selectList[0].expireTime;
       this.$refs.mapNode.formData.toServer = { ...this.selectList[0].toServer };
       this.$refs.mapNode.formData.id = this.selectList[0].id;
@@ -741,7 +742,6 @@ export default {
         return;
       }
       this.isMap = true;
-      console.log("删除映射");
     },
     handleDelMap() {
       let ids = this.selectList.map(item => {
@@ -825,29 +825,6 @@ export default {
       }
       callback();
     },
-    // 列表数据刷新
-    loadPageData(pageNo, pageSize, search) {
-      return new Promise(function(resolve, reject) {
-        dataSourceApi
-          .getMapList({
-            pageNo: pageNo,
-            pageSize: pageSize
-          })
-          .then(req => {
-            let data = req.data;
-            data.list.map(item => {
-              item.isFold = false;
-              return item;
-            });
-            // 处理数据，如果存在异常则提示
-            resolve(data);
-          })
-          .catch(err => {
-            // 异常处理,不用提示
-            reject(err);
-          });
-      });
-    },
     // 列表映射展开收起
     handleFold(val) {
       val.isFold = !val.isFold;
@@ -875,7 +852,6 @@ export default {
 
       this.formValidate = { ...this.formValidate, ...initForm };
       this.$refs["formValidate"].resetFields();
-      console.log(this.formValidate, val);
     },
     // 提交
     handleSubmit(val) {
@@ -923,7 +899,6 @@ export default {
                 this.isLoad = false;
                 this.isShow = false;
                 this.$Message.error(res.msg || "保存数据源失败!");
-                console.log(res);
               }
             })
             .catch(err => {
