@@ -1,4 +1,3 @@
-
 <template>
   <Modal
     class="map-modal"
@@ -36,7 +35,11 @@
         </Select>
       </FormItem>
       <FormItem label="映射数据源协议" prop="toServer.type">
-        <Select v-model="formData.toServer.type" placeholder="" @on-change="handleProtocol">
+        <Select
+          v-model="formData.toServer.type"
+          placeholder=""
+          @on-change="handleProtocol"
+        >
           <Option
             :value="item.value"
             v-for="(item, index) in typeProtocol"
@@ -46,7 +49,11 @@
         </Select>
       </FormItem>
       <div class="border-layout" v-if="formData.toServer.type">
-     <form-protocol :value="formData.toServer" propName="toServer."></form-protocol>
+        <form-protocol
+          :value="formData.toServer"
+          :isSource="2"
+          propName="toServer."
+        ></form-protocol>
       </div>
       <FormItem label="映射给予方" prop="toServer.name">
         <Input v-model="formData.toServer.name" placeholder=""></Input>
@@ -321,7 +328,8 @@ export default {
       let init = {
         toServer: {
           type: val,
-          name: this.formData.toServer.name
+          name: this.formData.toServer.name,
+          defaultParam: '{ "exchange":"",    "type":"",    "queue":""}'
         }
       };
       this.formData = { ...this.formData, ...init };

@@ -25,7 +25,7 @@
     top: 11rem;
     padding: 0 60px;
     width: 100%;
-    height: 46rem;
+    height: ~'calc(100vh - 16.5rem - 36px)';
     z-index: 1;
 
     display: flex;
@@ -83,7 +83,7 @@
         width: 100%;
         padding: 30px 20px 0;
         .page-modal-form {
-          height: 590px;
+          height: ~'calc(100% - 72px)';
           width: 100%;
           overflow: auto;
           padding-right: 10px;
@@ -206,16 +206,18 @@
 .table-box {
   border: unset !important;
   margin-bottom: 30px;
+  height: ~'calc(100% - 60px)'  !important;
   .no-map {
     color: #4567a3;
   }
   /deep/ .ivu-table:after {
     display: none;
   }
-  /deep/.ivu-table-tbody {
+  /deep/.ivu-table-body {
+    height: ~'calc(100% - 70px)' !important;
   }
   /deep/.ivu-table {
-    overflow: auto !important;
+    // overflow: auto !important;
     /deep/.ivu-table-tbody {
       .ivu-table-cell {
         padding: 5px 18px 15px !important;

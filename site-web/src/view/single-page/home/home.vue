@@ -120,9 +120,9 @@
                 </div>
                 <table-item
                   label="数据源协议："
-                  :value="row.fromServer.name"
+                  :value="row.fromServer.type"
                 ></table-item>
-                <table-item-common :value="row.fromServer"></table-item-common>
+                <table-item-common :value="row.fromServer" ></table-item-common>
               </div>
             </template>
             <template slot-scope="{ row, index }" slot="network">
@@ -242,7 +242,7 @@
               </Select>
             </FormItem>
             <div class="border-layout" v-show="formValidate.type">
-              <form-protocol :value="formValidate"></form-protocol>
+              <form-protocol :value="formValidate" :isSource="1"></form-protocol>
             </div>
             <FormItem
               label="选择网络"
@@ -852,7 +852,7 @@ export default {
         group: "",
         tag: "",
         topic: "",
-        defaultParam: ""
+        defaultParam: ''
       };
 
       this.formValidate = { ...this.formValidate, ...initForm };
