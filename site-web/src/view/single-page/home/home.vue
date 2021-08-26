@@ -690,13 +690,15 @@ export default {
         this.$Message.warning("暂无映射");
         return;
       }
-      this.$refs.mapNode.show();
+      this.$refs.mapNode.show(1);
+      // 修改映射赋值
+      this.$refs.mapNode.formData.date = this.selectList[0].expireTime;
       this.$refs.mapNode.formData.toServer = { ...this.selectList[0].toServer };
+      this.$refs.mapNode.formData.id = this.selectList[0].id;
       this.$refs.mapNode.id = this.selectList[0].fromServer.id;
       this.$refs.mapNode.formData.fromServer = {
         ...this.selectList[0].fromServer
       };
-      this.$refs.mapNode.formData.date = this.selectList[0].expireTime;
     },
 
     // 删除数据源
@@ -740,7 +742,6 @@ export default {
         return;
       }
       this.isMap = true;
-      console.log("删除映射");
     },
     handleDelMap() {
       let ids = this.selectList.map(item => {
@@ -824,29 +825,6 @@ export default {
       }
       callback();
     },
-    // 列表数据刷新
-    loadPageData(pageNo, pageSize, search) {
-      return new Promise(function(resolve, reject) {
-        dataSourceApi
-          .getMapList({
-            pageNo: pageNo,
-            pageSize: pageSize
-          })
-          .then(req => {
-            let data = req.data;
-            data.list.map(item => {
-              item.isFold = false;
-              return item;
-            });
-            // 处理数据，如果存在异常则提示
-            resolve(data);
-          })
-          .catch(err => {
-            // 异常处理,不用提示
-            reject(err);
-          });
-      });
-    },
     // 列表映射展开收起
     handleFold(val) {
       val.isFold = !val.isFold;
@@ -874,7 +852,6 @@ export default {
 
       this.formValidate = { ...this.formValidate, ...initForm };
       this.$refs["formValidate"].resetFields();
-      console.log(this.formValidate, val);
     },
     // 提交
     handleSubmit(val) {
@@ -889,6 +866,8 @@ export default {
           } else {
             port = "testSoruce";
           }
+          if (val) this.isShow = false;
+
           dataSourceApi[port](this.formValidate)
             .then(res => {
               this.isLoad = false;
@@ -897,14 +876,13 @@ export default {
                 if (data) {
                   this.selectList = [];
                   if (val) {
+                    this.handleReset();
                     this.checkoutTitle = "消息转发正在检验中，请稍后…";
                     this.isShow = false;
-                    this.handleReset();
                     this.isAdd = false;
                     this.$Message.success(this.btnTitle + "成功!");
                     this.modalTitle = "添加数据源";
                     this.btnTitle = "添加";
-
                     // this.$refs.dataTables.refreshPageData();
                     this.getListData();
                   } else {
@@ -921,7 +899,6 @@ export default {
                 this.isLoad = false;
                 this.isShow = false;
                 this.$Message.error(res.msg || "保存数据源失败!");
-                console.log(res);
               }
             })
             .catch(err => {

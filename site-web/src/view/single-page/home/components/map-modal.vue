@@ -245,14 +245,7 @@ export default {
             trigger: "blur"
           }
         ],
-        date: [
-          {
-            required: true,
-            type: "date",
-            message: "请选择",
-            trigger: "change"
-          }
-        ]
+        date: [{ validator: this.validateDate, trigger: "change" }]
       },
       sourceList: [],
       isTitleShow: false,
@@ -294,6 +287,13 @@ export default {
   },
   mounted() {},
   methods: {
+    // 校验日期
+    validateDate(rule, value, callback) {
+      if (!value) {
+        callback(new Error("请选择"));
+      }
+      callback();
+    },
     show(val, row) {
       this.isShow = true;
       this.handleReset();
@@ -311,7 +311,6 @@ export default {
     // 选择类型
     handleType(val) {
       this.id = val;
-      console.log(val)
       if (!val) return;
       this.rowData = this.sourceList.find(item => item.value === val);
       this.formData.fromServer = this.rowData;
@@ -347,6 +346,7 @@ export default {
             port = "testMap";
             param = this.formData.toServer;
           }
+          if (val) this.isTitleShow = false;
           dataSourceApi[port](param)
             .then(res => {
               this.isLoad = false;
@@ -355,9 +355,9 @@ export default {
                 if (data) {
                   this.selectList = [];
                   if (val) {
+                    this.hide();
                     this.checkoutTitle = "消息转发正在检验中，请稍后…";
                     this.isTitleShow = false;
-                    this.hide();
                     this.isAdd = false;
                     this.$Message.success(this.btnTitle + "成功!");
                     this.btnTitle = "添加";
