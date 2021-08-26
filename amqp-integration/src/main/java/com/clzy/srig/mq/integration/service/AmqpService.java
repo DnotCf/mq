@@ -100,13 +100,32 @@ public class AmqpService {
 
     public void testConnect(ForwardRouter router) throws Exception {
         if (router.getToServer() != null) {
-            Channel build = build(router.getToServer());
-            build.close();
+            MQServer server = router.getToServer();
+            Channel client = build(server);
+            JSONObject defaultParam = getDefaultParam(server.getDefaultParam());
+            String exchange=defaultParam.getString("exchange");
+            String type = defaultParam.getString("type");
+            if (!StringUtils.isBlank(exchange)) {
+                if (StringUtils.isBlank(type)) {
+                    type = BuiltinExchangeType.DIRECT.getType();
+                }
+                server.setExchange(exchange);
+                client.exchangeDeclare(exchange, type);
+            }
+            String queueName = defaultParam.getString("queue");
+            if (StringUtils.isBlank(queueName)) {
+                queueName = server.getTopic();
+            }
+            client.queueDeclare(queueName, false, false, false, null);
+            if (StringUtils.isNotBlank(exchange)) {
+                client.exchangeBind(queueName, exchange, server.getTopic());
+            }
+            client.close();
             return;
         }
         Channel client = build(router.getFromServer());
         if (StringUtils.isNotBlank(router.getFromTopic())) {
-            client.queueDeclare(router.getFromTopic(), false, false, false, null);
+//            client.queueDeclare(router.getFromTopic(), false, false, false, null);
             client.basicConsume(router.getFromTopic(), (consumerTag, message) -> {
 //            forwardService.publish(router.getFromServer(), message.getBody());
             }, consumerTag -> {

@@ -35,7 +35,10 @@ public class MqttIntegration implements IMqIntegration {
             }
             log.debug("===={} send msg：{}===", type(), new String(message));
             MqttClient client = mqttService.getClient(server);
-            client.publish(router.getToTopic(), message, 1, false);
+            String[] topics = router.getToTopic().split(",");
+            for (String topic : topics) {
+                client.publish(topic, message, 1, false);
+            }
             router.setStatus(MQStuats.online.getCode());
         } catch (MqttException e) {
             log.error("MQTT消息推送失败");

@@ -48,7 +48,7 @@ public class AmqpIntegration implements IMqIntegration {
                 try {
                     log.info("=====AMQP(RabbitMQ) producer重试连接=====");
                     Channel client = amqpService.getProducer(server);
-                    client.queueDeclare(router.getToTopic(), false, false, false, null);
+//                    client.queueDeclare(router.getToTopic(), false, false, false, null);
                     client.basicPublish(server.getExchange(), router.getToTopic(), null, message);
                     router.setStatus(MQStuats.online.getCode());
                 }catch (Exception e1){
@@ -69,7 +69,7 @@ public class AmqpIntegration implements IMqIntegration {
     public void consumer(ForwardRouter router) {
         try {
             Channel client = amqpService.getConnect(router.getFromServer());
-            client.queueDeclare(router.getFromTopic(), false, false, false, null);
+//            client.queueDeclare(router.getFromTopic(), false, false, false, null);
             client.basicConsume(router.getFromTopic(), (consumerTag, message) -> {
                 forwardService.publish(router.getFromServer(), message.getBody());
             }, consumerTag -> {
