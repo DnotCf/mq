@@ -64,6 +64,7 @@ public class SrigMqServerController extends BaseController {
                 if (!server.getTopic().equals(entiy.getTopic())) {
                     ForwardRouter query = new ForwardRouter();
                     query.setFromTopic(server.getTopic());
+                    query.setFromId(entiy.getId());
                     List<ForwardRouter> list = routerService.findList(query);
                     for (ForwardRouter router : list) {
                         router.setFromTopic(entiy.getTopic());

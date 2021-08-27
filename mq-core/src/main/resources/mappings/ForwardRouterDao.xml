@@ -114,6 +114,9 @@
             <if test="fromTopic != null and fromTopic != ''">
                 AND a.FROM_TOPIC = #{fromTopic}
             </if>
+            <if test="fromId != null and fromId != ''">
+                AND a.FROM_SERVER_ID = #{fromId}
+            </if>
             <if test="toTopic != null and toTopic != ''">
                 AND a.TO_TOPIC = #{toTopic}
             </if>
