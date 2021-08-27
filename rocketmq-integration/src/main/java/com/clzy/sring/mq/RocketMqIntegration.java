@@ -107,7 +107,8 @@ public class RocketMqIntegration implements IMqIntegration {
     @Override
     public void connect(ForwardRouter router) {
         try {
-            DefaultMQPushConsumer consumer = rocketMqService.createConsumer(router);
+            disConnect(router);
+            rocketMqService.createConsumer(router);
         } catch (Exception e) {
             router.setStatus(MQStuats.server_offline.getCode());
             log.error("初始化RocketMq连接失败", e);

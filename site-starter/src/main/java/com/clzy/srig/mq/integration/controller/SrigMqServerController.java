@@ -58,21 +58,25 @@ public class SrigMqServerController extends BaseController {
         if (entiy.getSourceType() == null) {
             entiy.setSourceType(0);
         }
-        service.save(entiy);
-        if (StringUtils.isNotBlank(entiy.getTopic())) {
+        if (StringUtils.isNotBlank(entiy.getId()) && StringUtils.isNotBlank(entiy.getTopic())) {
             try {
-                ForwardRouter query = new ForwardRouter();
-                query.setFromTopic(entiy.getTopic());
-                List<ForwardRouter> list = routerService.findList(query);
-                for (ForwardRouter router : list) {
-                    router.setFromTopic(entiy.getTopic());
-                    routerService.save(router);
-                    forwardService.updateRouterTable(router);
+                MQServer server = service.get(entiy.getId());
+                if (!server.getTopic().equals(entiy.getTopic())) {
+                    ForwardRouter query = new ForwardRouter();
+                    query.setFromTopic(server.getTopic());
+                    List<ForwardRouter> list = routerService.findList(query);
+                    for (ForwardRouter router : list) {
+                        router.setFromTopic(entiy.getTopic());
+                        routerService.save(router);
+                        forwardService.updateRouterTable(router);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+        service.save(entiy);
 
         return JsonResponse.success(true);
     }

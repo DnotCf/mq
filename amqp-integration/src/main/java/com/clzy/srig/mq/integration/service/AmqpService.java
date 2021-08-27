@@ -116,6 +116,7 @@ public class AmqpService {
             if (StringUtils.isBlank(queueName)) {
                 queueName = server.getTopic();
             }
+
             client.queueDeclare(queueName, false, false, false, null);
             if (StringUtils.isNotBlank(exchange)) {
                 client.queueBind(queueName, exchange, server.getTopic());

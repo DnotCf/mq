@@ -61,6 +61,7 @@ public class RocketAliyunMqIntegration implements IMqIntegration {
     @Override
     public void connect(ForwardRouter router) {
         try {
+            aliyunMqService.disConnect(router.getFromServer());
             aliyunMqService.buildOrderConsumer(router);
         } catch (Exception e) {
             router.setStatus(MQStuats.server_offline.getCode());

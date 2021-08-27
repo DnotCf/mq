@@ -104,7 +104,7 @@ public class RocketMqService {
             consumer.subscribe(router.getFromTopic(), tag);
         }
 //        consumerMap.put(namesrvAddr, consumer);
-        log.info("====={}===activeMQ消费连接服务创建成功=====", namesrvAddr);
+        log.info("====={}===rocketMQ消费连接服务创建成功=====", namesrvAddr);
         return consumer;
     }
 
@@ -136,7 +136,7 @@ public class RocketMqService {
 
     public DefaultMQProducer buildProducer(MQServer server) throws MQClientException {
         String url = getConectionUrl(server);
-        log.info("====={}===activeMQ生产服务连接创建开始=====", url);
+        log.info("====={}===rocketMQ生产服务连接创建开始=====", url);
         JSONObject param = getDefaultParam(server.getDefaultParam());
         String group = server.getGroup();
         if (StringUtils.isBlank(group)) {
@@ -154,7 +154,7 @@ public class RocketMqService {
             producer.setRetryTimesWhenSendAsyncFailed(server.getRetry());
         }
         producer.start();
-        log.info("====={}===activeMQ生产服务连接服务创建成功=====", url);
+        log.info("====={}===rocketMQ生产服务连接服务创建成功=====", url);
         return producer;
     }
 

@@ -81,6 +81,7 @@ public class KafkaMqIntegration implements IMqIntegration {
     @Override
     public void connect(ForwardRouter router) {
         try {
+            kafkaMqService.disConnect(router.getFromServer());
             KafkaConsumer consumer = kafkaMqService.createConsumer(router);
         } catch (Exception e) {
             router.setStatus(MQStuats.server_offline.getCode());

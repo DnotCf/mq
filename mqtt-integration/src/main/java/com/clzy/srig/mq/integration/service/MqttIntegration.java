@@ -98,10 +98,8 @@ public class MqttIntegration implements IMqIntegration {
 
     @Override
     public void connect(ForwardRouter router) {
-        MqttClient client = mqttService.getMqttClientMap(router.getFromServer());
-        if (client == null) {
-            consumer(router);
-        }
+        mqttService.disConnect(router.getFromServer());
+        consumer(router);
     }
 
     @Override

@@ -70,10 +70,13 @@ public class AmqpIntegration implements IMqIntegration {
         try {
             Channel client = amqpService.getConnect(router.getFromServer());
 //            client.queueDeclare(router.getFromTopic(), false, false, false, null);
-            client.basicConsume(router.getFromTopic(), (consumerTag, message) -> {
-                forwardService.publish(router.getFromServer(), message.getBody());
-            }, consumerTag -> {
-            });
+            String[] queues = router.getFromTopic().split(",");
+            for (String queue : queues) {
+                client.basicConsume(queue, (consumerTag, message) -> {
+                    forwardService.publish(router.getFromServer(), message.getBody());
+                }, consumerTag -> {
+                });
+            }
         } catch (Exception e) {
             e.printStackTrace();
             router.setStatus(MQStuats.server_offline.getCode());
@@ -82,10 +85,8 @@ public class AmqpIntegration implements IMqIntegration {
 
     @Override
     public void connect(ForwardRouter router) {
-        Channel channel = amqpService.getAmqpClientMap(router.getFromServer());
-        if (channel == null) {
-            consumer(router);
-        }
+        amqpService.disConnect(router.getFromServer());
+        consumer(router);
     }
 
     @Override
