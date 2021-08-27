@@ -193,6 +193,16 @@ public class RocketMqService {
         DefaultMQPushConsumer consumer = consumerMap.get(namesrvAddr);
         if (consumer != null) {
             consumerMap.remove(namesrvAddr);
+            try {
+                if (StringUtils.isNotBlank(server.getTopic())) {
+                    String[] split = server.getTopic().split(",");
+                    for (String s : split) {
+                        consumer.unsubscribe(s);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             consumer.shutdown();
         }
     }
