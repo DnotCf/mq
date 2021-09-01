@@ -80,7 +80,7 @@ public class RocketAliyunMqIntegration implements IMqIntegration {
         try {
             aliyunMqService.testConnection(router);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("连接测试异常", e);
             return false;
         }
         return true;
